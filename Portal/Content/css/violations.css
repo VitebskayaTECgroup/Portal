@@ -1,0 +1,171 @@
+﻿body {
+	background: #eee;
+	color: #000;
+	font-size: 14px;
+	overflow-y: auto;
+}
+
+* {
+	box-sizing: border-box;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+	padding-bottom: 4em;
+}
+
+.layout {
+	margin: 2em 4em;
+	padding: 1em;
+	background: #fff;
+	border: 1px solid #ccc;
+}
+
+.search {
+	margin-bottom: 1em;
+}
+
+	.search form {
+		margin: 0;
+		border: 0;
+		padding: 0;
+	}
+
+	.search input[type="search"] {
+		padding: .2em .5em;
+		border: 0;
+		border-bottom: 1px solid #ccc;
+		font-size: 1em;
+		margin-right: 1em;
+		width: 90%;
+	}
+
+	.search input[type="submit"] {
+		color: #000;
+		background: #fff;
+		font-size: 1em;
+		text-decoration: none;
+		display: inline-block;
+		border: 1px solid #ccc;
+		padding: .2em .5em;
+		cursor: pointer;
+		width: 8%;
+	}
+
+		.search input[type="submit"]:hover {
+			color: #0089ff;
+			border-color: #0089ff;
+		}
+
+.operations {
+	margin-bottom: 1em;
+}
+
+	.operations a {
+		color: #000;
+		text-decoration: none;
+		display: inline-block;
+		border: 1px solid #ccc;
+		padding: .2em .5em;
+		cursor: pointer;
+	}
+
+		.operations a:hover {
+			color: #0089ff;
+			border-color: #0089ff;
+		}
+
+
+.content > div {
+	margin-bottom: 2em;
+}
+
+.content .caption {
+	/* font-size: .9em; */
+	color: #0089ff;
+}
+
+.content input,
+.content textarea,
+.content select {
+	padding: .2em 0;
+	display: block;
+	width: 100%;
+	border: 0;
+	border-bottom: 1px solid #ccc;
+}
+
+.content textarea {
+	border: 1px solid #ccc;
+	padding: .2em;
+}
+
+	.content input:focus,
+	.content textarea:focus,
+	.content select:focus {
+		outline: none;
+		border-color: #0089ff;
+	}
+
+.content input[type="date"] {
+	width: 10em;
+}
+
+.body .header {
+	font-weight: 500;
+	font-size: 1.1em;
+	margin-bottom: .5em;
+}
+
+.body table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.body th {
+	text-align: left;
+	padding: .2em .5em;
+	font-size: .9em;
+	font-weight: 500;
+	border: 1px solid #ddd;
+	background: #efefef;
+}
+
+.body td {
+	border: 1px solid #ddd;
+	padding: .2em .5em;
+	font-size: .9em;
+}
+
+.body a {
+	text-decoration: none;
+	color: #000;
+}
+
+.body tbody tr:hover a {
+	color: #0089ff;
+}
+
+.sort_up::after {
+	content: ' ↑';
+}
+
+.sort_down::after {
+	content: ' ↓';
+}
+
+i {
+	color: #666;
+}
+
+.filter table {
+	width: 100%;
+}
+
+.filter td {
+	vertical-align: top;
+}
+
+.filter label {
+	display: block;
+}

@@ -1,0 +1,17 @@
+﻿@model List<DirectivePage>
+@{
+	ViewBag.Title = "Директива №1";
+	Layout = "~/Areas/Directive/Views/Shared/_Layout.cshtml";
+}
+
+<header>@ViewBag.Title</header>
+
+<div class="menu">
+	@foreach (var page in Model)
+	{
+		<a href="~/directive/page/@page.Url">
+			<img src="~/Areas/Directive/Content/images/@(page.Url).png" />
+			<span>@page.Caption</span>
+		</a>
+	}
+</div>

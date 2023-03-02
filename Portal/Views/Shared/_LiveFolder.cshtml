@@ -1,0 +1,109 @@
+﻿@model LiveFolder
+@{
+	Layout = null;
+}
+@using System.Text.RegularExpressions
+
+@if (!string.IsNullOrEmpty(Model.Name))
+{
+	<h3>@Model.Name</h3>
+}
+
+@{
+	string absolutePath = @"\\web\Files\Одно окно\" + Model.RelativePath;
+	var files = System.IO.Directory
+		.GetFiles(absolutePath)
+		.Select(x => new FileInfo(x))
+		.OrderByDescending(x => x.LastWriteTime)
+		.ToList();
+
+	if (Model.SortByDate)
+	{
+		var dateRegex = new Regex(@"\d\d.\d\d.\d\d\d\d");
+
+		var sortFiles = files
+			.Select(x => new { Date = DateTime.TryParse(dateRegex.Match(x.Name).Value, out DateTime d) ? d : DateTime.MinValue, File = x })
+			.OrderByDescending(x => x.Date)
+			.ToList();
+
+		foreach (var entry in sortFiles)
+		{
+			string name = entry.File.Name.Replace(absolutePath, "");
+			string type = name.Substring(name.LastIndexOf('.') + 1);
+			string text = name.Substring(0, name.LastIndexOf('.'));
+
+			if (!Model.NoImages && "jpg jpeg png gif bmp".Contains(type))
+			{
+				if (Model.WriteImageBox)
+				{
+					<div class="imager">
+						<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" />
+						@if (Model.WriteImageCaptions)
+						{
+							<span>@text</span>
+						}
+					</div>
+				}
+				else
+				{
+					if (Model.WriteImageCaptions)
+					{
+						<span>@text</span>
+					}
+					<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" />
+				}
+			}
+			else if ("doc docx pdf rtf".Contains(type))
+			{
+				<div class="link">
+					<b>@entry.Date.ToString("dd.MM.yyyy")</b>
+					<a href="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)">@text</a>
+				</div>
+			}
+		}
+	}
+	else
+	{
+		if (Model.SortByName)
+		{
+			files = files
+				.OrderBy(x => x.Name)
+				.ToList();
+		}
+
+		foreach (var file in files)
+		{
+			string name = file.Name.Replace(absolutePath, "");
+			string type = name.Substring(name.LastIndexOf('.') + 1);
+			string text = name.Substring(0, name.LastIndexOf('.'));
+
+			if (!Model.NoImages && "jpg jpeg png gif bmp".Contains(type))
+			{
+				if (Model.WriteImageBox)
+				{
+					<div class="imager">
+						<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" />
+						@if (Model.WriteImageCaptions)
+						{
+							<span>@text</span>
+						}
+					</div>
+				}
+				else
+				{
+					if (Model.WriteImageCaptions)
+					{
+						<span>@text</span>
+					}
+					<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" />
+				}
+			}
+			else if ("doc docx pdf rtf".Contains(type))
+			{
+				<div class="link">
+					<a href="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)">@text</a>
+				</div>
+			}
+		}
+	}
+}

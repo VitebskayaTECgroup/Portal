@@ -1,0 +1,44 @@
+﻿@{
+	ViewBag.Title = "Карты оценки опасностей и рисков";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+
+	string path = @"\\backup\pub\Карты оценки опасностей и рисков\";
+}
+
+<h3>@ViewBag.Title</h3>
+
+@foreach (var sub in new DirectoryInfo(path).EnumerateDirectories().OrderBy(x => x.Name))
+{
+	@Expand(sub, path)
+}
+
+@helper  Expand(DirectoryInfo dir, string path)
+{
+	var files = dir
+		.EnumerateFiles()
+		.Select(x => new
+		{
+			Path = x.FullName.Replace(path, "").Replace('\\', '/'),
+			Type = x.FullName.Substring(x.FullName.LastIndexOf('.') + 1)
+		})
+		.Select(x => new
+		{
+			x.Path,
+			x.Type,
+			Name = x.Path.Substring(0, x.Path.LastIndexOf('.'))
+		})
+		.OrderByDescending(x => x.Type);
+
+	<div style="text-align: center;">
+		<h4>@dir.Name.Replace("_", "")</h4>
+		@foreach (var file in files)
+		{
+			if (!file.Path.Contains("~$"))
+			{
+				<div class="link">
+					<a href="http://www.vst.vitebsk.energo.net/pub/Карты оценки опасностей и рисков/@file.Path">@file.Name.Substring(file.Name.IndexOf("/") + 1)</a>
+				</div>
+			}
+		}
+	</div>
+}

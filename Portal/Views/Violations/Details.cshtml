@@ -1,0 +1,73 @@
+﻿@model Violation
+@{
+	ViewBag.Title = "Просмотр записи о нарушении #" + Model.Id;
+	Layout = "~/Views/Shared/_ViolationsLayout.cshtml";
+
+	User user = ViewBag.User;
+}
+
+<div class="operations">
+	<a onclick="history.back()">Вернуться</a>
+	&emsp;
+	&emsp;
+	&emsp;
+	@if (user.IsViolationsAdmin)
+	{
+		<a href="~/violations/edit/@Model.Id">Изменить запись</a>
+		<a onclick="action('@Url.Action("delete", "violations", new { Id = Model.Id })')">Удалить запись</a>
+	}
+</div>
+
+<div class="content">
+	<div>
+		<div class="caption">Дата выявления нарушения</div>
+		<div>@Model.DateViolation.ToString("d MMMM yyyy")</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. работника, допустившего нарушение</div>
+		<div>@Text(Model.PersonName)</div>
+	</div>
+	<div>
+		<div class="caption">Профессия/должность работника, допустившего нарушение</div>
+		<div>@Text(Model.PersonPosition)</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. производителя работ (если допустивший нарушение работник был в составе бригады)</div>
+		<div>@Text(Model.ProcessName)</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. руководителя работ работ (если допустивший нарушение работник был в составе бригады)</div>
+		<div>@Text(Model.HeadName)</div>
+	</div>
+	<div>
+		<div class="caption">Структурное подразделение</div>
+		<div>@Text(Model.PersonDepartment)</div>
+	</div>
+	<div>
+		<div class="caption">Краткое содержание нарушения</div>
+		<div>@Text(Model.Description)</div>
+	</div>
+	<div>
+		<div class="caption">Принятые меры, по отношению к работнику, допустившему нарушение</div>
+		<div>@Text(Model.Result)</div>
+	</div>
+	<div>
+		<div class="caption">Номер приказа</div>
+		<div>@Text(Model.OrderId)</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. работника, выявившего нарушение</div>
+		<div>@Text(Model.JudgeName)</div>
+	</div>
+</div>
+
+@helper Text(string text) { 
+	if (string.IsNullOrEmpty(text))
+	{
+		<i>не заполнено</i>
+	}	
+	else
+	{
+		@text
+	}
+}

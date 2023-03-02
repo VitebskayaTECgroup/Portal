@@ -1,0 +1,46 @@
+﻿@{
+	ViewBag.Title = "Поиск документов";
+	Layout = "~/Areas/Directive/Views/Shared/_Layout.cshtml";
+}
+
+<header>@ViewBag.Title</header>
+
+<div class="container">
+	<div class="search">
+		<input id="search" placeholder="Введите поисковый запрос" />
+	</div>
+	<div id="search-results">
+		<div class="result">...</div>
+	</div>
+</div>
+
+@section scripts {
+	<script>
+		$('#search').on('input', function () {
+			getResults()
+		})
+
+		$(function () {
+			getResults()
+		})
+
+		function getResults() {
+			let query = document.getElementById('search').value
+
+			if (query.trim() != '') {
+
+				let form = new FormData()
+				form.append('query', query)
+
+				fetch('@Url.Action("results", "main")', { method: 'POST', body: form })
+					.then(res => res.text())
+					.then(text => {
+						document.getElementById('search-results').innerHTML = text
+					})
+			}
+			else {
+				document.getElementById('search-results').innerHTML = '<div class="result">...</div>'
+			}
+		}
+	</script>
+}

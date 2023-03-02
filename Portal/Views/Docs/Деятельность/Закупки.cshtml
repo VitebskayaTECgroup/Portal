@@ -1,0 +1,33 @@
+﻿@{
+	ViewBag.Title = "Закупки";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+
+	string parentPath = @"Деятельность\3. Закупки\";
+}
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	SortByDate = true,
+	Name = "Закупки в строительстве",
+	RelativePath = parentPath + @"Закупки в строительстве\",
+})
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	SortByDate = true,
+	Name = "Закупки не в строительстве",
+	RelativePath = parentPath + @"Закупки не в строительстве\",
+})
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	SortByDate = true,
+	Name = "НПА",
+	RelativePath = parentPath + @"Нормативно-правовые акты\",
+})
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	Name = "Доверенности (основные) руководителей Витебская ТЭЦ РУП Витебскэнерго",
+	RelativePath = parentPath + @"Доверенности (основные) руководителей Витебская ТЭЦ РУП Витебскэнерго\",
+})

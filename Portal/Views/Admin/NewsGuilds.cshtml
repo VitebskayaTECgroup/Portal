@@ -1,0 +1,179 @@
+﻿@{
+    ViewBag.Title = "Пользователи";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin.css" />
+}
+
+@Html.Partial("Links", model: "newsguilds")
+
+@using (var db = new SiteContext())
+{
+    var user = db.Authorize(User);
+
+    if (!user.IsAdmin)
+    {
+        <h3>Нет доступа</h3>
+        return;
+    }
+
+    var guilds = db.NewsGuilds
+        .OrderBy(x => x.Name)
+        .ToList();
+
+    var users = db.Users
+        .Select(x => new { x.UName, x.DisplayName, x.UClass })
+        .OrderBy(x => x.UName)
+        .ToList();
+
+    <div class="layout_center_right">
+        @foreach (var guild in guilds)
+        {
+            var pinned = db.UsersToGuilds
+                .Where(x => x.GuildId == guild.Id)
+                .Select(x => x.UserName)
+                .ToList();
+
+            <div class="sub-data" style="float: none; width: 500px;">
+                <table style="width: 100%; table-layout: inherit;">
+                    <tr>
+                        <td style="width: 120px;">
+                            <select>
+                                <option value="0">Открытый</option>
+                                <option value="1" @(guild.IsPrivate ? "selected" : "")>Закрытый</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" value="@guild.Name" placeholder="Введите имя канала" style="width: 100%; padding: 3px; box-sizing: border-box;" />
+                        </td>
+                        <td style="width: 30px; padding-top: 6px;">
+                            <div class="icon icon_hover ic-save" onclick="saveGuild(@guild.Id, this)"></div>
+                        </td>
+                        <td style="width: 30px; padding-top: 6px;">
+                            <div class="icon icon_hover ic-delete" onclick="delGuild(@guild.Id)"></div>
+                        </td>
+                    </tr>
+                    @foreach (var u in users.Where(x => pinned.Contains(x.UName)).OrderBy(x => !x.UClass.Contains("site_red")))
+                    {
+                        <tr>
+                            <td class="onhover">
+                                @if (u.UClass.Contains("site_red"))
+                                {
+                                    <b title="Нажмите, чтобы убрать роль редактора новостей" onclick="setRedactor('remove', '@u.UName')">@u.UName</b>
+                                }
+                                else
+                                {
+                                    <span title="Нажмите, чтобы добавить роль редактора новостей" onclick="setRedactor('add', '@u.UName')">@u.UName</span>
+                                }
+                            </td>
+                            <td colspan="2">@u.DisplayName</td>
+                            <td>
+                                <div class="icon icon_hover ic-clear" onclick="unpin(@guild.Id, '@u.UName')"></div>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="3">
+                            <select>
+                                <option value="0">?</option>
+                                @foreach (var u in users.Where(x => !pinned.Contains(x.UName)))
+                                {
+                                    <option value="@u.UName">(@u.UName) @u.DisplayName</option>
+                                }
+                            </select>
+                        </td>
+                        <td style="padding-top: 8px;">
+                            <div class="icon icon_hover ic-add" onclick="pin(@guild.Id, this)"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        <div class="sub-data" style="float: none; width: 500px;">
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 120px;">
+                        <select>
+                            <option value="0">Открытый</option>
+                            <option value="1">Закрытый</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" placeholder="Введите имя канала" style="width: 100%; padding: 3px; box-sizing: border-box;" />
+                    </td>
+                    <td style="width: 30px; padding-top: 6px;">
+                        <div class="icon icon_hover ic-add" onclick="addGuild(this)"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}
+
+@section scripts {
+    <div id="cart" class="cart hide"></div>
+
+    <script>
+        function pin(guildId, button) {
+
+            let body = new FormData()
+            body.append('GuildId', guildId)
+            body.append('UserName', button.parentNode.parentNode.querySelector('select').value)
+
+            fetch('@Url.Action("pinUserToGuild", "admin")', { method: 'POST', body })
+                .then(res => res.ok ? location.reload() : alert('Ошибка'))
+        }
+
+        function unpin(guildId, userName) {
+
+            let body = new FormData()
+            body.append('GuildId', guildId)
+            body.append('UserName', userName)
+
+            fetch('@Url.Action("unpinUserToGuild", "admin")', { method: 'POST', body })
+                .then(res => res.ok ? location.reload() : alert('Ошибка'))
+        }
+
+        function addGuild(button) {
+            let body = new FormData()
+            body.append('Name', button.parentNode.parentNode.querySelector('input').value)
+            body.append('IsPrivate', button.parentNode.parentNode.querySelector('select').value == '1')
+
+            fetch('@Url.Action("addGuild", "admin")', { method: 'POST', body })
+                .then(res => res.ok ? location.reload() : alert('Ошибка'))
+        }
+
+        function saveGuild(guildId, button) {
+            let body = new FormData()
+            body.append('GuildId', guildId)
+            body.append('Name', button.parentNode.parentNode.querySelector('input').value)
+            body.append('IsPrivate', button.parentNode.parentNode.querySelector('select').value == '1')
+
+            fetch('@Url.Action("saveGuild", "admin")', { method: 'POST', body })
+                .then(res => res.ok ? location.reload() : alert('Ошибка'))
+        }
+
+        function delGuild(guildId) {
+            if (!confirm('Канал будет удален, подписчики отписаны, новости останутся в базе. Продолжить?')) return
+
+            let body = new FormData()
+            body.append('GuildId', guildId)
+
+            fetch('@Url.Action("delGuild", "admin")', { method: 'POST', body })
+                .then(res => res.ok ? location.reload() : alert('Ошибка'))
+        }
+
+        function setRedactor(mode, uname) {
+
+            var form = new FormData()
+            form.append('mode', mode)
+            form.append('uname', uname)
+
+            fetch('@Url.Action("news", "admin")', { method: 'POST', body: form })
+                .then(() => location.reload())
+        }
+    </script>
+}

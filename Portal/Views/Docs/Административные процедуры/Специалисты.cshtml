@@ -1,0 +1,206 @@
+﻿@{
+	ViewBag.Title = "Специалисты филиала осуществляющие прием заявлений заинтересованных лиц";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+}
+
+<h3>Специалисты филиала осуществляющие прием заявлений заинтересованных лиц:</h3>
+@*<h4>в отношении граждан:</h4>*@
+
+<style>
+	.no-padding {
+		width: 100%;
+		text-align: center;
+	}
+
+		.no-padding td[colspan] {
+			text-align: center;
+			font-weight: bolder;
+		}
+
+		.no-padding td {
+			padding: 0;
+		}
+</style>
+
+<table>
+	<tr>
+		<td>
+			<img src="http://www.vst.vitebsk.energo.net/photos/Мазенкова Людмила Петровна.jpg"
+				 onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/Мазенкова Людмила Петровна.jpg')" />
+		</td>
+		<td>
+			<p class="status">Начальник ОПКОиД</p>
+			<p class="name">Мазенкова Людмила Петровна</p>
+			<p>Телефоны: внутренний <i>3-57</i>, городской <i>37-34-03</i></p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="http://www.vst.vitebsk.energo.net/photos/Якимова Юлия Михайловна.jpg"
+				 onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/Якимова Юлия Михайловна.jpg')" />
+		</td>
+		<td>
+			<p class="status">Ведущий специалист по кадрам</p>
+			<p class="name">Якимова Юлия Михайловна</p>
+			<p>Телефоны: внутренний <i>3-18</i>, городской <i>37-34-03</i></p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="http://www.vst.vitebsk.energo.net/photos/Николаев Алексей Павлович.jpg"
+				 onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/Николаев Алексей Павлович.jpg')" />
+		</td>
+		<td>
+			<p class="status">Ведущий юрисконсульт ОПКОиД</p>
+			<p class="name">Николаев Алексей Павлович</p>
+			<p>Телефоны: внутренний <i>3-07</i>, городской <i>37-82-24</i></p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="http://www.vst.vitebsk.energo.net/photos/Козлова Ольга Олеговна.jpg"
+				 onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/Козлова Ольга Олеговна.jpg')" />
+		</td>
+		<td>
+			<p class="status">Бухгалтер 1-й категории</p>
+			<p class="name">Козлова Ольга Олеговна</p>
+			<p>Телефоны: внутренний <i>2-56</i>, городской <i>37-34-21</i></p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="http://www.vst.vitebsk.energo.net/photos/Супранкова Жанна Романовна.jpg"
+				 onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/Супранкова Жанна Романовна.jpg')" />
+		</td>
+		<td>
+			<p class="status">Ведущий бухгалтер</p>
+			<p class="name">Супранкова Жанна Романовна</p>
+			<p>Телефоны: внутренний <i>3-36</i></p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="http://www.vst.vitebsk.energo.net/photos/Пелипенко Оксана Геннадьевна.jpg"
+				 onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/Пелипенко Оксана Геннадьевна.jpg')" />
+		</td>
+		<td>
+			<p class="status">Специалист по идеологической и социальной работе ОПКОиД</p>
+			<p class="name">Пелипенко Оксана Геннадьевна</p>
+			<p>Телефоны: внутренний <i>2-18</i>, городской <i> 37-34-15</i></p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="http://www.vst.vitebsk.energo.net/photos/Науменко Елена Владимировна.jpg"
+				 onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/Науменко Елена Владимировна.jpg')" />
+		</td>
+		<td>
+			<p class="status">Инспектор по контролю за исполнением поручений ОПКОиД</p>
+			<p class="name">Науменко Елена Владимировна</p>
+			<p>Телефоны: внутренний <i>3-83</i>, городской <i>37-34-15</i></p>
+		</td>
+	</tr>
+</table>
+
+<div>
+	<h3 style="text-align: center;">График приёма:</h3>
+	<table class="no-padding">
+		<tr>
+			<td colspan="2">Рабочие дни</td>
+		</tr>
+		<tr>
+			<td>Понедельник-четверг</td>
+			<td>Пятница</td>
+		</tr>
+		<tr>
+			<td>с 8.00 до 12.30 и с 13.15 до 17.00</td>
+			<td>с 8.00 до 12.30 и с 13.15 до 15.45</td>
+		</tr>
+
+		<tr>
+			<td colspan="2">Предпраздничные дни</td>
+		</tr>
+		<tr>
+			<td>Понедельник-четверг</td>
+			<td>Пятница</td>
+		</tr>
+		<tr>
+			<td>с 8.00 до 12.30 и с 13.15 до 16.00</td>
+			<td>с 8.00 до 12.30 и с 13.15 до 14.45</td>
+		</tr>
+	</table>
+</div>
+
+@*<h4>в отношении юридических лиц и индивидуальных предпринимателей:</h4>
+
+	<table>
+		<tr>
+			<td>
+				<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/Административные процедуры/Специалисты/Матвиевич Алексей Петрович.jpg" />
+			</td>
+			<td>
+				<p class="status">Начальник производственно-технического отдела</p>
+				<p class="name">Матвиевич Алексей Петрович</p>
+				<p>Время приема: понедельник-пятница, с <i>8.30</i> до <i>12.00</i> и с <i>14.00</i> до <i>16.00</i></p>
+				<p>Телефоны: внутренний <i>3-60</i>, городской <i>37-34-05</i></p>
+				<p>Расположение: кабинет начальника производственно-технического отдела, расположенный на четвертом этаже здания служебного бытового корпуса второй очереди</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/Административные процедуры/Специалисты/Шуляковская Ирина Иосифовна.jpg" />
+			</td>
+			<td>
+				<p class="status">Заместитель начальника производственно-технического отдела</p>
+				<p class="name">Шуляковская Ирина Иосифовна</p>
+				<p>В случае отсутствия начальника ПТО Матвиевича А.П.</p>
+				<p>Время приема: понедельник-пятница, с <i>8.30</i> до <i>12.00</i> и с <i>14.00</i> до <i>16.00</i></p>
+				<p>Телефоны: внутренний <i>3-70</i>, городской <i>37-34-06</i></p>
+				<p>Расположение: кабинет заместителя начальника производственно-технического отдела, расположенный на четвертом этаже здания служебного бытового корпуса второй очереди</p>
+			</td>
+		</tr>
+	</table>*@
+
+<style>
+	#big_photo {
+		position: fixed;
+		top: 30%;
+		left: 40%;
+		padding: 6px;
+		background: #ffffff;
+		border: 1px solid #111;
+		text-align: right;
+	}
+
+		#big_photo > .icon {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			top: 7px;
+			right: 7px;
+			height: 24px;
+			width: 24px;
+		}
+
+	#big_photo__photo {
+		max-height: 500px;
+	}
+</style>
+
+<div id="big_photo" class="hide" onclick="document.getElementById('big_photo').style.display = 'none';">
+	<div class="icon icon_hover ic-clear"></div>
+	<img id="big_photo__photo" src="">
+</div>
+
+<script>
+	function getBigPhoto(url) {
+		if (url.indexOf('logo.png') > -1) return;
+		try {
+			document.getElementById('big_photo__photo').src = url;
+			document.getElementById('big_photo').style.display = 'inline-block';
+		}
+		catch (e) { }
+	}
+</script>
+
+<br /><br /><br /><br /><br /><br /><br />

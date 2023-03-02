@@ -1,0 +1,152 @@
+﻿@model News
+
+@{ 
+    string className = "news news-first news-" + Model.Priority;
+    string arrow = "arrow_drop_down";
+
+    if (Model.IsHide)
+    {
+        className += " news-hided";
+    }
+
+    if (!Model.IsWatched)
+    {
+        className += " news-unwatched";
+
+        if (Model.Priority != "low")
+        {
+            className += " news-open";
+            arrow = "arrow_drop_up";
+        }
+    }
+
+    var links = (Model.Links ?? "").Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+    bool isShort = string.IsNullOrEmpty(Model.Message) && string.IsNullOrEmpty(Model.Title) && links.Length == 1;
+
+    bool isBackAndUnwatch = !Model.IsWatched && Model.Priority == "back";
+    bool isTemp = Model.DateAdd.Date < Model.DateExpire.Date;
+
+    int daysRemains = (Model.DateExpire.Date - DateTime.Now.Date).Days;
+}
+
+<div id="@Model.Id" class="@className">
+    <table onmouseup="@(!Model.IsWatched && Model.Priority != "back" ? "watchNews(this, " + Model.Id + ")" : "")">
+        <tr>
+            @if (isShort)
+            {
+                <td class="news-title">
+                    @if (Model.Guild?.Id != 0)
+                    {
+                        if (Model.Guild.IsPrivate)
+                        {
+                            <span class="news-channel private" title="Новость видна только подписчикам канала">@Model.Guild.Name</span>
+                        }
+                        else
+                        {
+                            <span class="news-channel" title="Общедоступная новость">@Model.Guild.Name</span>
+                        }
+                    }
+                    <a href="http://www.vst.vitebsk.energo.net/files/Новости/@Model.Id/@links[0]">@links[0].Substring(0, links[0].IndexOf("."))</a>
+                </td>
+            }
+            else
+            {
+                <td class="news-title" onclick="@(isBackAndUnwatch ? "return false" : "expandNews(this)")">
+                    @if (Model.Guild?.Id != 0)
+                    {
+                        if (Model.Guild.IsPrivate)
+                        {
+                            <span class="news-channel private" title="Новость видна только подписчикам канала">@Model.Guild.Name</span>
+                        }
+                        else
+                        {
+                            <span class="news-channel" title="Общедоступная новость">@Model.Guild.Name</span>
+                        }
+                    }
+
+                    @if (Model.Title != "")
+                    {
+                        @Model.Title
+                    }
+                    else
+                    {
+                        <i>Без названия</i>
+                    }
+                    <small>@Model.DateAdd.ToString("dd.MM.yyyy")</small>
+
+                    @if (isTemp)
+                    {
+                        <small>
+                            <i class="icon ic-time icon-small"></i>
+                            @if (daysRemains == 0)
+                            {
+                                @: Истекает: сегодня
+                            }
+                            else if (Model.DateExpire.Date < DateTime.Now.Date)
+                            {
+                                @: Истекла: @(0 - daysRemains) дн. назад
+                            }
+                            else
+                            {
+                                @: @daysRemains дн.
+                            }
+                        </small>
+                    }
+                </td>
+            }
+
+            @if (Model.IsRedactor)
+            {
+                <td width="30px">
+                    <span class="material-icons" title="Перейти к редактированию новости" onclick="document.location='@Url.Action("edit", "news", new { Id = Model.Id })'">settings</span>
+                </td>
+            }
+
+            @if (Model.IsWatched || Model.Priority != "back")
+            {
+                if (Model.IsPinned)
+                {
+                    <td width="30px">
+                        <span class="material-icons" title="Открепить новость" onclick="unpinNews(@Model.Id)">push_pin</span>
+                    </td>
+                }
+                else
+                {
+                    <td width="30px">
+                        <span class="material-icons" title="Закрепить новость" onclick="pinNews(@Model.Id)">add_circle_outline</span>
+                    </td>
+                }
+            }
+
+            @if (!Model.IsHide && (Model.Priority != "back" || Model.IsWatched))
+            {
+                <td width="30px">
+                    <span class="material-icons" title="Скрыть новость. В дальнейшем она не будет отображаться в списке." onclick="hideNews(@(Model.Id))">clear</span>
+                </td>
+            }
+
+            @if (!Model.IsWatched && Model.Priority == "back") { }
+            else
+            {
+                <td width="30px" onclick="@(isBackAndUnwatch ? "return false" : "expandNews(this)")">
+                    <span class="material-icons">@arrow</span>
+                </td>
+            }
+        </tr>
+    </table>
+
+	<div class="news-body">
+		@if (!Model.IsWatched)
+		{
+			if (Model.Priority == "back")
+			{
+				@Html.Partial("NewsBody", Model)
+			}
+
+			if (Model.Priority == "high" && (DateTime.Now - Model.DateAdd.Date).TotalDays <= 3)
+			{
+				@Html.Partial("NewsBody", Model)
+			}
+		}
+		</div>
+</div>

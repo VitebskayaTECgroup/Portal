@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/Content/css/violations.css" />
+</head>
+<body>
+    <div class="layout">
+        @RenderBody()
+    </div>
+
+    <script>
+		function submit(url) {
+
+			if (!url) return alert('Не передан адрес для отправки формы')
+
+			var form = new FormData(), i = 0, items = document.querySelectorAll('input,select,textarea')
+			for (; i < items.length; i++) {
+				var name = items[i].name, value = items[i].type == 'checkbox' ? items[i].checked : (items[i].value || '')
+				if (name) form.append(name, value)
+			}
+
+			fetch(url, { method: 'POST', body: form })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Error) alert('Ошибка! ' + json.Error)
+					if (json.Done) {
+						alert(json.Done)
+						if (json.Link) location = json.Link
+					}
+				})
+		}
+
+		function action(url) {
+			if (!url) return alert('Не передан адрес для отправки формы')
+
+			fetch(url, { method: 'POST' })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Error) alert('Ошибка! ' + json.Error)
+					if (json.Done) {
+						alert(json.Done)
+						if (json.Link) location = json.Link
+					}
+				})
+		}
+    </script>
+</body>
+</html>

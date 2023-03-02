@@ -1,0 +1,19 @@
+﻿@{
+	ViewBag.Title = "О товарах (работах, услугах)";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+
+	string parentPath = @"Деятельность\1. О товарах, работах, услугах\";
+}
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	Name = "Порядок реализации",
+	RelativePath = parentPath + @"Порядок реализации\",
+})
+
+@*<h3>Перечень</h3>
+<img style="max-width: 90%;" src="http://www.vst.vitebsk.energo.net/files/Одно окно/Деятельность/1. О товарах, работах, услугах/Перечень/list.jpeg" />
+
+<h3>Перечень</h3>
+<img style="max-width: 90%;" src="http://www.vst.vitebsk.energo.net/files/Одно окно/Деятельность/1. О товарах, работах, услугах/Цены/Прейскурант на услуги автотранспорта.jpeg" />
+<img style="max-width: 90%;" src="http://www.vst.vitebsk.energo.net/files/Одно окно/Деятельность/1. О товарах, работах, услугах/Цены/Прейскурант на услуги спецтехники.jpeg" />*@

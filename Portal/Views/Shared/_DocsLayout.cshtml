@@ -1,0 +1,47 @@
+﻿@{
+	int r = new Random().Next();
+	string theme = Request.Cookies.Get("theme")?.Value ?? "white";
+	if (theme == "") { theme = "white"; }
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta charset="utf-8" />
+	<title>@ViewBag.Title | Витебская ТЭЦ</title>
+	<link rel="shortcut icon" href="~/Content/images/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="~/Content/css/core.css?@r" />
+	<link rel="stylesheet" href="~/Content/css/docs.css?@r" />
+	@if (theme == "black")
+	{
+		<style>
+			::-webkit-scrollbar {
+				width: 8px;
+				height: 8px;
+			}
+
+			::-webkit-scrollbar-thumb {
+				border: 0;
+				background-color: #444;
+			}
+
+				::-webkit-scrollbar-thumb:hover {
+					background-color: #1a83f5;
+				}
+
+			::-webkit-scrollbar-track {
+				border: 0;
+				background: #333;
+			}
+		</style>
+	}
+</head>
+<body class="theme_@theme">
+	@Html.Partial("_Nav")
+
+	<div class="content @(ViewBag.IsFix == true ? ViewBag.Fix : "") @(ViewBag.IsCentered == true ? "centered" : "")">
+		@RenderBody()
+	</div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+﻿@{
+	int r = new Random().Next();
+	string theme = Request.Cookies.Get("theme")?.Value ?? "white";
+	if (theme == "") { theme = "white"; }
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta charset="utf-8" />
+	<title>@ViewBag.Title</title>
+	<link rel="shortcut icon" href="~/Content/images/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="~/Areas/Directive/Content/css/layout.css?r=@r" />
+	@if (theme == "black")
+	{
+		<style>
+			::-webkit-scrollbar {
+				width: 8px;
+				height: 8px;
+			}
+
+			::-webkit-scrollbar-thumb {
+				border: 0;
+				background-color: #444;
+			}
+
+				::-webkit-scrollbar-thumb:hover {
+					background-color: #1a83f5;
+				}
+
+			::-webkit-scrollbar-track {
+				border: 0;
+				background: #333;
+			}
+		</style>
+	}
+</head>
+<body class="@theme">
+	@if (ViewBag.Title != "Директива №1")
+	{
+		<a class="link back" href="~/directive">
+			<span icon>menu</span> К содержанию
+		</a>
+	}
+	else
+	{
+		<a class="link back" href="~/site/">
+			<span icon>home</span> На главную
+		</a>
+		<a class="link admin" href="~/directive/search">
+			<span icon>search</span> Поиск
+		</a>
+	}
+	@RenderSection("links", false)
+
+	<div class="content-center">
+		@RenderBody()
+	</div>
+
+	<script src="~/Areas/Directive/Content/lib/jquery-3.6.0.min.js"></script>
+	<script src="~/Areas/Directive/Content/js/core.js?1"></script>
+	@RenderSection("scripts", false)
+</body>
+</html>

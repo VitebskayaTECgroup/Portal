@@ -1,0 +1,64 @@
+﻿@model DirectivePage
+@{
+	ViewBag.Title = "Директива №1 | " + Model.Caption;
+	Layout = "~/Areas/Directive/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.IsAdmin)
+{
+	@section links {
+		<a class="link admin" href="~/directive/admin/@Model.Id">Настройка</a>
+	}
+}
+
+<header>@Model.Caption</header>
+
+<div class="container">
+	<div id="sections">
+		@foreach (var sect in Model.Sections)
+		{
+			bool isExpanded = (Request.Cookies[ "expand" + sect.Id ]?.Value ?? "") == "1";
+
+			<div class="section" data-id="@sect.Id">
+				<div class="caption">
+
+					<span btn icon
+						  toggle-fast="expand@(sect.Id)"
+						  toggle-el="expand@(sect.Id)"
+						  style="@(isExpanded ? "display: none" : "")">expand_more</span>
+					<span btn icon
+						  toggle-fast="expand@(sect.Id)"
+						  toggle-el="expand@(sect.Id)"
+						  style="@(isExpanded ? "" : "display: none;")">expand_less</span>
+
+					<span>@sect.Caption</span>
+				</div>
+				<div class="files no-hover files-sort" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
+					@if (sect.Documents.Count > 0)
+					{
+						foreach (var doc in sect.Documents.Where(x => x != null))
+						{
+							<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
+								<a href="@doc.FileUrl">@doc.Name</a>
+							</div>
+						}
+					}
+				</div>
+			</div>
+		}
+	</div>
+
+	<div class="sign">
+		<span>Редакторы данной страницы</span>
+		@foreach (var u in Model.Redactors)
+		{
+			<div>@(u.DisplayName ?? u.UName ?? u.UID.ToString())</div>
+		}
+		@if (Model.Redactors.Count == 0)
+		{
+			<div><i>не назначены</i></div>
+		}
+	</div>
+
+	<div></div>
+</div>

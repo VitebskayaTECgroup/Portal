@@ -1,0 +1,70 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    background: #eee;
+}
+
+.layout {
+    margin: 5em;
+}
+
+.container {
+    padding: 1em;
+    background: #fff;
+    box-shadow: 0 0 10px 0px #ccc;
+border: 1px solid #ccc;}
+
+.sub {
+    margin: 1em 0;
+}
+
+.caption {
+   padding: 1em;
+}
+
+.caption b {
+    display: inline-block;
+    margin-right: 1em;
+}
+
+.record_table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.record_table > a {
+    display: table-row;
+}
+
+.record_table > a > span {
+    display: table-cell;
+}
+
+.record_table .header {
+    text-decoration: none;
+    cursor: default;
+}
+
+    .record_table .header span {
+        text-align: center;
+        font-weight: 300;
+        font-size: 0.8em;
+    }
+
+.record_table .cell1 {
+    width: 8%;
+}
+
+.record_table .cell2 {
+    width: 45%;
+}
+
+.record_table .cell3 {
+    width: 20%;
+}
+
+.record_table .cell4 {
+    width: 25%;
+}

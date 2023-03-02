@@ -1,0 +1,97 @@
+h3, .div, .table {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.table {
+    margin: 40px auto 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.table > tbody > tr > td {
+    padding: 10px;
+}
+
+.table_sub td {
+    padding: 5px 15px;
+    font-size: 10pt;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.div {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.layout > div {
+    position: relative;
+}
+
+.layout ul {
+    margin: 0 auto;
+    width: 600px;
+}
+
+.layout li {
+    text-align: left;
+    list-style-type: circle;
+}
+
+.onewindow_header {
+    padding-left: 40px;
+}
+
+.onewindow_links {
+    padding: 15px;
+}
+
+.onewindow_link {
+    padding: 4px 4px 4px 15px;
+}
+
+.onewindow_image {
+    padding: 4px 4px 4px 15px;
+    max-width: 90%;
+}
+
+.onewindow_links > * {
+    display: block;
+    margin: 5px;
+}
+
+.onewindow_images {
+    padding: 20px;
+    text-align: center;
+}
+
+.onewindow_images > div {
+    display: inline-block;
+    padding: 10px;
+    vertical-align: top;
+}
+
+.onewindow_block {
+    padding: 10px;
+    border-bottom: 1px solid #808080;
+    margin: 10px;
+}
+
+.onewindow_block > h2 {
+    margin: 5px 10px;
+}
+
+
+.theme_black .layout {
+    color: #eee;
+}
+
+.theme_black .layout a {
+    color: #2196f3;
+}
+
+.theme_black .layout a:hover {
+    color: #00bcd4;
+}

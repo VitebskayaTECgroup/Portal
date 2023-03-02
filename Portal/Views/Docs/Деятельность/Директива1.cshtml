@@ -1,0 +1,79 @@
+﻿@{
+	ViewBag.Title = "Директива №1";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+
+	string path = @"\\backup\pub\#Директива № 1\";
+
+	if (!Request.UserHostAddress.Contains("10.178.9."))
+	{
+		<div>Нет доступа</div>
+		return;
+	}
+}
+
+<style>
+	.underlying {
+		margin-left: 4em;
+	}
+
+	h4:hover {
+		color: #0094ff;
+		cursor: pointer;
+	}
+</style>
+
+@Expand(new DirectoryInfo(path), path, 0)
+
+@helper  Expand(DirectoryInfo dir, string path, int deep)
+{
+	var files = dir
+		.EnumerateFiles()
+		.Select(x => new
+		{
+			Path = x.FullName.Replace(path, "").Replace('\\', '/'),
+			Type = x.FullName.Substring(x.FullName.LastIndexOf('.') + 1)
+		})
+		.Select(x => new
+		{
+			x.Path,
+			x.Type,
+			Name = x.Path.Substring(0, x.Path.LastIndexOf('.'))
+		})
+		.OrderByDescending(x => x.Type);
+
+	int newDeep = deep + 1;
+
+	<div class="underlying">
+		
+		<h4 onclick="toggle(this)"><span style="margin-right: 1em; font-weight: bold;">@(deep > 1 ? "˃" : "˅")</span>@dir.Name.Replace('#', ' ')</h4>
+		<div style="display: @(deep > 1 ? "none" : "block")">
+			@foreach (var file in files)
+			{
+				if (!file.Path.Contains("~$"))
+				{
+					<a href="http://www.vst.vitebsk.energo.net/information/@file.Path">@file.Name.Substring(file.Name.LastIndexOf('/') + 1)</a>
+				}
+			}
+			@foreach (var sub in dir.EnumerateDirectories())
+			{
+				@Expand(sub, path, newDeep)
+			}
+		</div>
+	</div>
+}
+
+<script>
+	function toggle(h4) {
+		var parent = h4.parentNode
+		var div = parent.querySelector('div')
+		var span = parent.querySelector('span')
+		if (div.style.display == 'none') {
+			div.style.display = 'block'
+			span.innerHTML = '˅'
+		}
+		else {
+			div.style.display = 'none'
+			span.innerHTML = '˃'
+		}
+	}
+</script>

@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Обратная связь";
+    Layout = "~/Views/Shared/_DocsLayout.cshtml";
+}
+
+<h3>Создание электронного обращения</h3>
+
+<p>
+    Ваше электронное обращение будет сопоставлено с Ip адресом запроса.
+    <br />Пожалуйста, не забудьте представиться и/или оставить реквизиты для обратной связи.
+</p>
+
+<form method="post" action="~/docs/appeal">
+    <textarea name="text"></textarea>
+    <input type="submit" value="Отправить" />
+</form>

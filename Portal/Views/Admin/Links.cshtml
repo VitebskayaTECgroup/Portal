@@ -1,0 +1,29 @@
+﻿@model string
+
+<div class="layout_left">
+    <div class="menu open">
+        <div class="menu_header">
+            <table>
+                <tr>
+                    <td>Разделы</td>
+                </tr>
+            </table>
+        </div>
+        <div class="menu_body">
+            <a href="~/admin/users/" class="@(Model == "users" ? "menu_active" : "")">Пользователи</a>
+            <a href="~/admin/guests/" class="@(Model == "guests" ? "menu_active" : "")">Гости</a>
+            <a href="~/admin/errors/" class="@(Model == "errors" ? "menu_active" : "")">Ошибки</a>
+            <a href="~/admin/granties/" class="@(Model == "granties" ? "menu_active" : "")">Права доступа</a>
+            <a href="~/admin/news/" class="@(Model == "news" ? "menu_active" : "")">Размещение новостей</a>
+            <a href="~/admin/newsguilds/" class="@(Model == "newsguilds" ? "menu_active" : "")">Каналы новостей</a>
+        </div>
+    </div>
+    @if (Model == "errors")
+    {
+        <div class="menu open">
+            <div class="menu_body">
+                <a onclick="deleteAllErrors()">Удалить все записи</a>
+            </div>
+        </div>
+    }
+</div>

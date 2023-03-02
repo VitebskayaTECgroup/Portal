@@ -1,0 +1,573 @@
+﻿* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/*#region База */
+
+body {
+	background-color: #eee;
+}
+
+	body.black {
+		background: #333;
+		color: #fff;
+	}
+
+header {
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	display: block;
+	font-weight: bolder;
+	text-align: center;
+	font-size: 1.4em;
+	padding: .7em 0;
+}
+
+.hide {
+	display: none !important;
+}
+
+.content-center {
+	position: absolute;
+	left: 10em;
+	right: 10em;
+	top: 0;
+	padding-bottom: 2em;
+	height: auto;
+}
+
+/*#endregion */
+
+/*#region Переходы*/
+
+.link {
+	display: block;
+	position: absolute;
+	background: #fff;
+	text-decoration: none;
+	color: inherit;
+	padding: .3em .5em;
+	border: 2px solid #ccc;
+	box-shadow: 0px 4px 6px 0px #ccc;
+	transition: box-shadow .2s ease;
+}
+
+	.link:hover {
+		cursor: pointer;
+		box-shadow: 0px 0px 10px 1px #aaa;
+		transition: box-shadow .2s ease;
+		border-color: #0072ff;
+		border: 2px solid #0072ff;
+	}
+
+.black .link {
+	background: #444;
+	color: #fff;
+	border: 2px solid #222;
+	box-shadow: 0 4px 6px 0 #222;
+}
+
+.black .link:hover {
+	box-shadow: 0px 0px 10px 1px #222;
+	transition: box-shadow .2s ease;
+	border-color: #0072ff;
+	border: 2px solid #0072ff;
+}
+
+.back {
+	left: .2em;
+	top: .2em;
+}
+
+.admin {
+	top: .2em;
+	right: .2em;
+}
+
+/*#endregion*/
+
+/*#region Список*/
+
+.menu {
+	position: relative;
+}
+
+	.menu > a {
+		padding: .7em;
+		margin-bottom: .2em;
+		display: flex;
+		align-items: center;
+		color: inherit;
+		background: #fff;
+		border: 2px solid #ccc;
+		box-shadow: 0px 4px 6px 0px #ddd;
+		text-decoration: none;
+		transition: box-shadow .2s ease;
+	}
+
+		.menu > a > img {
+			width: 40px;
+			height: 40px;
+			margin-right: 1.6em;
+		}
+
+		.menu > a:hover {
+			cursor: pointer;
+			box-shadow: 0px 0px 10px 1px #aaa;
+			transition: box-shadow .2s ease;
+			border-color: #0072ff;
+			border: 2px solid #0072ff;
+		}
+
+		.menu > a > span {
+			font-size: 1.1em;
+		}
+
+		.menu > a:hover > span {
+			text-shadow: 0 0 2px #0072ff;
+		}
+
+.black .menu > a {
+	background: #444;
+	border: 2px solid #222;
+	box-shadow: 0px 4px 6px 0px #222;
+}
+
+	.black .menu > a:hover {
+		box-shadow: 0px 0px 10px 1px #222;
+		transition: box-shadow .2s ease;
+		border-color: #0072ff;
+		border: 2px solid #0072ff;
+	}
+
+		.black .menu > a:hover > span {
+			text-shadow: 0 0 2px #0072ff;
+		}
+
+/*#endregion*/
+
+/*#region Контейнер документов */
+
+.container {
+	position: relative;
+	background: #fff;
+	border: 1px solid #ccc;
+	box-shadow: 0px 4px 6px 0px #ccc;
+	padding: 1.5em;
+}
+
+.section:first-child {
+	/* Табличный режим */
+	border-top: 1px solid #ccc;
+}
+
+.section {
+	margin-bottom: 1em;
+	padding: .2em 0;
+	background: #fff;
+	
+	/* Табличный режим */
+	border: 1px solid #ccc;
+	border-top: 0;
+	margin-bottom: 0;
+	border-collapse: collapse;
+}
+
+	.section .caption {
+		padding: .2em 0;
+		font-size: 1.1em;
+		display: flex;
+		align-items: center;
+	}
+
+	.section .number {
+		border: 1px solid #ccc;
+		border-radius: 1em;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #eee;
+		font-weight: 500;
+		width: 2em;
+		height: 2em;
+		margin-right: 1em;
+		cursor: default;
+	}
+
+	.section:hover {
+		box-shadow: 0 1px 4px #ccc;
+	}
+
+	.section .files {
+		padding: .5em;
+		display: flex;
+		flex-direction: column;
+	}
+
+		.section .files a {
+			color: #0072ff;
+			margin: 0 .3em;
+		}
+
+		.section .files > div {
+			display: flex;
+			padding: .5em;
+			margin-left: 1em;
+		}
+
+			.section .files > div:hover {
+				box-shadow: 0 1px 4px #ccc;
+			}
+
+		.section .files.no-hover > div:hover {
+			box-shadow: none;
+		}
+
+.files + .files {
+	padding-top: 0;
+}
+
+.handler {
+	cursor: move;
+}
+
+.sign {
+	font-size: .9em;
+	margin-top: 5em;
+	padding: 0 1em;
+}
+
+.sign span {
+	font-weight: 500;
+}
+
+.black .container {
+	background: #333;
+	border: 1px solid #000;
+	box-shadow: 0px 4px 6px 0px #222;
+}
+
+.black .section {
+	background: #333;
+}
+
+	.black .section .number {
+		border: 1px solid #222;
+		background-color: #555;
+		color: #fff;
+	}
+
+	.black .section:hover {
+		box-shadow: 0 1px 4px #000;
+	}
+
+.black .section .files a {
+	color: #6daeff;
+}
+
+	.black .section .files > div:hover {
+		box-shadow: 0 1px 4px #000;
+	}
+
+	.black .section .files.no-hover > div:hover {
+		box-shadow: none;
+	}
+
+/*#endregion*/
+
+/*#region Формы */
+
+.form {
+	display: flex;
+	flex-direction: column;
+}
+
+	.form div {
+		padding: .2em 0;
+	}
+
+.buttons {
+	display: flex;
+	justify-content: flex-end;
+}
+
+textarea {
+	border: 1px solid #ccc;
+	padding: 1em;
+	resize: none;
+	width: 100%;
+	font-size: .9em;
+}
+
+	textarea:hover,
+	textarea:focus {
+		border-color: #0072ff;
+		outline: none;
+	}
+
+button {
+	padding: .2em .4em;
+	background: #eee;
+	border: 1px solid #ccc;
+	box-shadow: 0px 2px 4px 0px #ccc;
+	display: flex;
+	font-size: .9em;
+	justify-content: space-between;
+	align-content: center;
+	margin-top: .5em;
+}
+
+	button + button {
+		margin-left: 1em;
+	}
+
+	button [icon] {
+		margin-right: .2em;
+	}
+
+	button:hover {
+		color: #0072ff;
+		cursor: pointer;
+	}
+
+input[type=file] {
+	display: none;
+}
+
+.form label {
+	border: 1px solid #ccc;
+	padding: 1em;
+	resize: none;
+	width: 100%;
+	font-size: .9em;
+	cursor: pointer;
+}
+
+	.form label:hover {
+		border-color: #0072ff;
+		color: #0072ff;
+	}
+
+.black textarea {
+	background: #444;
+	color: #fff;
+	border: 1px solid #555;
+}
+
+	.black textarea:hover,
+	.black textarea:focus {
+		border-color: #0072ff;
+		outline: none;
+	}
+
+.black button {
+	background: #444;
+	color: #fff;
+	border: 2px solid #222;
+	box-shadow: 0px 2px 4px 0px #222;
+}
+
+	.black button:hover {
+		border-color: #0072ff;
+	}
+
+.black .form label {
+	border: 1px solid #555;
+}
+
+.black .form label:hover {
+	border-color: #0072ff;
+	color: #fff;
+}
+
+/*#endregion*/
+
+/*#region Иконки */
+
+@font-face {
+	font-family: 'Material Icons';
+	font-style: normal;
+	font-weight: 400;
+	/*src: url(../fonts/MaterialIcons-Regular.ttf) format('truetype');*/
+	src: url(../fonts/MaterialIcons-Regular.ttf) format('opentype');
+}
+
+[icon] {
+	font-family: 'Material Icons';
+	font-weight: normal;
+	font-style: normal;
+	font-size: 1.5em; /* Preferred icon size */
+	display: inline-block;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
+	word-wrap: normal;
+	white-space: nowrap;
+	direction: ltr;
+	/* Support for all WebKit browsers. */
+	-webkit-font-smoothing: antialiased;
+	/* Support for Safari and Chrome. */
+	text-rendering: optimizeLegibility;
+	/* Support for Firefox. */
+	-moz-osx-font-smoothing: grayscale;
+	/* Support for IE. */
+	font-feature-settings: 'liga';
+	vertical-align: middle;
+}
+
+.black [icon] {
+	color: #aaa;
+}
+
+[btn] {
+	color: #000;
+	text-shadow: none;
+	cursor: pointer;
+	margin: 0 .3em;
+}
+
+	[btn]:hover {
+		color: #0072ff;
+	}
+
+.black [btn]:hover {
+	color: #0072ff;
+}
+
+/*#endregion*/
+
+/*#region Пользователи */
+
+.user {
+	display: flex;
+	justify-content: flex-start;
+}
+
+	.user.head {
+		font-weight: 500;
+	}
+
+	.user > span {
+		padding: .5em;
+	}
+
+	.user:hover {
+		box-shadow: 0 1px 4px #ccc;
+	}
+
+	.user.head:hover {
+		box-shadow: none;
+	}
+
+	.black .user:hover {
+		box-shadow: 0 1px 4px #000;
+	}
+
+/*#endregion*/
+
+/*#region Modal */
+
+[overlay] {
+	display: none;
+	z-index: 1;
+	opacity: .5;
+	background: #000;
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+[modal] {
+	display: none;
+	z-index: 2;
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: #fff;
+	border: 1px solid #000;
+	padding: 1em 2em;
+	width: 40em;
+}
+
+.black [modal] {
+	background: #333;
+	color: #fff;
+	border: 1px solid #000;
+	box-shadow: 0 0 5px 1px #000;
+	padding: 1em 2em;
+	width: 40em;
+}
+
+/*#endregion */
+
+/*#region Поиск*/
+
+#search {
+	width: 100%;
+	padding: 1em;
+	border: 1px solid #ccc;
+}
+
+	#search:focus,
+	#search:hover {
+		border-color: #0072ff;
+		outline: none;
+	}
+
+#search-results {
+	padding: 1em 0;
+}
+
+.result {
+	padding: .5em;
+}
+
+	.result span {
+		margin-right: .2em;
+	}
+
+	.result a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.result:hover {
+		box-shadow: 0 1px 4px #ccc;
+	}
+
+	.result a.a {
+		color: #0072ff;
+		text-decoration: underline;
+	}
+
+
+.black #search {
+	border: 1px solid #555;
+	background: #444;
+	color: #fff;
+}
+
+	.black #search:focus,
+	.black #search:hover {
+		border-color: #0072ff;
+		outline: none;
+	}
+
+	.black .result:hover {
+		box-shadow: 0 1px 4px #000;
+	}
+
+.black .result a.a {
+	color: #6daeff;
+}
+
+.black ::placeholder {
+	color: #aaa;
+}
+
+/*#endregion*/

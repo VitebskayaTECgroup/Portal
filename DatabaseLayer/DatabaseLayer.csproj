@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F745A20-6FCF-4F40-994B-C4871E23CDE7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DatabaseLayer</RootNamespace>
+    <AssemblyName>DatabaseLayer</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="linq2db, Version=3.7.0.0, Culture=neutral, PublicKeyToken=e41013125f9e410a, processorArchitecture=MSIL">
+      <HintPath>..\packages\linq2db.3.7.0\lib\net472\linq2db.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.8\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.8\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.8\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.8\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.8\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.8\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Checkpoint\_CheckpointContext.cs" />
+    <Compile Include="Checkpoint\Events.cs" />
+    <Compile Include="Checkpoint\Owners.cs" />
+    <Compile Include="Devin\Activity.cs" />
+    <Compile Include="Devin\Aida.cs" />
+    <Compile Include="Devin\AidaDescription.cs" />
+    <Compile Include="Devin\Cartridge.cs" />
+    <Compile Include="Devin\Computer.cs" />
+    <Compile Include="Devin\Device.cs" />
+    <Compile Include="Devin\DeviceSoftware.cs" />
+    <Compile Include="Devin\Elm.cs" />
+    <Compile Include="Devin\Employee.cs" />
+    <Compile Include="Devin\Folder.cs" />
+    <Compile Include="Devin\Hardware.cs" />
+    <Compile Include="Devin\Object1C.cs" />
+    <Compile Include="Devin\Official.cs" />
+    <Compile Include="Devin\Printer.cs" />
+    <Compile Include="Devin\PrinterCartridge.cs" />
+    <Compile Include="Devin\Relation_Official_Employee.cs" />
+    <Compile Include="Devin\Repair.cs" />
+    <Compile Include="Devin\Request.cs" />
+    <Compile Include="Devin\Software.cs" />
+    <Compile Include="Devin\Storage.cs" />
+    <Compile Include="Devin\TypeCartridge.cs" />
+    <Compile Include="Devin\TypeDevice.cs" />
+    <Compile Include="Devin\TypeSystem.cs" />
+    <Compile Include="Devin\TypeWriteoff.cs" />
+    <Compile Include="Devin\WorkPlace.cs" />
+    <Compile Include="Devin\Writeoff.cs" />
+    <Compile Include="Devin\WriteoffMark.cs" />
+    <Compile Include="Devin\_DevinContext.cs" />
+    <Compile Include="Phonebook\Phone.cs" />
+    <Compile Include="Phonebook\_PhonebookContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Site\DirectiveLog.cs" />
+    <Compile Include="Site\DirectiveSections.cs" />
+    <Compile Include="Site\UsersToPages.cs" />
+    <Compile Include="Site\DirectivePages.cs" />
+    <Compile Include="Site\DirectiveDocument.cs" />
+    <Compile Include="Site\AccidentUserList.cs" />
+    <Compile Include="Site\AccidentRecordList.cs" />
+    <Compile Include="Site\AccidentList.cs" />
+    <Compile Include="Site\AccidentRecord.cs" />
+    <Compile Include="Site\AccidentLog.cs" />
+    <Compile Include="Site\AccidentView.cs" />
+    <Compile Include="Site\Appeal.cs" />
+    <Compile Include="Site\Car.cs" />
+    <Compile Include="Site\Constant.cs" />
+    <Compile Include="Site\Driver.cs" />
+    <Compile Include="Site\Error.cs" />
+    <Compile Include="Site\Guest.cs" />
+    <Compile Include="Site\MetalsCost.cs" />
+    <Compile Include="Site\News.cs" />
+    <Compile Include="Site\NewsGuild.cs" />
+    <Compile Include="Site\NewsPin.cs" />
+    <Compile Include="Site\NewsHide.cs" />
+    <Compile Include="Site\NewsTags.cs" />
+    <Compile Include="Site\NewsView.cs" />
+    <Compile Include="Site\Notification.cs" />
+    <Compile Include="Site\Order.cs" />
+    <Compile Include="Site\OrderRecord.cs" />
+    <Compile Include="Site\Vacation.cs" />
+    <Compile Include="Site\Person.cs" />
+    <Compile Include="Site\Request.cs" />
+    <Compile Include="Site\User.cs" />
+    <Compile Include="Site\UsersToGuilds.cs" />
+    <Compile Include="Site\Violation.cs" />
+    <Compile Include="Site\_SiteContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Телефоны горячей линии";
+    Layout = "~/Views/Shared/_DocsLayout.cshtml";
+}
+<div onmousemove="hideEskobar()">
+	<h3>Телефоны "Горячей линии"</h3>
+
+	<div style="text-align: center;">
+		<p>Наша &quot;горячая телефонная линия&quot; функционирует КРУГЛОСУТОЧНО по телефону +375 (212) 37-34-32 и компетентно информирует по вопросам электро- и теплоснабжения потребителей.</p>
+		<p>Ваших обращений ждут начальники смены станции:</p>
+	</div>
+
+	<table style="table-layout: fixed;" onmouseover="showEskobar()">
+		<tr>
+			<td>
+				<img src="http://www.vst.vitebsk.energo.net/big_photos/Гудимчик Константин Михайлович.jpg" style="width: 200px;" />
+			</td>
+			<td>
+				<img src="http://www.vst.vitebsk.energo.net/big_photos/Абраменков Максим Алексеевич.jpg" style="width: 200px;" />
+			</td>
+			<td>
+				<img src="http://www.vst.vitebsk.energo.net/big_photos/Гойтан Вячеслав Васильевич.jpg" style="width: 200px;" />
+			</td>
+			@*<td>
+					<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/Обращения/Горячая линия/Шантур Андрей Сергеевич.jpg" style="width: 200px;" />
+				</td>*@
+			<td>
+				<img src="http://www.vst.vitebsk.energo.net/big_photos/Красев Александр Алексеевич.jpg" style="width: 200px;" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p class="name">Гудимчик Константин Михайлович</p>
+			</td>
+			<td>
+				<p class="name">Абраменков Максим Алексеевич</p>
+			</td>
+			<td>
+				<p class="name">Гойтан Вячеслав Васильевич</p>
+			</td>
+			@*<td>
+					<p class="name">Шантур Андрей Сергеевич</p>
+				</td>*@
+			<td>
+				<p class="name">Красев Александр Алексеевич</p>
+			</td>
+		</tr>
+	</table>
+
+	<p>
+		При обращении на "горячую линию" Вам необходимо сообщить свою фамилию, имя, отчество, место жительства и (или) работы (учебы),
+		а представителям юридических лиц - наименовании юридического лица, фамилию, собственное имя, отчество, изложить суть обращения.
+	</p>
+	<p>
+		Приносим свои извинения на тот случай, если Ваши вопросы не относится к нашей компетенции.
+		Мы всегда подскажем Вам в какую организацию можно обратиться.
+	</p>
+
+	<div id="eskobar" style="display: none;">
+		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; opacity: .5;"></div>
+		<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/Обращения/Горячая линия/eskobar-mem.jpg" style="position: fixed; top: 10em; left: calc(50% - 200px); width: 400px; opacity: 1; " />
+	</div>
+
+	<script>
+		var eskobar = document.getElementById('eskobar')
+		var timeout = 0
+
+		function showEskobar() {
+			timeout = setTimeout(function () {
+				eskobar.style.display = 'none'
+			}, 5000)
+		}
+
+		function hideEskobar() {
+			eskobar.style.display = 'none'
+		}
+	</script>
+</div>

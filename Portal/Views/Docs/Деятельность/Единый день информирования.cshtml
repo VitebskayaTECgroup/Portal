@@ -1,0 +1,44 @@
+﻿@{
+	ViewBag.Title = "Единый день информирования";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+}
+
+<h3>Единый день информирования</h3>
+
+<div style="border: 1px solid initial; padding: 2em;">
+
+	@{ 
+		var dirs = Directory.GetDirectories(@"\\web\Files\Одно окно\Деятельность\ЕДИ\");
+
+		var order = new List<LiveDateFolder>();
+
+		foreach (var dir in dirs)
+		{
+			try
+			{
+				order.Add(new LiveDateFolder
+				{
+					Name = dir.Substring(dir.LastIndexOf('\\') + 1),
+					Date = DateTime.Parse("01 " + dir.Substring(dir.LastIndexOf('\\') + 1)),
+				});
+			}
+			catch
+			{
+
+			}
+		}
+
+		foreach (var entry in order.OrderByDescending(x => x.Date))
+		{
+			string[] files = System.IO.Directory.GetFiles(@"\\web\Files\Одно окно\Деятельность\ЕДИ\" + entry.Name);
+
+			foreach (var file in files)
+			{
+				<div class="link">
+					<b>@entry.Name</b>
+					<a href="http://www.vst.vitebsk.energo.net/files/Одно окно/Деятельность/ЕДИ/@entry.Name/@file.Substring(file.LastIndexOf('\\') + 1)">@file.Substring(file.LastIndexOf('\\') + 1)</a>
+				</div>
+			}
+		}
+	}
+</div>

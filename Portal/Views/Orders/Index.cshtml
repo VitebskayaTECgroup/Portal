@@ -1,0 +1,472 @@
+﻿@{
+	ViewBag.Title = "Ежедневная (к 7ч. 30мин.) информация об организации работ в филиалах \"РУП Витебскэнерго\"";
+	var r = new Random().Next();
+	string theme = Request.Cookies.Get("theme")?.Value ?? "white";
+	if (theme == "") { theme = "white"; }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta charset="utf-8" />
+	<link rel="shortcut icon" href="~/Content/images/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="~/Content/css/orders.css?r=@r" />
+	<title>Ежедневная информация об организации работ</title>
+</head>
+<body class="@theme">
+	@using (var db = new SiteContext())
+	{
+		var user = db.Authorize(User);
+		var date = DateTime.TryParse(Request.QueryString.Get("date") ?? "", out DateTime d) ? d : DateTime.Today;
+
+		var viewers = new[] { "gen", "gen_zam", "eng_gen", "eng_zam", "tai_duty", "ttc_duty", "ktc_duty", "elec_duty", "hvo_1", "hvo_2", "tb1", "tb2", "tb3" };
+
+		var guilds = new[]
+		{
+		new
+		{
+			Name = "КТЦ",
+			Users = new [] { "ktc_gen", "ktc_zam", "ktc_mas", "ktc_masko", "ktc_zko", "ktc_zto" },
+		},
+		new
+		{
+			Name = "ТТЦ",
+			Users = new [] { "ttc_gen", "ttc_zam", "ttc_mast", "ttc_mast2" },
+		},
+		new
+		{
+			Name = "ЦТАИ",
+			Users = new [] { "tai_gen", "tai_zam", "tai_mast", "tai_mast2", "shumeiko", "ustinkov", "void", "tai_duty", "esmal" },
+		},
+		new
+		{
+			Name = "ЭЦ",
+			Users = new [] { "elec_gen", "elec_zam", "el_lab", "el_mast" },
+		},
+		new
+		{
+			Name = "РСУ",
+			Users = new [] { "rsu_gen", "rsc" },
+		},
+		new
+		{
+			Name = "ХЦ",
+			Users = new [] { "him_gen", "him_cad" },
+		},
+	};
+
+		bool isNSS = user.UName == "gcu_user";
+
+		if (!user.Groups.Contains("group_orders"))
+		{
+			<div>Нет доступа в данный раздел. Для получения доступа обратитесь в уАСУТП по тел. 3-34</div>
+			return;
+		}
+
+		var orders = db.Orders
+			.Where(x => x.Date.Date == date.Date)
+			.ToList();
+
+		if (orders.Count == 0)
+		{
+			// создание новых записей на указанную дату
+			foreach (var guild in guilds)
+			{
+				db.Insert(new Order
+				{
+					Date = date.Date,
+					Guild = guild.Name,
+					NumberMasters = 0,
+					NumberPersonal = 0,
+				});
+			}
+
+			orders = db.Orders
+				.Where(x => x.Date.Date == date.Date)
+				.ToList();
+		}
+
+		string AsNumber(int number)
+		{
+			return number == 0 ? "" : number.ToString();
+		}
+
+		var records = db.OrdersRecords
+			.Where(x => orders.Select(y => y.Id).ToList().Contains(x.OrderId))
+			.ToList();
+
+		var ftpDate = db.Constants.Where(x => x.Keyword == "OrdersFTPDate").FirstOrDefault()?.Value ?? "";
+
+		int plannedCommands = records.Select(x => x.NumberPlannedCommand).Sum();
+		int plannedOrders = records.Select(x => x.NumberPlannedOrder).Sum();
+		int unplannedCommands = records.Select(x => x.NumberUnplannedCommand).Sum();
+		int unplannedOrders = records.Select(x => x.NumberUnplannedOrder).Sum();
+
+		int masters = orders.Select(x => x.NumberMasters).Sum();
+		int personal = orders.Select(x => x.NumberPersonal).Sum();
+
+		<div class="header">
+			Просматриваемая дата: <span>@date.ToString("d MMMM yyyy")</span>
+			<a href="~/orders/?date=@date.AddDays(-1).ToString("dd.MM.yyyy")">Предыдущий день</a>
+			<a href="~/orders/?date=@date.AddDays(+1).ToString("dd.MM.yyyy")">Следующий день</a>
+			<a href="~/orders/?date=@DateTime.Today.ToString("dd.MM.yyyy")">Текущий день</a>
+
+			<i style="display: inline-block; margin: 0 2em;">Последний раз отчёт в РУП был отправлен @ftpDate</i>
+			@if (isNSS)
+			{
+				<button onclick="sendToFTP()">Отправить отчёт в РУП по FTP</button>
+			}
+		</div>
+
+		<table>
+			<thead>
+				<tr>
+					<th rowspan="3" width="120px">Наименование подразделения</th>
+					<th rowspan="3" width="30px"></th>
+					<th rowspan="3" width="500px">Порученная работа</th>
+					<th rowspan="3">Примечание</th>
+					<th colspan="4">Количество заданий на производство работ (шт.)</th>
+					<th rowspan="3">Причина невыполнения плановых работ</th>
+					<th rowspan="3">Количество ремонтного персонала (@personal)</th>
+					<th rowspan="3">Ответственные за выполнение работ (мастера) (@masters)</th>
+					<th rowspan="3" width="140px">Отметка о получении разрешения на выполнение работ от главного инженера</th>
+				</tr>
+				<tr>
+					<th colspan="2">Плановые (@(plannedCommands + plannedOrders))</th>
+					<th colspan="2">Внеплановые (@(unplannedCommands + unplannedOrders))</th>
+				</tr>
+				<tr>
+					<th width="110px">наряды (@plannedOrders)</th>
+					<th width="110px">распоряжения (@plannedCommands)</th>
+					<th width="110px">наряды (@unplannedOrders)</th>
+					<th width="110px">распоряжения (@unplannedCommands)</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var order in orders)
+				{
+					var orderRecords = records
+						.Where(x => x.OrderId == order.Id)
+						.ToList();
+
+					if (orderRecords.Count == 0)
+					{
+						var record = new OrderRecord
+						{
+							DateCreated = DateTime.Now,
+							OrderId = order.Id,
+							UserId = user.UID,
+							Description = "",
+							Comment = "",
+							NumberPlannedCommand = 0,
+							NumberPlannedOrder = 0,
+							NumberUnplannedCommand = 0,
+							NumberUnplannedOrder = 0,
+							ReasonToUndone = "",
+							AnswerCode = 1,
+							AnswerDate = null,
+							AnswerUserId = 0,
+						};
+
+						record.Id = db.InsertWithInt32Identity(record);
+						orderRecords.Add(record);
+					}
+
+					if (isNSS)
+					{
+						string border = orderRecords.Count < 2 ? "border" : "";
+						<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+							<td class="border left" rowspan="@orderRecords.Count">
+								<span>@order.Guild</span>
+							</td>
+							<td class="@border"></td>
+							<td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+							<td class="@border"><textarea name="Comment" style="text-align: left;">@orderRecords[0].Comment</textarea></td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+							<td class="text @border">@orderRecords[0].ReasonToUndone</td>
+							<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+							<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+							@if (date.Date >= DateTime.Today)
+							{
+								<td class="@border">
+									<select name="AnswerCode">
+										<option value="0">Неизвестно</option>
+										<option value="1" @(orderRecords[0].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+										<option value="2" @(orderRecords[0].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+									</select>
+								</td>
+							}
+							else
+							{
+								<td class="text right">@orderRecords[0].GetAnswer()</td>
+							}
+						</tr>
+
+						for (int i = 1; i < orderRecords.Count; i++)
+						{
+							string cls = i < (orderRecords.Count - 1) ? "" : "border";
+							<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+								<td class="@cls"></td>
+								<td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+								<td class="@cls"><textarea name="Comment" style="text-align: left;">@orderRecords[i].Comment</textarea></td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+								<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+								@if (date.Date >= DateTime.Today)
+								{
+									<td class="@cls right">
+										<select name="AnswerCode">
+											<option value="0">Неизвестно</option>
+											<option value="1" @(orderRecords[i].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+											<option value="2" @(orderRecords[i].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+										</select>
+									</td>
+								}
+								else
+								{
+									<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+								}
+							</tr>
+						}
+					}
+					else if (guilds.Where(x => x.Name == order.Guild).FirstOrDefault().Users.Contains(user.UName))
+					{
+						string border = orderRecords.Count < 2 ? "border" : "";
+						if (date.Date >= DateTime.Today)
+						{
+							<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+								<td class="border left" rowspan="@orderRecords.Count">
+									<span>@order.Guild</span> <button onclick="addRecord(@order.Id)">+</button>
+								</td>
+								<td class="@border"><button onclick="delRecord(@orderRecords[0].Id)">-</button></td>
+								<td class="@border"><textarea name="Description" style="text-align: left;">@orderRecords[0].Description</textarea></td>
+								<td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
+								@if (date.Date > DateTime.Today)
+								{
+									<td class="@border"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[0].NumberPlannedOrder)</textarea></td>
+									<td class="@border"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[0].NumberPlannedCommand)</textarea></td>
+								}
+								else
+								{
+									<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+									<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+								}
+								<td class="@border"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[0].NumberUnplannedOrder)</textarea></td>
+								<td class="@border"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[0].NumberUnplannedCommand)</textarea></td>
+								<td class="@border"><textarea name="ReasonToUndone">@orderRecords[0].ReasonToUndone</textarea></td>
+								<td class="border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
+									<textarea onchange="checkEmpty(this)" name="NumberPersonal">@AsNumber(order.NumberPersonal)</textarea>
+								</td>
+								<td class="border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
+									<textarea onchange="checkEmpty(this)" name="NumberMasters">@AsNumber(order.NumberMasters)</textarea>
+								</td>
+								<td class="text right @border">@orderRecords[0].GetAnswer()</td>
+							</tr>
+
+							for (int i = 1; i < orderRecords.Count; i++)
+							{
+								string cls = i < (orderRecords.Count - 1) ? "" : "border";
+								<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+									<td class="@cls"><button onclick="delRecord(@orderRecords[i].Id)">-</button></td>
+									<td class="@cls"><textarea name="Description" style="text-align: left;">@orderRecords[i].Description</textarea></td>
+									<td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
+									@if (date.Date > DateTime.Today)
+									{
+										<td class="@cls"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[i].NumberPlannedOrder)</textarea></td>
+										<td class="@cls"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[i].NumberPlannedCommand)</textarea></td>
+									}
+									else
+									{
+										<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+										<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+									}
+									<td class="@cls"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[i].NumberUnplannedOrder)</textarea></td>
+									<td class="@cls"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[i].NumberUnplannedCommand)</textarea></td>
+									<td class="@cls"><textarea name="ReasonToUndone">@orderRecords[i].ReasonToUndone</textarea></td>
+									<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+								</tr>
+							}
+						}
+						else
+						{
+							<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+								<td class="border left" rowspan="@orderRecords.Count">
+									<span>@order.Guild</span>
+								</td>
+								<td class="@border"></td>
+								<td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+								<td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
+								<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+								<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+								<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+								<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+								<td class="text @border">@orderRecords[0].ReasonToUndone</td>
+								<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+								<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+								<td class="text right @border">@orderRecords[0].GetAnswer()</td>
+							</tr>
+
+							for (int i = 1; i < orderRecords.Count; i++)
+							{
+								string cls = i < (orderRecords.Count - 1) ? "" : "border";
+								<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+									<td></td>
+									<td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+									<td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
+									<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+									<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+									<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+									<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+									<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+									<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+								</tr>
+							}
+						}
+					}
+					else if (viewers.Contains(user.UName) || user.Groups.Contains("group_orders"))
+					{
+						string border = orderRecords.Count < 2 ? "border" : "";
+						<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+							<td class="border left" rowspan="@orderRecords.Count">
+								<span>@order.Guild</span>
+							</td>
+							<td class="@border"></td>
+							<td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+							<td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+							<td class="text @border">@orderRecords[0].ReasonToUndone</td>
+							<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+							<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+							<td class="text right @border">@orderRecords[0].GetAnswer()</td>
+						</tr>
+
+						for (int i = 1; i < orderRecords.Count; i++)
+						{
+							string cls = i < (orderRecords.Count  - 1) ? "" : "border";
+							<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+								<td class="@cls"></td>
+								<td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+								<td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+								<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+								<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+							</tr>
+						}
+					}
+				}
+			</tbody>
+		</table>
+
+		<div class="messages" id="messages"></div>
+
+		<script>
+		function delRecord(recordId) {
+			var form = new FormData()
+			form.append('Id', recordId)
+			form.append('UserId', @user.UID)
+
+			fetch('@Url.Action("DelRecord", "Orders")', { method: 'post', body: form })
+				.then(function () { location.reload() })
+		}
+
+		function addRecord(orderId) {
+			var form = new FormData()
+			form.append('Id', orderId)
+			form.append('UserId', @user.UID)
+
+			fetch('@Url.Action("AddRecord", "Orders")', { method: 'post', body: form })
+				.then(function () { location.reload() })
+		}
+
+		function checkEmpty(textarea) {
+			if (textarea.value && textarea.value != '') {
+				textarea.parentNode.className = ''
+			}
+			else {
+				textarea.parentNode.className = 'empty'
+			}
+		}
+
+		document.querySelectorAll('textarea').forEach(function (el) {
+			el.style.height = "5px";
+			el.style.height = (el.scrollHeight) + "px";
+			el.addEventListener('input', function () {
+				el.style.height = "5px";
+				el.style.height = (el.scrollHeight) + "px";
+			})
+			el.addEventListener('resize', function () {
+				el.style.height = "5px";
+				el.style.height = (el.scrollHeight) + "px";
+			})
+
+			var old = ''
+			el.addEventListener('focus', function () {
+				old = el.value
+			})
+			el.addEventListener('blur', function () {
+				if (old != el.value) save(el)
+			})
+		})
+
+		document.querySelectorAll('select').forEach(function (el) {
+			el.addEventListener('change', function () {
+				save(el)
+			})
+		})
+
+		function save(el) {
+			var row = el.parentNode.parentNode
+			var form = new FormData()
+			form.append('OrderId', row.getAttribute('orderId'))
+			form.append('RecordId', row.getAttribute('recordId'))
+			form.append('Name', el.getAttribute('name'))
+			if (el.tagName == 'DIV') {
+				form.append('Value', el.innerHTML)
+			}
+			else {
+				form.append('Value', el.value)
+			}
+
+			fetch('@Url.Action("Save", "Orders")', { method: 'post', body: form })
+				.then(function () { message('Сохранено') })
+		}
+
+		function message(text) {
+			var container = document.getElementById('messages')
+			var ms = document.createElement('div')
+			ms.innerHTML = text
+			container.appendChild(ms)
+			setTimeout(function () { container.removeChild(ms) }, 3000)
+		}
+
+		function sendToFTP() {
+			var form = new FormData()
+			form.append('Date', '@date.ToString("dd.MM.yyyy")')
+
+			fetch('@Url.Action("SendToFTP", "Orders")', { method: 'post', body: form })
+				.then(function (res) { return res.json() })
+				.then(function (json) {
+					if (json.Done) location.reload()
+					if (json.Error) {
+						alert('Произошла ошибка загрузки. Сообщите в уАСУТП по тел. 3-34')
+						console.log(json.e)
+					}
+				})
+		}
+		</script>
+	}
+</body>
+</html>

@@ -1,0 +1,130 @@
+﻿@model int
+@{
+	ViewBag.Title = "Список рассылки №" + Model;
+	Layout = "~/Areas/Accidents/Views/Shared/_Layout.cshtml";
+}
+
+@using (var db = new SiteContext())
+{
+	var user = db.Authorize(User);
+
+	if (!user.IsAdmin)
+	{
+		<div>Нет доступа к настройке списков рассылки. Чтобы внести изменения либо получить доступ, обратитесь в уАСУТП по телефону 3-34</div>
+		return;
+	}
+
+	var list = db.AccidentsLists
+		.Where(x => x.Id == Model)
+		.FirstOrDefault();
+
+	if (list == null)
+	{
+		<div>Список не найден. Возможно, он уже удалён. Попробуйте ещё раз.</div>
+		return;
+	}
+
+	var users = db.Users
+		.OrderBy(x => x.DisplayName)
+		.ToList();
+
+	var pinnedUsers = db.AccidentsUsersLists
+		.Where(x => x.ListId == Model)
+		.Select(x => new
+		{
+			x.UserId,
+			x.Role,
+		})
+		.ToList();
+
+	<div class="header">
+		<span>На этой странице можно изменить наименование списка, а так же настроить связи списка с пользователями.</span>
+		<br />
+		<a href="@Url.Action("", "list")">Перейти к перечню списков рассылки</a>
+	</div>
+
+	<div class="container">
+		<div class="form">
+			<span>Наименование списка</span>
+			<br />
+			<input id="name" type="text" value="@list.Name" placeholder="Наименование списка" onblur="updateList()" />
+		</div>
+
+		<div class="form buttons">
+			<button onclick="deleteList()">Удалить этот список</button>
+		</div>
+
+		<p>Настройка подписок</p>
+
+		<table class="form">
+			<thead>
+				<tr>
+					<th>Пользователь</th>
+					<th>Учётная запись</th>
+					<th>Связь со списком</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var u in users)
+                {
+					var role = pinnedUsers
+						.Where(x => x.UserId == u.UID)
+						.Select(x => (int)x.Role)
+						.DefaultIfEmpty(0)
+						.FirstOrDefault();
+
+					<tr>
+						<td>@u.DisplayName</td>
+						<td>@u.UName</td>
+						<td>
+							<select onchange="setListUserRelation(@u.UID, this.value)">
+								@foreach (var r in Enum.GetValues(typeof(AccidentListRoles)))
+								{
+									if (role == (int)r)
+									{
+										<option selected value="@((int)r)">@AccidentUserList.RoleDescription((AccidentListRoles)r)</option>
+									}
+									else
+									{
+										<option value="@((int)r)">@AccidentUserList.RoleDescription((AccidentListRoles)r)</option>
+									}
+								}
+							</select>
+						</td>
+					</tr>
+                }
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+		function setListUserRelation(uid, role) {
+			var body = new FormData()
+			body.append('UserId', uid)
+			body.append('Role', role)
+
+			fetch('@Url.Action("setUserListRelation", "list", new { Id = Model })', { method: 'POST', body: body })
+				.then(res => res.text())
+				.then(text => alert(text))
+		}
+
+		function updateList() {
+			var body = new FormData()
+			body.append('Name', document.getElementById('name').value)
+
+			fetch('@Url.Action("edit", "list", new { Id = Model })', { method: 'POST', body: body })
+				.then(res => res.text())
+				.then(text => alert(text))
+		}
+
+		function deleteList() {
+			if (!confirm('Вы уверены, что хотите удалить этот список?')) return
+
+			fetch('@Url.Action("delete", "list", new { Id = Model })', { method: 'POST' })
+				.then(res => res.text())
+				.then(text => {
+					location = '@Url.Action("", "list")'
+				})
+		}
+	</script>
+}

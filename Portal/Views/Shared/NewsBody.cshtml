@@ -1,0 +1,52 @@
+﻿@model News
+
+@{ 
+	List<NewsTags> Tags = ViewBag.Tags;
+	var links = (Model.Links ?? "").Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+	bool isShort = string.IsNullOrEmpty(Model.Message) && string.IsNullOrEmpty(Model.Title) && links.Length == 1;
+}
+
+@if (Model.Priority == "back" && !Model.IsWatched)
+{
+    <div class="news-confirm">
+        Данная новость требует подтверждения того, что вы ознакомились с ее содержанием.
+        <button onclick="watchNews(this, @Model.Id)">Подтвердить, что ознакомлен с новостью</button>
+    </div>
+}
+
+<div class="news-author">
+    Создана <b>@Model.DateAdd.ToString("d MMMM yyyy")</b>, автор <b>@(string.IsNullOrEmpty(Model.UserName) ? Model.Creator.DisplayName : Model.UserName)</b>
+</div>
+
+<div class="news-tags">
+    @foreach (var tag in Tags)
+    {
+        if (Model.Tags.Contains(tag.Token))
+		{
+            <span>@tag.Name</span>
+		}
+    }
+</div>
+
+@if (isShort)
+{
+    return;
+}
+
+<div class="news-message">
+    @Html.Raw(Model.Message)
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Links))
+{
+    <div class="news-files">
+        @foreach (string link in links)
+        {
+            <div>
+                <a href="http://www.vst.vitebsk.energo.net/files/Новости/@Model.Id/@link">
+                    <i class="icon ic-file"></i> @link
+                </a>
+            </div>
+        }
+    </div>
+}

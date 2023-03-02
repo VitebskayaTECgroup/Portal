@@ -1,0 +1,12 @@
+﻿@{
+	ViewBag.Title = "Доска почета";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+	ViewBag.IsCentered = true;
+}
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	Name = ViewBag.Title,
+	RelativePath = @"О филиале\Доска почета\",
+	WriteImageBox = true
+})

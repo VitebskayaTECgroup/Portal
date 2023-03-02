@@ -1,0 +1,77 @@
+﻿@model Violation
+@{
+	ViewBag.Title = "Изменение записи о нарушении #" + Model.Id;
+	Layout = "~/Views/Shared/_ViolationsLayout.cshtml";
+}
+
+<div class="operations">
+	<a onclick="history.back()">Вернуться</a>
+	&emsp;
+	&emsp;
+	&emsp;
+	<a href="@Url.Action("Edit", "Violations", new { Id = Model.Id })">Обновить без сохранения</a>
+	<a onclick="submit('@Url.Action("Edit", "Violations", new { Id = Model.Id })')">Сохранить изменения</a>
+</div>
+
+<div class="content">
+	<div>
+		<div class="caption">Дата выявления нарушения</div>
+		<div>
+			<input name="@nameof(Model.DateViolation)" type="date" value="@Model.DateViolation.ToString("yyyy-MM-dd")" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. работника, допустившего нарушение</div>
+		<div>
+			<input name="@nameof(Model.PersonName)" type="text" value="@Model.PersonName" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Профессия/должность работника, допустившего нарушение</div>
+		<div>
+			<input name="@nameof(Model.PersonPosition)" type="text" value="@Model.PersonPosition" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. производителя работ (если допустивший нарушение работник был в составе бригады)</div>
+		<div>
+			<input name="@nameof(Model.ProcessName)" type="text" value="@Model.ProcessName" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. руководителя работ работ (если допустивший нарушение работник был в составе бригады)</div>
+		<div>
+			<input name="@nameof(Model.HeadName)" type="text" value="@Model.HeadName" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Структурное подразделение</div>
+		<div>
+			<input name="@nameof(Model.PersonDepartment)" type="text" value="@Model.PersonDepartment" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Краткое содержание нарушения</div>
+		<div>
+			<textarea name="@nameof(Model.Description)">@Model.Description</textarea>
+		</div>
+	</div>
+	<div>
+		<div class="caption">Принятые меры, по отношению к работнику, допустившему нарушение</div>
+		<div>
+			<textarea name="@nameof(Model.Result)">@Model.Result</textarea>
+		</div>
+	</div>
+	<div>
+		<div class="caption">Номер приказа</div>
+		<div>
+			<input name="@nameof(Model.OrderId)" type="text" value="@Model.OrderId" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. работника, выявившего нарушение</div>
+		<div>
+			<input name="@nameof(Model.JudgeName)" type="text" value="@Model.JudgeName" />
+		</div>
+	</div>
+</div>

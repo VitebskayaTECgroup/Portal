@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Ошибки";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin.css" />
+}
+
+@Html.Partial("Links", model: "errors")
+
+<div class="layout_center_right">
+    @using (var db = new SiteContext())
+    {
+        var user = db.Authorize(User);
+
+        if (!user.IsAdmin)
+        {
+            <h3>Нет доступа</h3>
+            return;
+        }
+
+        var model = db.Errors
+            .OrderByDescending(x => x.Date)
+            .ToList();
+
+        <table>
+            <thead>
+                <tr>
+                    <th data-type="string" width="120px">Ресурс</th>
+                    <th data-type="string" width="120px">Пользователь</th>
+                    <th data-type="date" width="180px">Время события</th>
+                    <th data-type="string">Ошибка</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var error in model)
+                {
+                    <tr>
+                        <td>@error.Page</td>
+                        <td>@error.User</td>
+                        <td>@error.Date.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                        <td><pre>@error.StackTrace</pre></td>
+                        <td><i class="icon ic-delete" onclick="deleteError(this, @error.Id)">&ensp;</i></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section scripts {
+	<script> setTimeout(() => location.reload(), 60000); </script>
+    <script>
+        function deleteError(obj, id) {
+            fetch('@Url.Action("DeleteError", "Admin")/' + id, { method: 'POST' })
+                .then(res => res.text())
+                .then(text => {
+                    alert('Удалено записей: ' + text)
+                    let tr = obj.parentNode.parentNode
+                    tr.parentNode.removeChild(tr)
+                })
+        }
+        function deleteAllErrors() {
+            fetch('@Url.Action("DeleteAllErrors", "Admin")', { method: 'POST' })
+                .then(res => res.text())
+                .then(text => {
+                    alert('Удалено записей: ' + text)
+                    location.reload()
+                })
+        }
+    </script>
+}

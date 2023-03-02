@@ -1,0 +1,147 @@
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .navigation {
+    justify-content: center;
+  }
+  .navigation > div {
+    vertical-align: middle;
+    padding: 0 20px;
+  }
+
+  .navigation > div > p {
+    margin-top: 15px;
+    margin-left: 5px;
+  }
+
+  .navigation > div > img {
+    margin-top: 15px;
+    margin-left: 5px;
+  }
+
+  .nav_links {
+    max-width: 865px;
+  }
+
+  .nav_links > a {
+    display: inline-flex;
+  }
+
+  .navigation_mobile__links > a {
+    margin: 0 auto;
+    padding: 5px 0;
+    display: table;
+  }
+
+  .open {
+    display: table;
+  }
+
+  .slider_switcher {
+    margin: 5px;
+  }
+
+  .panels {
+    margin-top: 20px;
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 420px 420px 420px;
+  }
+
+  .panel_img {
+    border: 0;
+  }
+
+  .panels > a:nth-child(1) {
+    margin: 0 10px 10px 0;
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
+  }
+
+  .panels > a:nth-child(2) {
+    margin: 0 0 10px 0;
+    -ms-grid-row: 1;
+    -ms-grid-column: 2;
+  }
+
+  .panels > a:nth-child(3) {
+    margin: 0 0 10px 10px;
+    -ms-grid-row: 1;
+    -ms-grid-column: 3;
+  }
+
+  .panels > a:nth-child(4) {
+    margin: 0 10px 0 0;
+    -ms-grid-row: 2;
+    -ms-grid-column: 1;
+  }
+
+  .panels > a:nth-child(5) {
+    -ms-grid-row: 2;
+    -ms-grid-column: 2;
+  }
+
+  .panels > a:nth-child(6) {
+    margin: 0 0 0 10px;
+    -ms-grid-row: 2;
+    -ms-grid-column: 3;
+  }
+
+  .column {
+    margin: 10px 0;
+  }
+
+  .column_info {
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.26);
+  }
+
+  .column_info__header {
+    display: inline-block;
+  }
+
+  .column_message {
+    border: 1px solid rgba(0, 0, 0, 0.26);
+    border-top: 0;
+  }
+
+  .column_info__active {
+    background-color: #d8d8d8;
+  }
+
+  .column_info:hover {
+    background-color: #d8d8d8;
+  }
+
+  .column_header__arrow {
+    position: relative;
+    top: 20px;
+    left: 5px;
+    max-width: 15px;
+    max-height: 15px;
+  }
+
+  .column_header__title {
+    margin-left: 35px;
+  }
+
+  .column_info__footer {
+    margin-top: 10px;
+  }
+
+  .column_footer__date {
+    margin-left: 5px;
+  }
+
+  footer > div {
+    padding: 0 40px;
+  }
+
+  .louver {
+    position: relative;
+  }
+
+  .menu-button {
+    position: absolute;
+    left: 20px;
+    top: 45%;
+  }
+}

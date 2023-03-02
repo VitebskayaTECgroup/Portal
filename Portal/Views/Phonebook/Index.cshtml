@@ -1,0 +1,192 @@
+﻿@{
+	ViewBag.Title = "Телефонный справочник";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	string key = Request.QueryString.Get("q") ?? "";
+	string sub = Request.QueryString.Get("sub") ?? (key == "" ? "Управление" : "");
+}
+
+@section styles {
+	<link rel="stylesheet" href="~/Content/css/phonebook.css?3" />
+	<link rel="stylesheet" href="~/Content/css/big-photos.css" />
+}
+
+@using (var db = new SiteContext())
+{
+	var phones = new List<DatabaseLayer.Phonebook.Phone>();
+	var guilds = new List<string>();
+
+	using (var phonedb = new DatabaseLayer.Phonebook.PhonebookContext())
+	{
+		guilds = phonedb.Phones
+			.Where(x => !string.IsNullOrEmpty(x.Guild))
+			.OrderByDescending(x => x.GuildPriority)
+			.Select(x => new { x.Guild, x.GuildPriority })
+			.ToList()
+			.GroupBy(x => x.Guild.Trim())
+			.Select(x => x.Key)
+			.ToList();
+
+		phones = phonedb.Phones
+			.Where(x => string.IsNullOrEmpty(key)
+				? (x.Guild == sub)
+				: (x.Name.Contains(key) || x.Guild.Contains(key) || x.InnerPhone.Contains(key) || x.Position.Contains(key) || x.Email.Contains(key) || x.OuterPhone.Contains(key)))
+			.OrderByDescending(x => x.GuildPriority)
+			.ThenByDescending(x => x.OrderPriority)
+			.ToList();
+	}
+
+	var persons = db.Persons
+		.Select(x => new
+		{
+			x.TabId,
+			x.Family
+		})
+		.ToList();
+
+	var vacations = db.Vacations
+		.Where(x => x.DateStart <= DateTime.Today)
+		.Where(x => x.DateEnd >= DateTime.Today)
+		.ToList()
+		.Select(x => new
+		{
+			Family = persons.FirstOrDefault(y => y.TabId == x.TabId)?.Family ?? "",
+			x.DateStart,
+			x.DateEnd,
+		})
+		.ToList();
+
+	<div class="layout_left">
+
+		<div class="menu open">
+			<div class="menu_header">
+				<table>
+					<tr>
+						<td>Подразделения</td>
+					</tr>
+				</table>
+			</div>
+			<div class="menu_body">
+				@foreach (var guild in guilds)
+				{
+					string name = guild.Contains(")")
+						? guild.Substring(guild.IndexOf(")") + 1)
+						: guild;
+
+					<a class="@(guild == sub ? "menu_active" : "")" href="~/phonebook/?sub=@guild">@name</a>
+				}
+			</div>
+		</div>
+	</div>
+
+	<div class="layout_center_right">
+
+		<ul class="search">
+			<li class="search_caption">Поиск: </li>
+			<li>
+				<form action="~/phonebook/" id="form">
+					<input name="q" placeholder="Введите поисковый запрос..." value="@key" />
+				</form>
+			</li>
+			<li class="search_button">
+				<button onclick="$('#form').submit()">Искать</button>
+			</li>
+		</ul>
+
+		<div class="view" id="view">
+			@{
+				if (phones.Count() == 0)
+				{
+					<div>По данному запросу ничего не найдено</div>
+				}
+
+				foreach (var phone in phones)
+				{
+					var vacation = vacations
+						.Where(x => x.Family == phone.Name)
+						.FirstOrDefault();
+
+					<div class="phone" style="min-height: 155px">
+						<table>
+							<tr>
+								<th class="phone_image">
+									<img src="@phone.Image()" title="@phone.Name" onclick="getBigPhoto('@phone.Image(true)')" />
+								</th>
+								<td>
+									@if (!string.IsNullOrEmpty(phone.Name))
+									{
+										<div class="phone_name">@phone.Name</div>
+									}
+									else
+									{
+										<div class="phone_name">@phone.Position</div>
+									}
+									<table>
+										@if (string.IsNullOrEmpty(phone.Name))
+										{
+											<tr>
+												<td width="200px"></td>
+												<td></td>
+											</tr>
+										}
+										else
+										{
+											<tr>
+												<td width="200px">Должность</td>
+												<td>@phone.Position</td>
+											</tr>
+										}
+										<tr>
+											<td>Телефон</td>
+											<td><div class="phone_number">@phone.InnerPhone</div></td>
+										</tr>
+										<tr>
+											<td>Городской телефон</td>
+											<td><div class="phone_number">@phone.OuterPhone</div></td>
+										</tr>
+										<tr>
+											<td>E-mail</td>
+											<td><a href="mailto:@phone.Email">@phone.Email</a></td>
+										</tr>
+										@if (vacation != null)
+										{
+											<tr class="red">
+												<td>Отпуск</td>
+												<td>c @vacation.DateStart.ToString("dd.MM.yyyy") по @vacation.DateEnd.ToString("dd.MM.yyyy")</td>
+											</tr>
+										}
+										else
+										{
+											<tr>
+												<td></td>
+												<td></td>
+											</tr>
+										}
+									</table>
+								</td>
+							</tr>
+						</table>
+					</div>
+				}
+			}
+		</div>
+	</div>
+}
+
+<div id="big_photo" class="hide" onclick="document.getElementById('big_photo').style.display = 'none';">
+	<div class="icon icon_hover ic-clear"></div>
+	<img id="big_photo__photo" />
+</div>
+
+@section scripts {
+	<script>
+		function getBigPhoto(url) {
+			if (url.indexOf('logo.png') > -1) return;
+			try {
+				document.getElementById('big_photo__photo').src = url;
+				document.getElementById('big_photo').style.display = 'inline-block';
+			}
+			catch (e) { }
+		}
+	</script>
+}

@@ -1,0 +1,203 @@
+﻿@{
+    ViewBag.Title = "Разрешения";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin.css" />
+}
+
+@Html.Partial("Links", model: "granties")
+
+<div class="layout_center_right">
+
+	@using (var db = new SiteContext())
+	{
+		var user = db.Authorize(User);
+
+		if (!user.IsAdmin)
+		{
+			<h3>Нет доступа</h3>
+			return;
+		}
+
+		var users = db.Users.OrderBy(x => x.UName).ToList();
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">Администраторы</th></tr>
+				</thead>
+				<tbody>
+					@Table(users, "site_admin", "Администраторы")
+				</tbody>
+			</table>
+		</div>
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">Заявки на закупку</tr>
+				</thead>
+				<tbody>
+					@Table(users, "z_watch", "Просмотр")
+					@Table(users, "z_user", "Создание")
+					@Table(users, "z_prov", "Проверка")
+					@Table(users, "z_omts", "ОМТС")
+					@Table(users, "z_exes", "Исполнение")
+					@Table(users, "z_admin", "Администратор")
+				</tbody>
+			</table>
+		</div>
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">Учет правонарушений</tr>
+				</thead>
+				<tbody>
+					@Table(users, "record_user", "Просмотр")
+					@Table(users, "record_admin", "Редактирование")
+				</tbody>
+			</table>
+		</div>
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">План работ на неделю</tr>
+				</thead>
+				<tbody>
+					@Table(users, "works_admin", "Просмотр и печать")
+					@Table(users, "works_user", "Редактирование")
+				</tbody>
+			</table>
+		</div>
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">Наряды</tr>
+				</thead>
+				<tbody>
+					@Table(users, "labours_user", "Представители цехов")
+					@Table(users, "labours_subuser", "Мастера цехов")
+					@Table(users, "labours_guildmaster", "Начальники цехов")
+					@Table(users, "labours_reviewer", "Проверяющие")
+					@Table(users, "labours_worksecurity", "Охрана труда")
+					@Table(users, "labours_stats", "Контролирующий")
+					@Table(users, "labours_watch", "Гость")
+					@Table(users, "labours_admin", "Администратор")
+				</tbody>
+			</table>
+		</div>
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr>
+						<th colspan="2">Редактирование драгметаллов</th>
+					</tr>
+				</thead>
+				<tbody>
+					@Table(users, "buh", "Редактирование")
+				</tbody>
+			</table>
+		</div>
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">Заказ авто</tr>
+				</thead>
+				<tbody>
+					@Table(users, "auto_prov", "Проверка заказов")
+				</tbody>
+			</table>
+		</div>
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">Обработка заявок на замены картриджей</tr>
+				</thead>
+				<tbody>
+					@Table(users, "cartridges", "Замены картриджей")
+				</tbody>
+			</table>
+		</div>
+
+
+		<div class="sub-data granties">
+			<table>
+				<thead>
+					<tr><th colspan="2">Ежедневная информация о работах</tr>
+				</thead>
+				<tbody>
+					@Table(users, "order_guest", "Разрешение на просмотр")
+					@Table(users, "order_user", "Представитель подразделения")
+					@Table(users, "order_nss", "Начальник смены станции")
+				</tbody>
+			</table>
+		</div>
+	}
+
+
+
+</div>
+
+@helper Table(List<User> users, string key, string caption)
+{
+    <tr>
+        <td colspan="2"><b>@caption</b></td>
+    </tr>
+
+    var select = new List<User>();
+
+    foreach (var user in users)
+    {
+        if (user.UClass.Contains(key))
+        {
+            <tr><td>(@user.UName) @user.DisplayName<td><div class="icon icon_hover ic-clear" onclick='removeGrantie("@key", "@user.UID")'></div></tr>
+        }
+        else
+        {
+            select.Add(user);
+        }
+    }
+
+    <tr>
+        <td>
+            <select name="@key">
+                <option value="0">?</option>
+                @foreach (var user in select)
+                {
+                    <option value="@user.UID">(@user.UName) @user.DisplayName</option>
+                }
+            </select>
+        </td>
+        <td style="padding-top: 8px;">
+            <div class="icon icon_hover ic-add" onclick="addGrantie(this)"></div>
+        </td>
+    </tr>
+}
+
+
+@section scripts {
+    <script>
+        function addGrantie(obj) {
+            let $select = $(obj).closest('tr').find('select');
+            $.post('@Url.Action("addGrantie", "admin")', {
+                id: $select.val(),
+                key: $select.attr('name')
+            }).done(() => location.reload());
+        }
+
+        function removeGrantie(key, id) {
+            $.post('@Url.Action("removeGrantie", "admin")', {
+                id: id,
+                key: key
+            }).done(() => location.reload());
+        }
+    </script>
+}

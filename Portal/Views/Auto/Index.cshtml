@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Заказ авто";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/lib/widgets/datepicker.css?02.12.2019" />
+    <link rel="stylesheet" href="~/Content/lib/widgets/jquery.timepicker.css" />
+    <link rel="stylesheet" href="~/Content/css/auto.css" />
+}
+
+<div class="layout_left">
+
+    @{ string open = Request.Cookies.Get("auto-operations")?.Value ?? "1"; }
+    <div class="menu @(open == "1" ? "open" : "")">
+        <div class="menu_header" onclick="toggleMenu(this, 'auto-operations')">
+            <table>
+                <tr>
+                    <td>Операции</td>
+                    <td class="menu_arrow"><div class="icon ic-arrow-@(open == "1" ? "up" : "down")"></div></td>
+                </tr>
+            </table>
+        </div>
+        <div class="menu_body">
+            @using (var db = new SiteContext())
+            {
+                var user = db.Authorize(User);
+
+                if (user.IsAutoHead)
+                {
+                    <a href="@Url.Action("drivers", "auto")">Перейти к списку водителей</a>
+                    <a href="@Url.Action("cars", "auto")">Перейти к списку автомобилей</a>
+                    <a onclick="Auto.print()">Распечатать заявку на завтра</a>
+                }
+                else
+                {
+                    <a onclick="Auto.create()">Создать заявку</a>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="widget">
+        <b>Внимание!</b>
+        Заявки на следующий день принимаются до 16:00 текущего рабочего дня.<br />
+        <small>Основания: <a class="widget_bottom_link" href="~/Content/documents/п. 31 Приказа по филиалу от 22.09.2016 г. № 192.pdf">п. 31 Приказа по филиалу №192 от 22.09.2016 г.</a></small>
+    </div>
+
+    <div data-mode="view" class="menu @(open == "1" ? "open" : "")" id="news-filter">
+        <div class="menu_header" onclick="toggleMenu(this, 'auto-filter')">
+            <table>
+                <tr>
+                    <td>Фильтр</td>
+                    <td class="menu_arrow"><div class="icon ic-arrow-@(open == "1" ? "up" : "down")"></div></td>
+                </tr>
+            </table>
+        </div>
+        <div class="menu_body">
+            <input id="auto-date" value="@DateTime.Now.ToString("dd.MM.yyyy")" />
+            <div onclick="Auto.step(-1)">На день назад</div>
+            <div onclick="Auto.step(1)">На день вперед</div>
+            <select id="mode" onchange="Auto.reload()">
+                <option value="all">Все</option>
+                <option value="accepted">Принятые</option>
+                <option value="declined">Отклоненные</option>
+                <option value="no_answer">Неотвеченные</option>
+            </select>
+            <label><input type="checkbox" id="self" onchange="Auto.reload()" />Только созданные лично</label>
+            <div onclick="Auto.clear()">Сброс параметров</div>
+        </div>
+    </div>
+</div>
+
+<div class="layout_center_right" id="view"></div>
+
+@section scripts {
+    <script src="~/Content/lib/widgets/datepicker.js?02.12.2019"></script>
+    <script src="~/Content/lib/widgets/jquery.timepicker.min.js"></script>
+    <script src="~/Content/js/auto.js"></script>
+    <script>
+        var source = '@Url.Action(null, "auto").Replace("index/", "").ToLower()';
+        Auto.reload(@(Request.QueryString.Get("id") ?? ""));
+
+        new DatePicker({
+            el: '#auto-date',
+            onSelect: function () {
+                Auto.reload()
+            }
+        })
+    </script>
+}

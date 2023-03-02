@@ -1,0 +1,348 @@
+﻿@model DirectivePage
+@{
+	ViewBag.Title = "Директива №1 | " + Model.Caption;
+	Layout = "~/Areas/Directive/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.IsAdmin)
+{
+	@section links {
+		<a class="link admin" href="~/directive/admin/@Model.Id">
+			<span icon>settings</span> Настройка
+		</a>
+	}
+}
+
+<header>@Model.Caption</header>
+
+<div class="container">
+
+	<span icon btn toggle-el="section-add" title="Добавить раздел">add</span>
+	<br />
+	<br />
+
+	<div id="sections">
+		@foreach (var sect in Model.Sections)
+		{
+			bool isExpanded = (Request.Cookies[ "expand" + sect.Id ]?.Value ?? "") == "1";
+
+			<div class="section" data-id="@sect.Id">
+				<div class="caption">
+					<span btn icon
+						  title="Переместить раздел"
+						  class="handler sect">drag_indicator</span>
+
+					<span btn icon
+						  toggle-fast="expand@(sect.Id)"
+						  toggle-el="expand@(sect.Id)"
+						  style="@(isExpanded ? "display: none;" : "")">expand_more</span>
+					<span btn icon
+						  toggle-fast="expand@(sect.Id)"
+						  toggle-el="expand@(sect.Id)"
+						  style="@(isExpanded ? "" : "display: none;")">expand_less</span>
+
+					<span>@sect.Caption</span>
+
+					<span icon btn
+						  title="Изменить название раздела"
+						  toggle-el="section-edit"
+						  onclick="editSection(@sect.Id, '@sect.Caption.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">edit</span>
+					<span icon btn
+						  title="Удалить раздел"
+						  toggle-el="section-del"
+						  onclick="delSection(@sect.Id, '@sect.Caption.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">clear</span>
+				</div>
+				<div class="files files-sort" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
+					@if (sect.Documents.Count > 0)
+					{
+						foreach (var doc in sect.Documents.Where(x => x != null))
+						{
+							<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
+								<span btn icon
+									  title="Переместить документ"
+									  class="handler docs">drag_indicator</span>
+
+								<a href="@doc.FileUrl">@doc.Name</a>
+
+								<span btn icon
+									  title="Изменить документ"
+									  toggle-el="document-edit"
+									  onclick="editDocument(@doc.Id, '@doc.Name.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">edit</span>
+								<span btn icon
+									  title="Удалить документ"
+									  toggle-el="document-del"
+									  onclick="delDocument(@doc.Id, '@doc.Name.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">clear</span>
+							</div>
+						}
+					}
+				</div>
+				<div class="files" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
+					<div>
+						<span icon btn toggle-el="document-add" onclick="addDocument(@sect.Id)" title="Добавить документ">file_upload</span>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+
+	<div class="sign">
+		<span>Редакторы данной страницы</span>
+		@foreach (var u in Model.Redactors)
+		{
+			<div>@(u.DisplayName ?? u.UName ?? u.UID.ToString())</div>
+		}
+	</div>
+</div>
+
+<!-- Модальные окна -->
+<div>
+	<div overlay toggle="section-add"></div>
+	<div modal toggle="section-add">
+		<div post="@Url.Action("add", "section")">
+			<div class="form">
+				<div>Название нового раздела</div>
+				<textarea name="caption"></textarea>
+				<input type="hidden"
+					   name="pageId"
+					   value="@Model.Id" />
+			</div>
+			<div class="buttons">
+				<button submit>
+					<span icon>save</span>
+					<span>Добавить раздел</span>
+				</button>
+				<button toggle-el="section-add">
+					<span icon>clear</span>
+					<span>Отменить</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div overlay toggle="section-edit"></div>
+	<div modal toggle="section-edit">
+		<div post="@Url.Action("edit", "section")">
+			<div class="form">
+				<div>Раздел <strong id="section_edit_name_old"></strong></div>
+				<div>Новое название раздела</div>
+				<textarea name="caption"
+						  id="section_edit_name"></textarea>
+				<input type="hidden"
+					   name="id"
+					   id="section_edit_id" />
+			</div>
+			<div class="buttons">
+				<button submit>
+					<span icon>save</span>
+					<span>Сохранить раздел</span>
+				</button>
+				<button toggle-el="section-edit">
+					<span icon>clear</span>
+					<span>Отменить</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div overlay toggle="section-del"></div>
+	<div modal toggle="section-del">
+		<div post="@Url.Action("del", "section")">
+			<div class="form">
+				<div>
+					Вы уверены, что хотите удалить раздел <strong id="section_del_name"></strong>?
+					<br />Все документы в этом разделе так же будут удалены
+				</div>
+				<input type="hidden"
+					   id="section_del_id"
+					   name="id" />
+			</div>
+			<div class="buttons">
+				<button submit>
+					<span icon>save</span>
+					<span>Удалить раздел</span>
+				</button>
+				<button toggle-el="section-del">
+					<span icon>clear</span>
+					<span>Отменить</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div overlay toggle="document-add"></div>
+	<div modal toggle="document-add">
+		<div post="@Url.Action("add", "document")">
+			<div class="form">
+				<input type="hidden" id="document_add_id" name="sectionId" value="0" />
+				<div>Наименование документа<small>&emsp;Если не задавать, будет взято имя файла</small></div>
+				<textarea name="name"></textarea>
+				<div>Файл</div>
+				<label for="file">Выберите файл</label>
+				<input id="file" name="file" type="file" />
+			</div>
+			<div class="buttons">
+				<button submit>
+					<span icon>save</span>
+					<span>Добавить документ</span>
+				</button>
+				<button toggle-el="document-add">
+					<span icon>clear</span>
+					<span>Отменить</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div overlay toggle="document-edit"></div>
+	<div modal toggle="document-edit">
+		<div post="@Url.Action("edit", "document")">
+			<div class="form">
+				<div>Раздел <strong id="document_edit_name_old"></strong></div>
+				<div>Новое название раздела</div>
+				<textarea name="name"
+						  id="document_edit_name"></textarea>
+				<input type="hidden"
+					   name="id"
+					   id="document_edit_id" />
+			</div>
+			<div class="buttons">
+				<button submit>
+					<span icon>save</span>
+					<span>Сохранить документ</span>
+				</button>
+				<button toggle-el="document-edit">
+					<span icon>clear</span>
+					<span>Отменить</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div overlay toggle="document-del"></div>
+	<div modal toggle="document-del">
+		<div post="@Url.Action("del", "document")">
+			<div class="form">
+				<div>
+					Вы уверены, что хотите удалить документ <strong id="document_del_name"></strong>?
+				</div>
+				<input type="hidden"
+					   name="id"
+					   id="document_del_id" />
+			</div>
+			<div class="buttons">
+				<button submit>
+					<span icon>save</span>
+					<span>Удалить документ</span>
+				</button>
+				<button toggle-el="document-del">
+					<span icon>clear</span>
+					<span>Отменить</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts {
+	<script src="~/Areas/Directive/Content/lib/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="~/Areas/Directive/Content/lib/jquery-ui.min.css" />
+	<style>
+		.ui-sortable-placeholder {
+			margin-bottom: 1.4em;
+		}
+	</style>
+	<script>
+
+	function addDocument(id) {
+		document.getElementById('document_add_id').value = id
+	}
+
+	function editDocument(id, name) {
+		document.getElementById('document_edit_id').value = id
+		document.getElementById('document_edit_name').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
+		document.getElementById('document_edit_name_old').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
+	}
+
+	function delDocument(id) {
+		document.getElementById('document_del_id').value = id
+		document.getElementById('document_del_name').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
+	}
+
+	function editSection(id, name) {
+		document.getElementById('section_edit_id').value = id
+		document.getElementById('section_edit_name').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
+		document.getElementById('section_edit_name_old').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
+	}
+
+	function delSection(id, name) {
+		document.getElementById('section_del_id').value = id
+		document.getElementById('section_del_name').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
+	}
+
+	$(function () {
+		$('#sections').sortable({
+			handle: '.handler.sect',
+			placeholder: "ui-state-highlight",
+			forcePlaceholderSize: true,
+			stop() {
+				saveSort()
+			},
+		})
+
+		$('.files-sort').sortable({
+			handle: '.handler.docs',
+			placeholder: 'ui-state-highlight',
+			forcePlaceholderSize: true,
+			connectWith: '.files',
+			stop() {
+				saveSort()
+			},
+		})
+
+		function saveSort() {
+			var json = {
+				PageId: @Model.Id,
+				Documents: [],
+				Sections: [],
+			}
+
+			var sectionOrder = 0
+			document.querySelectorAll('.section').forEach(sect => {
+				var sectionId = Number(sect.getAttribute('data-id'))
+
+				json.Sections.push({
+					Id: sectionId,
+					Order: sectionOrder
+				})
+
+				sectionOrder++
+
+				var docOrder = 0
+				sect.querySelectorAll('.file').forEach(doc => {
+					var docId = Number(doc.getAttribute('data-id'))
+
+					json.Documents.push({
+						Id: docId,
+						Order: docOrder,
+						SectionId: sectionId,
+					})
+
+					docOrder++
+				})
+			})
+
+			console.log(json.Documents)
+
+			var form = new FormData()
+			form.append('json', JSON.stringify(json))
+
+			fetch('@Url.Action("sort", "page")', { method: 'POST', body: form })
+				.then(res => res.text())
+				.then(text => {
+					if (text != 'done') alert(text)
+				})
+		}
+	})
+
+	</script>
+}

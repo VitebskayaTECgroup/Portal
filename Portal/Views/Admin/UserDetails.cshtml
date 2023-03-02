@@ -1,0 +1,71 @@
+﻿@model User
+
+<table>
+    <tr>
+        <th>@Model.UName</th>
+        <td width="30px">
+            <div class="icon icon_hover ic-clear" onclick="closer()"></div>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td width="300px">Имя учётной записи</td>
+        <td>@Model.UName</td>
+    </tr>
+    <tr>
+        <td>Имя пользователя Active Directory</td>
+        <td>@Model.DisplayName</td>
+    </tr>
+    <tr>
+        <td>Ник пользователя на сайте</td>
+        <td><input name="Nick" value="@Model.Nick" /></td>
+    </tr>
+    <tr>
+        <td>Разрешения</td>
+        <td><textarea name="Granties">@Model.UClass</textarea></td>
+    </tr>
+    <tr>
+        <td>Последний раз активен</td>
+        <td>@Model.Last.ToString("d MMMM yyyy HH:mm")</td>
+    </tr>
+    <tr>
+        <td>Новостные каналы</td>
+        <td>
+            @using (var db = new SiteContext())
+            {
+                var all = db.NewsGuilds
+                    .Where(x => Model.UClass.Contains("site_red") || x.IsPrivate)
+                    .OrderBy(x => !x.IsPrivate)
+                    .ThenBy(x => x.Name)
+                    .ToList();
+                var pinned = db.UsersToGuilds
+                    .Where(x => x.UserName == Model.UName)
+                    .Select(x => x.GuildId)
+                    .ToList();
+
+                foreach (var g in all)
+                {
+                    <label style="display: block;">
+                        @if (pinned.Contains(g.Id))
+                        {
+                            <input type="checkbox" name="Guilds[]" value="@g.Id" checked style="width: inherit;" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="Guilds[]" value="@g.Id" style="width: inherit;" />
+                        }
+                        [@(g.IsPrivate ? "Закрытый" : "Открытый")] @g.Name
+                    </label>
+                }
+            }
+        </td>
+    </tr>
+</table>
+
+<div style="text-align: right; padding: 10px;">
+    <button onclick="submit('@Model.UName')">Сохранить</button>
+    <button onclick="del('@Model.UName')">Удалить</button>
+    <button onclick="closer()">Закрыть</button>
+</div>

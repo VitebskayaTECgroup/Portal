@@ -1,0 +1,75 @@
+﻿.works_table {
+    background: #fff;
+    box-shadow: 0 1px 3px #808080;
+}
+
+.works_table th {
+    padding: 3px 5px;
+    font-size: 13px;
+    font-weight: 500;
+    background: #eee;
+    border: 1px solid #ddd;
+}
+
+.works_table td {
+    padding: 3px 5px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.works_table a {
+    color: #1e8ef7;
+}
+
+.works_table a:hover {
+    color: #7fc1ff;
+}
+
+.works_table .works_table__dateRow {
+    text-align: center;
+    color: #f63671;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+}
+
+.works_table .works_table__header {
+    font-size: 18px;
+    padding-bottom: 10px;
+}
+
+
+.works_form {
+    background: #fff;
+    box-shadow: 0 1px 3px #808080;
+    border: 1px solid #eee;
+    padding: 10px;
+}
+
+.works_form__header {
+    font-size: 16px;
+    font-weight: 500;
+    padding-bottom: 10px;
+}
+
+.works_form__row {
+    font-size: 14px;
+    padding-bottom: 10px;
+}
+
+.works_form__field {
+    width: 100%;
+    resize: vertical;
+    padding: 4px 6px;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.works_form__item {
+    border: 1px solid #eee;
+    padding: 10px;
+}
+
+.works_form__item:hover {
+    border-color: #1e8ef7;
+}

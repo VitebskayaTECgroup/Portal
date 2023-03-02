@@ -1,0 +1,22 @@
+﻿@model List<SearchResult>
+@{
+	Layout = null;
+}
+
+@if (Model.Count == 0)
+{
+	<div class="result">ничего не найдено</div>
+}
+else
+{ 
+	foreach (var result in Model)
+	{
+		<div class="result">
+			<a href="~/directive/page/@result.PageUrl">
+				<span icon btn title="Страница: @result.Page
+Раздел: @result.Section">info_outline</span>
+			</a>
+			<a class="a" href="@result.Document.FileUrl">@result.Document.Name</a>
+		</div>
+	}
+}

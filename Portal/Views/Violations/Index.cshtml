@@ -1,0 +1,237 @@
+﻿@{
+	ViewBag.Title = "Учет нарушений";
+	Layout = "~/Views/Shared/_ViolationsLayout.cshtml";
+}
+
+@using (var db = new SiteContext())
+{
+	var user = db.Authorize(User);
+	if (!user.IsViolationsUser)
+	{
+		@: Нет доступа к данному разделу. Для получения доступа обратитесь в уАСУТП по тел. 3-34
+		return;
+	}
+
+	<div class="operations">
+		<a href="~/site/">Выход на домашнюю страницу</a>
+		&emsp;
+		&emsp;
+		&emsp;
+		<a href="~/violations/search">Расширенный поиск</a>
+		@if (user.IsViolationsAdmin)
+		{
+			<a href="~/violations/create">Добавить запись</a>
+		}
+	</div>
+
+	var search = Request.QueryString.Get("q");
+	var sort = Request.QueryString.Get("s");
+	var revert = string.IsNullOrEmpty(Request.QueryString.Get("r"));
+	if (string.IsNullOrEmpty(sort))
+	{
+		sort = "date";
+		revert = false;
+	}
+
+	<div class="search">
+		<form action="~/violations/" method="get">
+			<input type="search" placeholder="введите запрос... " name="q" value="@search" />
+			<input type="submit" value="Поиск" />
+		</form>
+	</div>
+
+	string header;
+	List<Violation> model;
+
+	if (string.IsNullOrEmpty(search))
+	{
+		header = "Нарушения за последний год";
+		model = db.Violations
+			.Where(x => !x.IsDeleted && x.DateViolation.Year == DateTime.Today.Year)
+			.ToList();
+	}
+	else
+	{
+		header = "Результаты поиска: \"" + search + "\"";
+		model = db.Violations
+			.Where(x => !x.IsDeleted)
+			.Where(x => x.PersonDepartment.Contains(search)
+				|| x.PersonName.Contains(search)
+				|| x.Result.Contains(search)
+			)
+			.ToList();
+	}
+
+	<div class="body">
+		<div class="header">@header</div>
+		<table>
+			<thead>
+				<tr>
+					@if (sort == "date")
+					{
+						<th class="@(revert ? "sort_up" : "sort_down")" onclick="location = '@Link(search, "date", revert)'">Дата</th>
+					}
+					else
+					{
+						<th onclick="location = '@Link(search, "date", false)'">Дата</th>
+					}
+
+					@if (sort == "department")
+					{
+						<th class="@(revert ? "sort_up" : "sort_down")" onclick="location = '@Link(search, "department", revert)'">Структурное подразделение</th>
+					}
+					else
+					{
+						<th onclick="location = '@Link(search, "department", false)'">Структурное подразделение</th>
+					}
+
+					@if (sort == "personname")
+					{
+						<th class="@(revert ? "sort_up" : "sort_down")" onclick="location = '@Link(search, "personname", revert)'">Ф.И.О. работника, допустившего нарушение</th>
+					}
+					else
+					{
+						<th onclick="location = '@Link(search, "personname", false)'">Ф.И.О. работника, допустившего нарушение</th>
+					}
+
+					@if (sort == "result")
+					{
+						<th class="@(revert ? "sort_up" : "sort_down")" onclick="location = '@Link(search, "result", revert)'">Принятые к работнику меры</th>
+					}
+					else
+					{
+						<th onclick="location = '@Link(search, "result", false)'">Принятые к работнику меры</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					if (!string.IsNullOrEmpty(sort))
+					{
+						switch (sort)
+						{
+							case "date":
+								if (!revert)
+								{
+									model = model
+										.OrderByDescending(x => x.DateViolation)
+										.ToList();
+								}
+								else
+								{
+									model = model
+										.OrderBy(x => x.DateViolation)
+										.ToList();
+								}
+								break;
+							case "department":
+								if (!revert)
+								{
+									model = model
+										.OrderByDescending(x => x.PersonDepartment)
+										.ToList();
+								}
+								else
+								{
+									model = model
+										.OrderBy(x => x.PersonDepartment)
+										.ToList();
+								}
+								break;
+							case "personname":
+								if (!revert)
+								{
+									model = model
+										.OrderByDescending(x => x.PersonName)
+										.ToList();
+								}
+								else
+								{
+									model = model
+										.OrderBy(x => x.PersonName)
+										.ToList();
+								}
+								break;
+							case "result":
+								if (!revert)
+								{
+									model = model
+										.OrderByDescending(x => x.Result)
+										.ToList();
+								}
+								else
+								{
+									model = model
+										.OrderBy(x => x.Result)
+										.ToList();
+								}
+								break;
+						}
+					}
+
+					string _link;
+
+					foreach (var v in model)
+					{
+						_link = Url.Action("details", "violations", new { Id = v.Id });
+
+						<tr onclick="location = '@_link'">
+							<td style="width: 7em;">
+								<a href="@_link">@Text(v.DateViolation.ToString("dd.MM.yyyy"))</a>
+							</td>
+							<td style="width: 25em;">
+								<a href="@_link">@Text(v.PersonDepartment)</a>
+							</td>
+							<td>
+								<a href="@_link">@Text(v.PersonName)</a>
+							</td>
+							<td style="width: 20em;">
+								<a href="@_link">@Text(v.Result)</a>
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+@functions{
+	string Link(string search, string sort, bool revert)
+	{
+		if (string.IsNullOrEmpty(search))
+		{
+			if (revert)
+			{
+				return Url.Action("", "violations", new { s = sort, r = 1 });
+			}
+			else
+			{
+				return Url.Action("", "violations", new { s = sort });
+			}
+		}
+		else
+		{
+			if (revert)
+			{
+				return Url.Action("", "violations", new { q = search, s = sort, r = 1 });
+			}
+			else
+			{
+				return Url.Action("", "violations", new { q = search, s = sort });
+			}
+		}
+	}
+}
+
+@helper Text(string text)
+{
+	if (string.IsNullOrEmpty(text))
+	{
+		<i>не заполнено</i>
+	}
+	else
+	{
+		@text
+	}
+}

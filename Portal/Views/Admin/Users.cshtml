@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Пользователи";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin.css" />
+}
+
+@Html.Partial("Links", model: "users")
+
+@using (var db = new SiteContext())
+{
+    var user = db.Authorize(User);
+
+    if (!user.IsAdmin)
+    {
+        <h3>Нет доступа</h3>
+        return;
+    }
+
+    <div class="layout_center_right">
+
+        <div>
+            <button onclick="checkAD()">Загрузить данные из Active Directory</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th data-type="string" width="80px">Win</th>
+                    <th data-type="string">Ф.И.О.</th>
+                    <th data-type="date" width="160px">Последняя активность</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var model = db.Users
+                        .OrderBy(x => x.UName)
+                        .ToList();
+
+                    foreach (var row in model)
+                    {
+                        <tr onclick="load('@row.UName')">
+                            <td>@row.UName</td>
+                            <td>@row.DisplayName</td>
+                            <td>@row.Last</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section scripts {
+    <div id="cart" class="cart hide"></div>
+
+    <script>
+        function load(userName) {
+            fetch('@Url.Action("userDetails", "admin")/?userName=' + userName)
+                .then(res => res.text())
+                .then(text => {
+                    let cart = document.getElementById('cart')
+                    cart.innerHTML = text
+                    cart.classList.remove('hide')
+                })
+        }
+
+        function submit(userName) {
+
+            let guilds = Array.from(document.querySelectorAll('input[type="checkbox"]'))
+                .map(x => x.checked ? x.value : null)
+                .filter(x => x != null)
+                .join(';')
+
+            let body = new FormData()
+            body.append('Nick', document.querySelector('[name="Nick"]').value)
+            body.append('Granties', document.querySelector('[name="Granties"]').value)
+            body.append('Guilds', guilds)
+            body.append('UserName', userName)
+
+            fetch('@Url.Action("userDetails", "admin")', { method: 'POST', body })
+                .then(res => {
+                    if (!res.ok) return alert('Ошибка!')
+
+                    alert('Запись сохранена!')
+                    load(userName)
+                })
+        }
+
+        function del(userName) {
+            let message = 'Запись о пользователе будет удалена из базу.\nЕсли пользователь вновь зайдет на сайт, будет создана новая запись без полей "Ник", "Ф.И.О.", "Цех" и выданных разрешений.\n\nУдалить запись?'
+
+            if (confirm(message)) {
+
+                let body = new FormData()
+                body.append('UserName', userName)
+
+                fetch('@Url.Action("userDelete", "admin")', { method: 'POST', body })
+                    .then(res => {
+                        if (!res.ok) return alert('Ошибка!')
+
+                        alert('Запись удалена!')
+                        location.reload()
+                    })
+            }
+        }
+
+        function closer() {
+            document.getElementById('cart').classList.add('hide')
+        }
+
+        function checkAD() {
+			fetch('@Url.Action("CheckAD", "Admin")', { method: 'POST' })
+                .then(res => res.json())
+                .then(json => {
+                    if (json.Error) alert(json.Error)
+                    if (json.Done) location.reload()
+				})
+		}
+    </script>
+}

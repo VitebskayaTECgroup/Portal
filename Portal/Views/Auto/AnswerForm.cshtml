@@ -1,0 +1,85 @@
+﻿@model int
+
+@using (var db = new SiteContext())
+{
+    var id = Model;
+
+    var request = db.AutoRequests.FirstOrDefault(x => x.Id == id);
+    var cars = db.AutoCars.OrderBy(x => x.Model).ToList();
+    var drivers = db.AutoDrivers.OrderBy(x => x.Name).ToList();
+
+    if (request == null)
+    {
+        return;
+    }
+
+    <table>
+        <tr>
+            <th colspan="2">Принятие решения</th>
+        </tr>
+
+        <tr>
+            <td width="300px">Решение:</td>
+            <td>
+                <select onchange="Auto.answerChange(this)" id="answerSelect">
+                    <option value="null">Не принято</option>
+                    <option value="1" @(@request.DecisionCode == 1 ? "selected" : "")>Заявка одобрена</option>
+                    <option value="-1" @(@request.DecisionCode == -1 ? "selected" : "")>Заявка отклонена</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr class="answer answer_1 hide">
+            <td>Дата предоставления авто:</td>
+            <td>
+                <input id="acceptDate" class="datepick" value="@((request.DateAccepted < DateTime.Now) ? "" : request.DateAccepted?.ToString("dd.MM.yyyy"))" />
+            </td>
+        </tr>
+
+        <tr class="answer answer_1 hide">
+            <td>Машина:</td>
+            <td>
+                <select id="carId">
+                    <option value="0">? не выбрана</option>
+                    @foreach (var car in cars)
+                    {
+                        <option value="@car.Id">@car.Model</option>
+                    }
+                </select>
+            </td>
+        </tr>
+
+        <tr class="answer answer_1 hide">
+            <td>Водитель:</td>
+            <td>
+                <select id="driverId">
+                    <option value="0">? не выбрана</option>
+                    @foreach (var driver in drivers)
+                    {
+                        <option value="@driver.Id">@driver.Name</option>
+                    }
+                </select>
+            </td>
+        </tr>
+
+        <tr class="answer answer_1 hide">
+            <td>Примечание:</td>
+            <td>
+                <textarea id="comments1">@request.Comment</textarea>
+            </td>
+        </tr>
+
+        <tr class="answer answer_-1 hide">
+            <td>Примечание:</td>
+            <td>
+                <textarea id="comments2">@request.Comment</textarea>
+            </td>
+        </tr>
+
+    </table>
+
+    <div id="answerErrors"></div>
+
+    <button onclick="Auto.endAnswer(@id, this)">Сохранить</button>
+    <button onclick="Auto.closeAnswer(this)">Закрыть</button>
+}

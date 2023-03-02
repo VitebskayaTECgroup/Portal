@@ -1,0 +1,299 @@
+﻿@model int
+@{
+	ViewBag.Title = "Редактирование #" + Model + " | Новости";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+	<link rel="stylesheet" href="~/Content/lib/widgets/datepicker.css" />
+}
+
+@using (var db = new SiteContext())
+{
+	var user = db
+		.Authorize(User);
+
+	var news = db.News
+		.Where(x => x.Id == Model)
+		.First();
+
+	var links = (news.Links ?? "")
+		.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+	var guilds = db.NewsGuilds
+		.OrderBy(x => x.Name)
+		.ToList();
+
+	var pinnedGuilds = db.UsersToGuilds
+		.Where(x => x.UserName == user.UName)
+		.Select(x => x.GuildId)
+		.ToList();
+
+	news.Tags = news.Tags ?? "";
+
+	<div class="layout_left">
+		<div class="menu open">
+			<div class="menu_body">
+				<a class="news-editor-confirm" onclick="save('@Url.Action("edit", "news", new { Id = Model })')">
+					<span class="material-icons">save</span>
+					Сохранить
+				</a>
+				<a class="news-editor-reject" onclick="del('@Url.Action("delete", "news", new { Id = Model })')">
+					<span class="material-icons">delete</span>
+					Удалить
+				</a>
+				<a href="~/news/">
+					<span class="material-icons">undo</span>
+					Выйти без сохранения
+				</a>
+			</div>
+		</div>
+
+		<div data-mode="view" class="menu open">
+			<div class="menu_header">
+				<table>
+					<tr>
+						<td>Теги</td>
+					</tr>
+				</table>
+			</div>
+			<div class="menu_body">
+				<label>
+					<input type="checkbox" onclick="setTagsToNothing(this)" />
+					Сброс выбранных тегов
+				</label>
+				@foreach (var tag in db.NewsTags.ToList())
+				{
+					<label>
+						<input type="checkbox" class="tags" name="@tag.Token" @(news.Tags.Contains(tag.Token) ? "checked" : "") />
+						@tag.Name
+					</label>
+				}
+			</div>
+		</div>
+	</div>
+
+	<div class="layout_center_right">
+
+		<div class="form">
+
+			<div>
+				<b class="news-editor-caption">Заголовок новости:</b>
+				<input type="text" name="@nameof(news.Title)" placeholder="Введите заголовок новости" value="@news.Title" class="news-editor-title" />
+			</div>
+
+			<div>
+				<b class="news-editor-caption">Текст новости:</b>
+				<textarea id="message" name="@nameof(news.Message)">@news.Message</textarea>
+			</div>
+
+			<div>
+				<b class="news-editor-caption">Прикреплённые файлы:</b>
+				<div class="form-files">
+					<div id="form-files">
+						@foreach (var link in links)
+						{
+							if (File.Exists(@"\\web\Files\Новости\" + news.Id + "\\" + link))
+							{
+								<table>
+									<tr>
+										<th>
+											<span>@link</span>
+											<a href="http://www.vst.vitebsk.energo.net/files/Новости/@news.Id/@link">http://www.vst.vitebsk.energo.net/files/@news.Id/@link</a>
+											<input name="Links[]" class="hide" value="@link" />
+										</th>
+										<td width="120px">
+											<button onclick="removeFile(this)">
+												<span class="material-icons">remove_circle_outline</span>
+												<span class="form-button-caption">Удалить</span>
+											</button>
+										</td>
+									</tr>
+								</table>
+							}
+						}
+					</div>
+					<iframe name="uploader" src="" class="hide"></iframe>
+					<form action="@Url.Action("uploadfile", "news", new { Id = news.Id })" method="post" enctype="multipart/form-data" target="uploader" id="upload">
+						<label class="form-upload">
+							<input type="file" name="file" class="hided" onchange="$('#upload').submit()" />
+							<span class="material-icons">file_upload</span>
+							<span class="form-button-caption">Прикрепить файл</span>
+						</label>
+					</form>
+				</div>
+			</div>
+
+			<div>
+				<b class="news-editor-caption">Настройки отображения:</b>
+				<div class="form-settings">
+					<table>
+						<tr>
+							<th>
+								<span title="Степень важности позволяет выделить информацию на фоне остальных новостей">
+									Степень важности
+								</span><select id="form-type" name="@nameof(news.Priority)">
+									<option value="low">Информационная</option>
+									<option value="high" @(news.Priority == "high" ? "selected" : "")>С важной информацией</option>
+									<option value="back" @(news.Priority == "back" ? "selected" : "")>Для обязательного ознакомления</option>
+								</select>
+
+								<span title="Определяет канал, по которому будет распространяться новость">
+									Доступность
+								</span><select id="form-guild" name="@nameof(news.GuildId)">
+									<option value="0">Общедоступная</option>
+									@{
+										var channels = guilds
+											.Where(x => pinnedGuilds.Contains(x.Id) || x.Id == news.GuildId)
+											.ToList();
+
+										var closedChannels = channels
+											.Where(x => x.IsPrivate)
+											.OrderBy(x => x.Name)
+											.ToList();
+
+										var openedChannels = channels
+											.Where(x => !x.IsPrivate)
+											.OrderBy(x => x.Name)
+											.ToList();
+
+										if (openedChannels.Count > 0)
+										{
+											<optgroup label="Открытые каналы">
+												@foreach (var channel in openedChannels)
+												{
+													if (news.GuildId == channel.Id)
+													{
+														<option value="@channel.Id" selected>@channel.Name</option>
+													}
+													else
+													{
+														<option value="@channel.Id" )>@channel.Name</option>
+													}
+												}
+											</optgroup>
+										}
+
+										if (closedChannels.Count > 0)
+										{
+											<optgroup label="Закрытые каналы">
+												@foreach (var channel in closedChannels)
+												{
+													if (news.GuildId == channel.Id)
+													{
+														<option value="@channel.Id" selected>@channel.Name</option>
+													}
+													else
+													{
+														<option value="@channel.Id" )>@channel.Name</option>
+													}
+												}
+											</optgroup>
+										}
+									}
+								</select>
+							</th>
+							<td width="400px">
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<label>
+									<input id="form-custom-date" name="IsCustomDate" onchange="$('#form-box-add').css('display', this.checked ? 'inline' : 'none' )" type="checkbox" /><span>Изменить дату создания</span>
+								</label>
+								<div id="form-box-add" style="display: none">
+									<span>Дата создания</span><input id="form-date-add" name="@nameof(news.DateAdd)" style="width: 100px" placeholder="текущая" type="text" class="date" value="@news.DateAdd.ToString("dd.MM.yyyy")" />
+								</div>
+							</th>
+							<th style="text-align: right;">
+								<div id="form-box-expire" style="display: @(news.IsTimed ? "inline" : "none")">
+									<span>Дата завершения</span><input id="form-date-expire" name="@nameof(news.DateExpire)" style="width: 100px" placeholder="постоянная" type="text" class="date" value="@news.DateExpire.ToString("dd.MM.yyyy")" />
+								</div>
+								<label>
+									<input id="form-timed" name="@nameof(news.IsTimed)" onchange="$('#form-box-expire').css('display', this.checked ? 'inline' : 'none')" type="checkbox" @(news.IsTimed ? "checked" : "") /><span>Временная</span>
+								</label>
+							</th>
+						</tr>
+						<tr>
+							<th>
+								<label>
+									<input id="form-custom-username" name="IsUsername" onchange="$('#form-box-username').css('display', this.checked ? 'inline' : 'none')" type="checkbox" @(string.IsNullOrEmpty(news.UserName) ? "" : "checked") /><span>Своя подпись</span>
+								</label>
+								<div id="form-box-username" style="display: @(string.IsNullOrEmpty(news.UserName) ? "none" : "inline")">
+									<span>Подпись</span><input id="form-username" name="@nameof(news.UserName)" style="width: 300px" placeholder="Ф.И.О. по умолчанию" type="text" value="@(string.IsNullOrEmpty(news.UserName) ? (user.DisplayName ?? user.UName) : news.UserName)" />
+								</div>
+							</th>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+@section scripts {
+	<script src="~/Content/lib/ckeditor/ckeditor.js"></script>
+	<script src="~/Content/lib/widgets/datepicker.js"></script>
+	<script>
+        $(function () {
+            CKEDITOR.replace('message');
+            new DatePicker({ el: '#form-date-add' });
+            new DatePicker({ el: '#form-date-expire' });
+        })
+
+        function save(url) {
+            var form = []
+            var fields = document.querySelectorAll('select,input');
+
+            for (var i = 0; i < fields.length; i++) {
+                var type = fields[i].type
+                if (type != 'file') {
+                    form.push(fields[i].name + '=' + encodeURIComponent(type == 'checkbox' ? fields[i].checked : fields[i].value))
+                }
+			}
+
+			var labels = document.querySelectorAll('.tags')
+			var tags = []
+			labels.forEach(function (el) {
+				if (el.checked) tags.push(el.name)
+			})
+			if (tags.length > 0) {
+				form.push('tags=' + tags.join('|'))
+			}
+
+            form.push('message=' + encodeURIComponent(CKEDITOR.instances['message'].getData()))
+
+            $.post(url, form.join('&'))
+                .fail(function (data) { try { console.log(data) } catch (e) { } })
+                .done(function (data) {
+                    if (data.Done) document.location = '@Url.Action(null, "news")'
+                    else {
+                        try { console.log(data) } catch (e) { }
+                    }
+                })
+        }
+
+        function del(url) {
+            if (!confirm('Данная новость будет безвозратно удалена для всех пользователей. Продолжить?')) return
+            $.post(url)
+                .fail(function (data) { try { console.log(data) } catch (e) { } })
+                .done(function (data) {
+                    if (data.Done) document.location = '@Url.Action("index", "news")'
+                    else {
+                        try { console.log(data) } catch (e) { }
+                    }
+                })
+        }
+
+        function removeFile(obj) {
+            $(obj).closest('table').remove();
+		}
+
+		function setCategoriesToNothing(input) {
+			var container = input.parentNode.parentNode
+			container.querySelectorAll('input').forEach(function (el) {
+				el.checked = false
+			})
+		}
+	</script>
+}

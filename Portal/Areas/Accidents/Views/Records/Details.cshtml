@@ -1,0 +1,257 @@
+﻿@model int
+@{
+	Layout = "~/Areas/Accidents/Views/Shared/_Layout.cshtml";
+}
+
+@using (var db = new SiteContext())
+{
+	var user = db.Authorize(User);
+
+	var record = db.AccidentsRecords.FirstOrDefault(x => x.Id == Model);
+	if (record == null)
+	{
+		ViewBag.Title = "Просмотр сообщения";
+		<div>Сообщение не найдено</div>
+		return;
+	}
+	else
+	{
+		ViewBag.Title = record.Description + " от " + record.Date.ToString("d MMMM yyyy");
+	}
+
+	if (record.IsDeleted || record.IsTemplate)
+	{
+		<div>Сообщение удалено либо недоступно</div>
+		return;
+	}
+
+	var canCreateRecords = db.AccidentsUsersLists
+	  .Where(x => x.UserId == user.UID && x.Role == AccidentListRoles.Writer)
+	  .Count() > 0;
+
+	<div class="header">
+		<span>
+			Просмотр сообщения <b>"@record.Description"</b> от <b>@record.Date.ToString("d MMMM yyyy")</b>.
+			<br />Чтобы отметить сообщение как прочитанное, необходимо ознакомиться с прикреплёнными документами, а затем нажать кнопку "Прочитано"
+		</span>
+		<a href="@Url.Action("", "records")">Перейти к списку сообщений</a>
+		@if (canCreateRecords)
+		{
+			<a href="@Url.Action("edit", "records", new { Id = Model })">Перейти к редактированию</a>
+		}
+	</div>
+
+
+	var users = db.Users.ToList();
+	var author = users.FirstOrDefault(x => x.UID == record.UserId);
+	var viewed = db.AccidentsViews
+		.Where(x => x.AccidentId == record.Id)
+		.ToList();
+
+	var _usersToRead = from x1 in db.AccidentsRecordsLists.Where(x => x.RecordId == Model)
+					   from x2 in db.AccidentsLists.LeftJoin(x => x.Id == x1.ListId)
+					   from x3 in db.AccidentsUsersLists.LeftJoin(x => x.ListId == x2.Id)
+					   from x4 in db.Users.LeftJoin(x => x.UID == x3.UserId)
+					   from x5 in db.AccidentsViews.Where(x => x.AccidentId == Model).LeftJoin(x => x.UserId == x4.UID)
+					   orderby x2.Name, x4.DisplayName
+					   select new
+					   {
+						   List = x2.Name,
+						   DisplayName = x4.DisplayName,
+						   View = x5 != null ? new { x5.Date } : null,
+					   };
+
+	var usersToRead = _usersToRead
+		.ToList()
+		.GroupBy(x => x.List)
+		.Select(g => new
+        {
+			Name = g.Key,
+			Users = g
+				.Select(x => new
+                {
+					x.DisplayName,
+					x.View,
+                })
+				.ToList()
+        })
+		.ToList();
+
+	int numberOfFiles = 0;
+
+	var isThisUserViewRecord = viewed.FirstOrDefault(x => x.UserId == user.UID);
+
+	<div class="container details">
+		<div>
+			<span>Добавлено @record.DateCreated.ToString("d MMMM yyyy") пользователем @(author?.DisplayName ?? "неизв.")</span>
+		</div>
+		<div>
+			<b>@record.Date.ToString("d MMMM yyyy")</b>
+		</div>
+		<div>
+			<b>@record.Description</b>
+		</div>
+		<div id="files" class="files">
+			<div>Прикреплённые документы</div>
+			@if (Directory.Exists(@"\\web\Files\Час ТБ\" + record.Id))
+			{
+				var files = Directory
+					.GetFiles(@"\\web\Files\Час ТБ\" + record.Id)
+					.Select(x => x.Substring(x.LastIndexOf("\\") + 1))
+					.ToList();
+
+				numberOfFiles = files.Count;
+
+				if (files.Count > 0)
+				{
+					foreach (var file in files)
+					{
+						<a onclick="checkFile(this)" target="_blank" href="http://www.vst.vitebsk.energo.net/files/Час ТБ/@Model/@file">@file</a>
+					}
+				}
+				else
+				{
+					<i>нет</i>
+				}
+			}
+			else
+			{
+				<i>нет</i>
+			}
+		</div>
+
+
+		@if (isThisUserViewRecord != null)
+		{
+			<div>
+				<span class="good">Прочитано @isThisUserViewRecord.Date.ToString("d MMMM yyyy")</span>
+			</div>
+		}
+		else if (numberOfFiles > 0)
+		{
+			<div>Чтобы запись можно было отметить как прочитанную, просмотрите прикреплённые документы. После этого в этом окне появится кнопка "Прочитано".</div>
+			<div class="form buttons">
+				<button id="confirm" style="display: none;" onclick="setViewed(@record.Id)">Прочитано</button>
+			</div>
+		}
+		else
+        {
+			<div class="form buttons">
+				<button id="confirm" onclick="setViewed(@record.Id)">Прочитано</button>
+			</div>
+        }
+	</div>
+
+	if (user.IsAccidents)
+	{
+		<div class="container details">
+			<div>
+				<b>Список пользователей, которые должны прочитать сообщение</b>
+				<a onclick="pad(this, 'users')">показать</a>
+			</div>
+			<table id="users" style="display: none">
+				@foreach (var list in usersToRead)
+				{
+					<tr>
+						<th colspan="2">@list.Name</th>
+					</tr>
+					foreach (var u in list.Users)
+					{
+						<tr>
+							<td>@u.DisplayName</td>
+							@if (u.View != null)
+                            {
+								if (u.View.Date > record.DateControl.AddDays(1))
+								{
+									<td class="expired">@u.View.Date.ToString("d MMMM yyyy HH:mm")</td>
+								}
+								else
+								{
+									<td>@u.View.Date.ToString("d MMMM yyyy HH:mm")</td>
+								}
+                            }
+							else
+                            {
+								<td>не просмотрено</td>
+                            }
+						</tr>
+					}
+				}
+			</table>
+		</div>
+	}
+
+	if (user.IsAdmin)
+	{
+		<div class="container details">
+			<div>
+				<b>История изменений</b>
+				<a onclick="pad(this, 'logs')">показать</a>
+			</div>
+			<table id="logs" style="display: none;">
+				@{
+					var logs = db.AccidentsLogs
+						.Where(x => x.AccidentId == Model)
+						.OrderByDescending(x => x.Date)
+						.ToList();
+
+					foreach (var log in logs)
+					{
+						var logPerson = users.FirstOrDefault(x => x.UID == log.UserId);
+
+						<tr>
+							<td style="width: 12em;">@log.Date.ToString("d MMMM yyyy HH:mm:ss")</td>
+							<td style="width: 10em;">@(logPerson.DisplayName ?? "неизвестно")</td>
+							<td>@log.Reason</td>
+						</tr>
+					}
+				}
+			</table>
+		</div>
+	}
+
+	<script>
+		isAllFilesChecked()
+
+		function checkFile(link) {
+			link.classList.add('checked')
+			isAllFilesChecked()
+		}
+
+		function isAllFilesChecked() {
+			var checked = true
+			document.getElementById('files').querySelectorAll('a').forEach(function (a) {
+				if (!a.classList.contains('checked')) {
+					checked = false
+				}
+			})
+			if (checked) {
+				try {
+					document.getElementById('confirm').style.display = 'block'
+				}
+				catch (e) {}
+			}
+		}
+
+		function setViewed() {
+			fetch('@Url.Action("setViewed", "records", new { Id = Model })', { method: 'POST' })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Done) {
+						location.reload()
+					}
+					else {
+						alert(json.Error)
+						console.log(json)
+					}
+				})
+		}
+
+		function pad(link, id) {
+			var el = document.getElementById(id)
+			link.innerHTML = link.innerHTML == 'показать' ? 'скрыть' : 'показать'
+			el.style.display = el.style.display == 'none' ? 'inherit' : 'none'
+		}
+	</script>
+}
+

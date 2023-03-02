@@ -1,0 +1,37 @@
+﻿@{
+	ViewBag.Title = "Профком";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+}
+
+<h3>@ViewBag.Title</h3>
+
+<a onclick="toggle()" href="#">13.05.2017 г. состоялся Витебский велопробег в рамках Международного велокарнавала (VIVA POBAP) (фото)</a>
+<div style="display: none;" id="images">
+	@Html.Partial("_LiveFolder", new LiveFolder
+	{
+		Name = null,
+		RelativePath = "Деятельность/6. Профком/велопробег/"
+	})
+</div>
+
+<br />
+<br />
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	Name = null,
+	RelativePath = "Деятельность/6. Профком/"
+})
+
+<br />
+<br />
+
+<a href="http://www.esbit.vitebsk.energo.net/DebtAndProd.html">Информация о задолженности за электрическую и тепловую энергию потребителей Витебской области и предлагаемой продукции в счёт её погашения</a>
+<a href="http://10.178.4.2/wp/wp-content/uploads/2016/10/objavlenie-magazin-nojabr.doc">Магазин филиала &quot;Витебские тепловые сети&quot; реализует товары (бытовая техника и электроника, компьютерная и цифровая техника, садовая техника и инструменты, шины, диски, аккумуляторы и многое другое)</a>
+
+<script>
+	function toggle() {
+		var images = document.getElementById('images');
+		images.style.display = images.style.display === 'none' ? 'block' : 'none';
+	}
+</script>

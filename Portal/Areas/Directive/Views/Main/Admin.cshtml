@@ -1,0 +1,42 @@
+﻿@model AdminPageModel
+@{
+	ViewBag.Title = "Директива №1 | Настройка | " + Model.Page.Caption;
+	Layout = "~/Areas/Directive/Views/Shared/_Layout.cshtml";
+}
+
+<header>Настройка: @Model.Page.Caption</header>
+
+<div class="container">
+	<div class="user head">
+		<span>Право редактирования</span>
+		<span>Пользователь</span>
+	</div>
+	@foreach (var user in Model.Users)
+	{
+		<div class="user" @user.UID>
+			<span>
+				<input onchange="setUsers()" data-id="@user.UID" type="checkbox" @(Model.PageUsers.Contains(user.UID) ? "checked" : "") />
+			</span>
+			<span>@(user.DisplayName ?? user.UName ?? user.Nick ?? user.UID.ToString())</span>
+		</div>
+	}
+</div>
+
+<script>
+	function setUsers() {
+		let users = []
+		document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+			if (el.checked) users.push(Number(el.getAttribute('data-id')))
+		})
+
+		let form = new FormData()
+		form.append('pageId', @Model.Page.Id)
+		form.append('users', JSON.stringify(users))
+
+		fetch('@Url.Action("SetUsers", "page")', { method: 'POST', body: form })
+			.then(res => res.text())
+			.then(text => {
+				if (text != "done") alert(text)
+			})
+	}
+</script>

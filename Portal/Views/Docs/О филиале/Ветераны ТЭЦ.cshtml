@@ -1,0 +1,13 @@
+﻿@{
+	ViewBag.Title = "Ветераны ТЭЦ";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+	ViewBag.IsCentered = true;
+}
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	Name = "Их имена вошли в Историю Витебской ТЭЦ",
+	RelativePath = @"О филиале\Ветераны ТЭЦ\",
+	WriteImageBox = true,
+	WriteImageCaptions = true,
+})

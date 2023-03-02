@@ -1,0 +1,76 @@
+﻿@{
+	ViewBag.Title = "Создание записи о нарушении";
+	Layout = "~/Views/Shared/_ViolationsLayout.cshtml";
+	var model = new Violation();
+}
+
+<div class="operations">
+	<a onclick="history.back()">Вернуться</a>
+	&emsp;
+	&emsp;
+	&emsp;
+	<a onclick="submit('@Url.Action("Create", "Violations")')">Создать запись</a>
+</div>
+
+<div class="content">
+	<div>
+		<div class="caption">Дата выявления нарушения</div>
+		<div>
+			<input name="@nameof(model.DateViolation)" type="date" value="" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. работника, допустившего нарушение</div>
+		<div>
+			<input name="@nameof(model.PersonName)" type="text" value="" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Профессия/должность работника, допустившего нарушение</div>
+		<div>
+			<input name="@nameof(model.PersonPosition)" type="text" value="" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. производителя работ (если допустивший нарушение работник был в составе бригады)</div>
+		<div>
+			<input name="@nameof(model.ProcessName)" type="text" value="" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. руководителя работ работ (если допустивший нарушение работник был в составе бригады)</div>
+		<div>
+			<input name="@nameof(model.HeadName)" type="text" value="" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Структурное подразделение</div>
+		<div>
+			<input name="@nameof(model.PersonDepartment)" type="text" value="" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Краткое содержание нарушения</div>
+		<div>
+			<textarea name="@nameof(model.Description)"></textarea>
+		</div>
+	</div>
+	<div>
+		<div class="caption">Принятые меры, по отношению к работнику, допустившему нарушение</div>
+		<div>
+			<textarea name="@nameof(model.Result)"></textarea>
+		</div>
+	</div>
+	<div>
+		<div class="caption">Номер приказа</div>
+		<div>
+			<input name="@nameof(model.OrderId)" type="text" value="" />
+		</div>
+	</div>
+	<div>
+		<div class="caption">Ф.И.О. работника, выявившего нарушение</div>
+		<div>
+			<input name="@nameof(model.JudgeName)" type="text" value="" />
+		</div>
+	</div>
+</div>

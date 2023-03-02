@@ -1,0 +1,23 @@
+﻿#big_photo {
+    position: fixed;
+    top: 30%;
+    left: 40%;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #111;
+    text-align: right;
+}
+
+    #big_photo > .icon {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        top: 7px;
+        right: 7px;
+        height: 24px;
+        width: 24px;
+    }
+
+#big_photo__photo {
+    max-height: 500px;
+}

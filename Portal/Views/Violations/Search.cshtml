@@ -1,0 +1,301 @@
+﻿@model  ViolationsFilter
+@{
+	ViewBag.Title = "Учет нарушений";
+	Layout = "~/Views/Shared/_ViolationsLayout.cshtml";
+}
+
+@using (var db = new SiteContext())
+{
+	var user = db.Authorize(User);
+	if (!user.IsViolationsUser)
+	{
+		@: Нет доступа к данному разделу. Для получения доступа обратитесь в уАСУТП по тел. 3-34
+		return;
+	}
+
+	<div class="operations">
+		<a href="~/violations/">Вернуться</a>
+		&emsp;&emsp;&emsp;
+		<a href="~/violations/search">Сбросить фильтр</a>
+		&emsp;
+		<a onclick="document.getElementById('form').submit()">Выполнить запрос</a>
+	</div>
+
+	<div class="filter">
+		<form action="@Url.Action("search", "violations")" method="get" id="form">
+			<table>
+				<tr>
+					<td>
+						Строка поиска:
+						<br />
+						<input name="search" type="search" placeholder="введите запрос... " value="@Model.Search" style="width: 20em; padding: .2em;" />
+						<br />
+						<br />
+						<label><input name="exact" type="checkbox" @(Model.Exact ? "checked" : "") />Точное соответствие</label>
+						<br />
+						<br />
+						Временной диапазон:
+						<br />
+						&emsp;<span style="display: inline-block; width: 2em; padding: .2em;"> от </span><input name="from" type="date" value="@(Model.From?.ToString("yyyy-MM-dd") ?? "")" />
+						<br />
+						&emsp;<span style="display: inline-block; width: 2em; padding: .2em;"> до </span><input name="to" type="date" value="@(Model.To?.ToString("yyyy-MM-dd") ?? "")" />
+					</td>
+					<td>
+						Поля для поиска:
+						<br />
+						<label><input name="fs1" type="checkbox" @(Model.FS1 ? "checked" : "") />Ф.И.О. работника</label>
+						<label><input name="fs2" type="checkbox" @(Model.FS2 ? "checked" : "") />Профессия/должность работника</label>
+						<label><input name="fs3" type="checkbox" @(Model.FS3 ? "checked" : "") />Подразделение</label>
+						<label><input name="fs4" type="checkbox" @(Model.FS4 ? "checked" : "") />Ф.И.О. производителя работ</label>
+						<label><input name="fs5" type="checkbox" @(Model.FS5 ? "checked" : "") />Ф.И.О. руководителя работ</label>
+						<label><input name="fs6" type="checkbox" @(Model.FS6 ? "checked" : "") />Описание нарушения</label>
+						<label><input name="fs7" type="checkbox" @(Model.FS7 ? "checked" : "") />Принятые меры</label>
+						<label><input name="fs8" type="checkbox" @(Model.FS8 ? "checked" : "") />Номер приказа</label>
+						<label><input name="fs9" type="checkbox" @(Model.FS9 ? "checked" : "") />Ф.И.О. выявившего нарушения</label>
+					</td>
+					<td>
+						Отображаемые поля:
+						<br />
+						<label><input name="fvd1" type="checkbox" @(Model.FVD1 ? "checked" : "") />Дата создания записи</label>
+						<label><input name="fvd2" type="checkbox" @(Model.FVD2 ? "checked" : "") />Дата выявления нарушения</label>
+						<label><input name="fv1" type="checkbox" @(Model.FV1 ? "checked" : "") />Ф.И.О. работника</label>
+						<label><input name="fv2" type="checkbox" @(Model.FV2 ? "checked" : "") />Профессия/должность работника</label>
+						<label><input name="fv3" type="checkbox" @(Model.FV3 ? "checked" : "") />Подразделение</label>
+						<label><input name="fv4" type="checkbox" @(Model.FV4 ? "checked" : "") />Ф.И.О. производителя работ</label>
+						<label><input name="fv5" type="checkbox" @(Model.FV5 ? "checked" : "") />Ф.И.О. руководителя работ</label>
+						<label><input name="fv6" type="checkbox" @(Model.FV6 ? "checked" : "") />Описание нарушения</label>
+						<label><input name="fv7" type="checkbox" @(Model.FV7 ? "checked" : "") />Принятые меры</label>
+						<label><input name="fv8" type="checkbox" @(Model.FV8 ? "checked" : "") />Номер приказа</label>
+						<label><input name="fv9" type="checkbox" @(Model.FV9 ? "checked" : "") />Ф.И.О. выявившего нарушения</label>
+					</td>
+				</tr>
+			</table>
+			<input type="hidden" name="sort" id="sort" value="@Model.Sort" />
+			<input type="hidden" name="revert" id="revert" value="@Model.Revert" />
+		</form>
+	</div>
+
+	var query = db.Violations
+		.Where(x => !Model.From.HasValue || Model.From.Value <= x.DateViolation)
+		.Where(x => !Model.To.HasValue || Model.To.Value >= x.DateViolation);
+
+	if (!string.IsNullOrEmpty(Model.Search) && (Model.FS1 || Model.FS2 || Model.FS3 || Model.FS4 || Model.FS5 || Model.FS6 || Model.FS7 || Model.FS8 || Model.FS9))
+	{
+		if (!Model.Exact)
+		{
+			query = query
+				.Where(x => (Model.FS1 && x.PersonName.Contains(Model.Search))
+					|| (Model.FS2 && x.PersonPosition.Contains(Model.Search))
+					|| (Model.FS3 && x.PersonDepartment.Contains(Model.Search))
+					|| (Model.FS4 && x.ProcessName.Contains(Model.Search))
+					|| (Model.FS5 && x.HeadName.Contains(Model.Search))
+					|| (Model.FS6 && x.Description.Contains(Model.Search))
+					|| (Model.FS7 && x.Result.Contains(Model.Search))
+					|| (Model.FS8 && x.OrderId.Contains(Model.Search))
+					|| (Model.FS9 && x.JudgeName.Contains(Model.Search))
+				);
+		}
+		else
+		{
+			query = query
+				.Where(x => (Model.FS1 && x.PersonName.ToLower() == Model.Search.ToLower())
+					|| (Model.FS2 && x.PersonPosition.ToLower() == Model.Search.ToLower())
+					|| (Model.FS3 && x.PersonDepartment.ToLower() == Model.Search.ToLower())
+					|| (Model.FS4 && x.ProcessName.ToLower() == Model.Search.ToLower())
+					|| (Model.FS5 && x.HeadName.ToLower() == Model.Search.ToLower())
+					|| (Model.FS6 && x.Description.ToLower() == Model.Search.ToLower())
+					|| (Model.FS7 && x.Result.ToLower() == Model.Search.ToLower())
+					|| (Model.FS8 && x.OrderId.ToLower() == Model.Search.ToLower())
+					|| (Model.FS9 && x.JudgeName.ToLower() == Model.Search.ToLower())
+				);
+		}
+	}
+
+	<div class="body">
+		<table>
+			<thead>
+				<tr>
+					@if (Model.FVD1)
+					{
+						<th class="@(Model.Sort == "fvd1" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fvd1', @((Model.Sort == "fvd1" && !Model.IsRevert) ? '1' : '0'))">Дата создания записи</th>
+					}
+					@if (Model.FVD2)
+					{
+						<th class="@(Model.Sort == "fvd2" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fvd2', @((Model.Sort == "fvd2" && !Model.IsRevert) ? '1' : '0'))">Дата выявления нарушения</th>
+					}
+					@if (Model.FV1)
+					{
+						<th class="@(Model.Sort == "fv1" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv1', @((Model.Sort == "fv1" && !Model.IsRevert) ? '1' : '0'))">Ф.И.О. работника</th>
+					}
+					@if (Model.FV2)
+					{
+						<th class="@(Model.Sort == "fv2" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv2', @((Model.Sort == "fv2" && !Model.IsRevert) ? '1' : '0'))">Профессия/должность работника</th>
+					}
+					@if (Model.FV3)
+					{
+						<th class="@(Model.Sort == "fv3" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv3', @((Model.Sort == "fv3" && !Model.IsRevert) ? '1' : '0'))">Подразделение</th>
+					}
+					@if (Model.FV4)
+					{
+						<th class="@(Model.Sort == "fv4" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv4', @((Model.Sort == "fv4" && !Model.IsRevert) ? '1' : '0'))">Ф.И.О. производителя работ</th>
+					}
+					@if (Model.FV5)
+					{
+						<th class="@(Model.Sort == "fv5" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv5', @((Model.Sort == "fv5" && !Model.IsRevert) ? '1' : '0'))">Ф.И.О. руководителя работ</th>
+					}
+					@if (Model.FV6)
+					{
+						<th class="@(Model.Sort == "fv6" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv6', @((Model.Sort == "fv6" && !Model.IsRevert) ? '1' : '0'))">Описание нарушения</th>
+					}
+					@if (Model.FV7)
+					{
+						<th class="@(Model.Sort == "fv7" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv7', @((Model.Sort == "fv7" && !Model.IsRevert) ? '1' : '0'))">Принятые меры</th>
+					}
+					@if (Model.FV8)
+					{
+						<th class="@(Model.Sort == "fv8" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fv8', @((Model.Sort == "fv8" && !Model.IsRevert) ? '1' : '0'))">Номер приказа</th>
+					}
+					@if (Model.FV9)
+					{
+						<th class="@(Model.Sort == "fv9" ? (Model.IsRevert ? "sort_up" : "sort_down") : "")" onclick="sort('fs1', @((Model.Sort == "fv9" && !Model.IsRevert) ? '1' : '0'))">Ф.И.О. выявившего нарушение</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					if (Model.IsRevert)
+					{
+						if (Model.Sort == "fvd1") { query = query.OrderBy(x => x.DateCreated); }
+						else if (Model.Sort == "fvd2") { query = query.OrderBy(x => x.DateViolation); }
+						else if (Model.Sort == "fv1") { query = query.OrderBy(x => x.PersonName); }
+						else if (Model.Sort == "fv2") { query = query.OrderBy(x => x.PersonPosition); }
+						else if (Model.Sort == "fv3") { query = query.OrderBy(x => x.PersonDepartment); }
+						else if (Model.Sort == "fv4") { query = query.OrderBy(x => x.ProcessName); }
+						else if (Model.Sort == "fv5") { query = query.OrderBy(x => x.HeadName); }
+						else if (Model.Sort == "fv6") { query = query.OrderBy(x => x.Description); }
+						else if (Model.Sort == "fv7") { query = query.OrderBy(x => x.Result); }
+						else if (Model.Sort == "fv8") { query = query.OrderBy(x => x.OrderId); }
+						else if (Model.Sort == "fv9") { query = query.OrderBy(x => x.JudgeName); }
+					}
+					else
+					{
+						if (Model.Sort == "fvd1") { query = query.OrderByDescending(x => x.DateCreated); }
+						else if (Model.Sort == "fvd2") { query = query.OrderByDescending(x => x.DateViolation); }
+						else if (Model.Sort == "fv1") { query = query.OrderByDescending(x => x.PersonName); }
+						else if (Model.Sort == "fv2") { query = query.OrderByDescending(x => x.PersonPosition); }
+						else if (Model.Sort == "fv3") { query = query.OrderByDescending(x => x.PersonDepartment); }
+						else if (Model.Sort == "fv4") { query = query.OrderByDescending(x => x.ProcessName); }
+						else if (Model.Sort == "fv5") { query = query.OrderByDescending(x => x.HeadName); }
+						else if (Model.Sort == "fv6") { query = query.OrderByDescending(x => x.Description); }
+						else if (Model.Sort == "fv7") { query = query.OrderByDescending(x => x.Result); }
+						else if (Model.Sort == "fv8") { query = query.OrderByDescending(x => x.OrderId); }
+						else if (Model.Sort == "fv9") { query = query.OrderByDescending(x => x.JudgeName); }
+					}
+					string _link;
+
+					foreach (var v in query.ToList())
+					{
+						_link = Url.Action("details", "violations", new { Id = v.Id });
+
+						<tr onclick="location='@_link'">
+							@if (Model.FVD1)
+							{
+								<td>
+									<a href="@_link">@Text(v.DateCreated.ToString("dd.MM.yyyy"))</a>
+								</td>
+							}
+							@if (Model.FVD2)
+							{
+								<td>
+									<a href="@_link">@Text(v.DateViolation.ToString("dd.MM.yyyy"))</a>
+								</td>
+							}
+							@if (Model.FV1)
+							{
+								<td>
+									<a href="@_link">@Text(v.PersonName)</a>
+								</td>
+							}
+							@if (Model.FV2)
+							{
+								<td>
+									<a href="@_link">@Text(v.PersonPosition)</a>
+								</td>
+							}
+							@if (Model.FV3)
+							{
+								<td>
+									<a href="@_link">@Text(v.PersonDepartment)</a>
+								</td>
+							}
+							@if (Model.FV4)
+							{
+								<td>
+									<a href="@_link">@Text(v.ProcessName)</a>
+								</td>
+							}
+							@if (Model.FV5)
+							{
+								<td>
+									<a href="@_link">@Text(v.HeadName)</a>
+								</td>
+							}
+							@if (Model.FV6)
+							{
+								<td>
+									<a href="@_link">@Text(v.Description)</a>
+								</td>
+							}
+							@if (Model.FV7)
+							{
+								<td>
+									<a href="@_link">@Text(v.Result)</a>
+								</td>
+							}
+							@if (Model.FV8)
+							{
+								<td>
+									<a href="@_link">@Text(v.OrderId)</a>
+								</td>
+							}
+							@if (Model.FV9)
+							{
+								<td>
+									<a href="@_link">@Text(v.JudgeName)</a>
+								</td>
+							}
+
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+@helper Text(string text)
+{
+	if (string.IsNullOrEmpty(text))
+	{
+		<i>не заполнено</i>
+	}
+	else
+	{
+		@text
+	}
+}
+
+<script>
+	document.querySelectorAll('input[type="checkbox"]').forEach(function (el) {
+		el.value = el.checked ? 'true' : 'false'
+		el.addEventListener('change', function () {
+			el.value = el.checked ? 'true' : 'false'
+		})
+	})
+
+	function sort(column, revert) {
+		document.getElementById('sort').value = column
+		document.getElementById('revert').value = revert
+		document.getElementById('form').submit()
+	}
+</script>
