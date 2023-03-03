@@ -117,6 +117,14 @@ namespace DatabaseLayer.Site
 		public ITable<AccidentUserList> AccidentsUsersLists
 			=> GetTable<AccidentUserList>();
 
+		// Телефонный справочник
+
+		public ITable<PhonebookGuild> PhonebookGuilds
+			=> GetTable<PhonebookGuild>();
+
+		public ITable<PhonebookPosition> PhonebookPositions
+			=> GetTable<PhonebookPosition>();
+
 
 		public User Authorize(IPrincipal principal) => Authorize(principal.Identity.Name);
 

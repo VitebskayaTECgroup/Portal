@@ -50,6 +50,8 @@ namespace DatabaseLayer.Site
 
 		public bool IsAccidents => Groups.Contains("group_accidents");
 
+		public bool IsPhonebookAdmin => UClass.Contains("phonebook");
+
 		// fields
 
 		public string[] GroupsArray => Groups.ToLower().Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);

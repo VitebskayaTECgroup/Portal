@@ -112,6 +112,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site\DirectiveLog.cs" />
     <Compile Include="Site\DirectiveSections.cs" />
+    <Compile Include="Site\PhonebookPosition.cs" />
+    <Compile Include="Site\PhonebookGuild.cs" />
     <Compile Include="Site\UsersToPages.cs" />
     <Compile Include="Site\DirectivePages.cs" />
     <Compile Include="Site\DirectiveDocument.cs" />

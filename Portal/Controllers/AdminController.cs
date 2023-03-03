@@ -142,6 +142,7 @@ namespace Portal.Controllers
                         case "devin":
                         case "mnemonic":
                         case "z_admin":
+                        case "phonebook":
                             uclass = uclass + " " + Key;
                             break;
                         case "site_red":
@@ -240,7 +241,8 @@ namespace Portal.Controllers
                         case "order_guest":
                         case "order_user":
                         case "order_nss":
-                            uclass = uclass.Replace(Key, "");
+						case "phonebook":
+							uclass = uclass.Replace(Key, "");
                             break;
                         case "record_admin":
                             uclass = uclass.Replace(Key, "record_user");
