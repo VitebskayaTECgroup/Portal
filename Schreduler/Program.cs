@@ -1,38 +1,47 @@
-﻿using PortalSchreduler.Actions;
+﻿using Schreduler.Actions;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PortalSchreduler
+namespace Schreduler
 {
-	class Program
+	internal class Program
 	{
-		
-		static void Main()
+		public static string Site = @"Data Source=WEB\SQLEXPRESS; Initial Catalog=Site; Persist Security Info=True; User ID=Site; Password=Site";
+
+		public static string Devin = @"Data Source=WEB\SQLEXPRESS; Initial Catalog=Everest; Persist Security Info=True; User ID=user_everesr; Password=EveresT10";
+
+		public static string DBF = @"Provider=vfpoledb; Data Source=\\10.178.9.42\out; Extended Properties=dBASE IV; User ID=Admin; Password=";
+
+		static void Main(string[] args)
 		{
 #if DEBUG
-			NBRB.Parse().Wait();
+			NBRB.Parse();
 
 			OneC.Load();
 			Users.Load();
 			Checkpoint.Load();
-			Phonebook.Load().Wait();
+			Phonebook.Load();
 
 			Devices.Load();
 			MetalsCosts.Load();
 
 			Images.Process();
 
-			Console.WriteLine("... done."); 
+			Console.WriteLine("... done.");
 			Console.ReadLine();
 #else
 			// интернет-ресурсы
-			try { NBRB.Parse().Wait(); } catch (Exception e) { Err(e); }
+			try { NBRB.Parse(); } catch (Exception e) { Err(e); }
 
 			// пользователи и сотрудники
 			try { OneC.Load(); } catch (Exception e) { Err(e); }
 			try { Users.Load(); } catch (Exception e) { Err(e); }
 			try { Checkpoint.Load(); } catch (Exception e) { Err(e); }
-			try { Phonebook.Load().Wait(); } catch (Exception e) { Err(e); }
+			try { Phonebook.Load(); } catch (Exception e) { Err(e); }
 
 			// основные средства и малооценка, стоимость драгметаллов
 			try { Devices.Load(); } catch (Exception e) { Err(e); }

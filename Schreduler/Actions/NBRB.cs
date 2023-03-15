@@ -1,19 +1,20 @@
-﻿using AngleSharp.Html.Parser;
+﻿using AngleSharp.Parser.Html;
 using Dapper;
 using System;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
+using System.Net;
 
-namespace PortalSchreduler.Actions
+namespace Schreduler.Actions
 {
 	public static class NBRB
 	{
-		public static async Task Parse()
+		public static void Parse()
 		{
 			Console.WriteLine("NBRB => start");
 
-			string raw = await HtmlLoader.LoadAsync("http://www.nbrb.by/statistics/rates/ratesDaily/");
-			var document = new HtmlParser().ParseDocument(raw);
+			string raw = new WebClient().DownloadString("http://www.nbrb.by/statistics/rates/ratesDaily/");
+			var parser = new HtmlParser();
+			var document = parser.Parse(raw);
 
 			using (var conn = new SqlConnection(Program.Site))
 			{
