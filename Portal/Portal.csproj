@@ -158,6 +158,7 @@
     <Content Include="Content\css\orders.css" />
     <Content Include="Content\css\phonebook.css" />
     <Content Include="Content\css\safe.css" />
+    <Content Include="Content\css\site.css" />
     <Content Include="Content\css\violations.css" />
     <Content Include="Content\css\works.css" />
     <Content Include="Content\Guest\css\style.css" />

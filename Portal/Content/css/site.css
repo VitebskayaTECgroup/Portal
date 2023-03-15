@@ -1,0 +1,72 @@
+﻿#opc_panel {
+	display: none;
+	position: absolute;
+	top: 19em;
+	left: 1em;
+	width: 19em;
+	background: #fff;
+	color: #000;
+	border: 1px solid #ccc;
+	box-shadow: 0 1px 15px 0 #ccc;
+	padding: 0;
+	z-index: 1;
+}
+
+	#opc_panel:hover {
+		background: #fff;
+	}
+
+	#opc_panel > a {
+		color: #000;
+		text-decoration: none;
+		display: block;
+		font-size: 1.1em;
+		padding: .25em .5em;
+	}
+
+		#opc_panel > a:hover {
+			background: #eee;
+		}
+
+.theme_black #opc_panel {
+	background: #333;
+	color: #fff;
+	border: 1px solid #111;
+	box-shadow: 0 1px 15px 0 #000;
+}
+
+	.theme_black #opc_panel:hover {
+		background: #333;
+	}
+
+	.theme_black #opc_panel > a {
+		color: #fff;
+	}
+
+		.theme_black #opc_panel > a:hover {
+			background: #444;
+		}
+
+.closed span {
+	padding: 2px;
+	display: block;
+}
+
+.closed input, .closed div, .opened span {
+	display: none;
+}
+
+.opened input {
+	width: 80%;
+	margin-right: 2px;
+}
+
+.actions_button {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+#actions {
+	display: none;
+}

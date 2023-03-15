@@ -9,6 +9,10 @@
 	bool open;
 }
 
+@section styles {
+	<link rel="stylesheet" href="~/Content/css/site.css" />
+}
+
 @using (var db = new SiteContext())
 {
 	var user = db.Authorize(User);
@@ -40,8 +44,11 @@
 						<span class="material-icons" style="color: #9c27b0">headset_mic</span> Openfire
 					</a>
 					@*<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
-							<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
-						</a>*@
+						<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
+					</a>*@
+					<a href="http://develop.vst.vitebsk.energo.net/">
+						<span class="material-icons" style="color: #7867ff;">send</span> Logger
+					</a>
 					<a href="https://frw.vst.vitebsk.energo.net:4081/admin">
 						<span class="material-icons" style="color: #2196f3">security</span> Kerio Control
 					</a>
@@ -67,68 +74,16 @@
 						<a href="http://remote.vst.vitebsk.energo.net:81">REMOTE</a>
 					</div>
 					@*<a href="http://ic1.vst.vitebsk.energo.net:81/">
-							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
-						</a>
-						<a href="http://ups.vst.vitebsk.energo.net:81/">
-							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
-						</a>*@
+						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
+					</a>
+					<a href="http://ups.vst.vitebsk.energo.net:81/">
+						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
+					</a>*@
 					<a href="@Url.Action("", "admin")">
 						<span class="material-icons">admin_panel_settings</span> Настройки сайта
 					</a>
 				</div>
 			</div>
-
-			<style>
-				#opc_panel {
-					display: none;
-					position: absolute;
-					top: 19em;
-					left: 1em;
-					width: 19em;
-					background: #fff;
-					color: #000;
-					border: 1px solid #ccc;
-					box-shadow: 0 1px 15px 0 #ccc;
-					padding: 0;
-					z-index: 1;
-				}
-
-					#opc_panel:hover {
-						background: #fff;
-					}
-
-					#opc_panel > a {
-						color: #000;
-						text-decoration: none;
-						display: block;
-						font-size: 1.1em;
-						padding: .25em .5em;
-					}
-
-						#opc_panel > a:hover {
-							background: #eee;
-						}
-
-				.theme_black #opc_panel {
-					background: #333;
-					color: #fff;
-					border: 1px solid #111;
-					box-shadow: 0 1px 15px 0 #000;
-				}
-
-					.theme_black #opc_panel:hover {
-						background: #333;
-					}
-
-					.theme_black #opc_panel > a {
-						color: #fff;
-					}
-
-						.theme_black #opc_panel > a:hover {
-							background: #444;
-						}
-			</style>
-
 		}
 
 		@{ open = Request.Cookies.Get("operations")?.Value != "0"; }
@@ -143,82 +98,23 @@
 			</div>
 			<div class="menu_body" id="links">
 				<a href="~/news/">
-					<span class="material-icons">article</span> Новости
+					<span class="material-icons" style="color: #ff5050;">article</span> Новости
 				</a>
 				<a href="http://10.178.9.31/ask/">
-					<span class="material-icons" style="color: #f44336;">laptop</span> АСК "Выбросы"
+					<span class="material-icons" style="color: #f45936;">laptop</span> АСК "Выбросы"
 				</a>
 				<a href="http://asu.vst.vitebsk.energo.net/">
-					<span class="material-icons" style="color: #e91e63;">settings</span> АСУ
-				</a>
-				<a href="~/auto/">
-					<span class="material-icons" style="color: #9c27b0;">phone_in_talk</span> Заявки на автомобиль
-				</a>
-				<a href="~/site/birthdays/">
-					<span class="material-icons" style="color: #673ab7;">cake</span> Дни рождений
+					<span class="material-icons" style="color: #f19018;">settings</span> АСУ
 				</a>
 				@if (user.Groups.Contains("group_checkpoint") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_gen") || user.Groups.Contains("group_tb") || user.Groups.Contains("group_ok"))
 				{
 					<a href="http://www.vst.vitebsk.energo.net/checkpoint/">
-						<span class="material-icons" style="color: #3f51b5;">videocam</span> Проходная
+						<span class="material-icons" style="color: #ffa700;">videocam</span> Проходная
 					</a>
 				}
 				<a href="https://email.vst.vitebsk.energo.net">
-					<span class="material-icons" style="color: #2196f3;">email</span> Почта
+					<span class="material-icons" style="color: #69b307;">email</span> Почта
 				</a>
-				@*<a href="http://web.vst.vitebsk.energo.net:88">
-						<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
-					</a>*@
-
-				@if (user.Groups.Contains("group_inet") || user.Groups.Contains("group_inet_restricted") || user.Groups.Contains("group_gen"))
-				{
-					<a href="http://frw.vst.vitebsk.energo.net:4080/login/?NTLM=1">
-						<span class="material-icons" style="color: #00bcd4;">language</span> Просмотр интернет статистики
-					</a>
-					<script>
-						try {
-							var xhr = new XMLHttpRequest()
-							xhr.open('GET', 'http://frw.vst.vitebsk.energo.net:4080/internal/ntlm/dologin.php?', true)
-							xhr.withCredentials = true
-							xhr.send()
-						} catch (e) { }
-						//try {
-						//	var xhr = new XMLHttpRequest()
-						//	xhr.open('POST', 'https://email.vst.vitebsk.energo.net/service/soap/SearchRequest', true)
-						//	xhr.withCredentials = true
-						//	xhr.send()
-						//} catch (e) { }
-					</script>
-				}
-				@if (user.Groups.Contains("group_uchet") || user.Groups.Contains("group_ASUP"))
-				{
-					<a href="http://info.energo.net:9858/Home/Identificate">
-						<span class="material-icons" style="color: #009688;">cast</span> Каскад
-					</a>
-					<a href="http://info.energo.net:8088/Home/Vitebsktc">
-						<span class="material-icons" style="color: #009688;">cast</span> 777
-					</a>
-				}
-				@if (user.Groups.Contains("group_pto") || user.Groups.Contains("group_boss") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_tb") || user.UName == "tai_duty" || user.UName == "gcu_user" || user.UName == "elec_duty" || user.UName == "el_mast" || user.UName == "el_mast2")
-				{<a href="http://web.vst.vitebsk.energo.net/mnemo/#TEC_osn_oborud">
-						<span class="material-icons" style="color: #4caf50;">view_column</span> Схема основного оборудования ТЭЦ
-					</a>
-					<a href="http://web.vst.vitebsk.energo.net/mnemonica/el_main">
-						<span class="material-icons" style="color: #9aff66;">bolt</span> Главная электрическая схема ТЭЦ
-					</a>
-				}
-				@if ("gen gen_zam eng_gen eng_zam".Contains(user.UName) || user.Groups.Contains("group_ttc") || user.Groups.Contains("group_ASUP"))
-				{
-					<a href="http://track.vitebsk.energo.by">
-						<span class="material-icons" style="color: #8bc34a;">local_shipping</span> Трекер автотранспорта
-					</a>
-				}
-				@if (user.Groups.Contains("group_violations"))
-				{
-					<a href="~/violations/">
-						<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
-					</a>
-				}
 				@{
 					var q1 = from record in db.AccidentsRecords
 							 from recordList in db.AccidentsRecordsLists.LeftJoin(x => x.RecordId == record.Id)
@@ -235,20 +131,71 @@
 					var notViewedAccidents = q1.Count();
 
 					<a href="@Url.Action("", "accidents")">
-						<span class="material-icons" style="color: #ff5722;">info</span> Информационные сообщения
+						<span class="material-icons" style="color: #37d953;">info</span> Информационные сообщения
 						@if (notViewedAccidents > 0)
 						{
 							<i class="counter">@notViewedAccidents</i>
 						}
 					</a>
 				}
-
 				@if (user.Groups.Contains("group_orders"))
 				{
 					<a href="@Url.Action("", "orders")">
-						<span class="material-icons" style="color: #795548;">list_alt</span> План работ
+						<span class="material-icons" style="color: #1fbbbb;">list_alt</span> План работ
 					</a>
 				}
+				@if (user.Groups.Contains("group_pto") || user.Groups.Contains("group_boss") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_tb") || user.UName == "tai_duty" || user.UName == "gcu_user" || user.UName == "elec_duty" || user.UName == "el_mast" || user.UName == "el_mast2")
+				{<a href="http://web.vst.vitebsk.energo.net/mnemo/#TEC_osn_oborud">
+						<span class="material-icons" style="color: #189dc5;">view_column</span> Схема основного оборудования ТЭЦ
+					</a>
+					<a href="http://web.vst.vitebsk.energo.net/mnemonica/el_main">
+						<span class="material-icons" style="color: #3a7ffd;">bolt</span> Главная электрическая схема ТЭЦ
+					</a>
+				}
+				@if (user.Groups.Contains("group_uchet") || user.Groups.Contains("group_ASUP"))
+				{
+					<a href="http://info.energo.net:9858/Home/Identificate">
+						<span class="material-icons" style="color: #0546bd;">cast</span> Каскад
+					</a>
+					<a href="http://info.energo.net:8088/Home/Vitebsktc">
+						<span class="material-icons" style="color: #0546bd;">cast</span> 777
+					</a>
+				}
+				<a href="~/auto/">
+					<span class="material-icons" style="color: #6b3ef7;">phone_in_talk</span> Заявки на автомобиль
+				</a>
+				@if ("gen gen_zam eng_gen eng_zam".Contains(user.UName) || user.Groups.Contains("group_ttc") || user.Groups.Contains("group_ASUP"))
+				{
+					<a href="http://track.vitebsk.energo.by">
+						<span class="material-icons" style="color: #913bdf;">local_shipping</span> Трекер автотранспорта
+					</a>
+				}
+				<a href="~/site/birthdays/">
+					<span class="material-icons" style="color: #cd27c8;">cake</span> Дни рождений
+				</a>
+				@if (user.Groups.Contains("group_inet") || user.Groups.Contains("group_inet_restricted") || user.Groups.Contains("group_gen"))
+				{
+					<a href="http://frw.vst.vitebsk.energo.net:4080/login/?NTLM=1">
+						<span class="material-icons" style="color: #d40062;">language</span> Просмотр интернет статистики
+					</a>
+					<script>
+						try {
+							var xhr = new XMLHttpRequest()
+							xhr.open('GET', 'http://frw.vst.vitebsk.energo.net:4080/internal/ntlm/dologin.php?', true)
+							xhr.withCredentials = true
+							xhr.send()
+						} catch (e) { }
+					</script>
+				}
+				@*@if (user.Groups.Contains("group_violations"))
+				{
+					<a href="~/violations/">
+						<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
+					</a>
+				}*@
+				@*<a href="http://web.vst.vitebsk.energo.net:88">
+					<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
+				</a>*@
 			</div>
 		</div>
 
@@ -349,21 +296,6 @@
 				<div class="icon ic-save icon_hover" onclick="saveUserPanel()"></div>
 				<div class="icon ic-clear icon_hover" onclick="closeUserPanel()"></div>
 			</div>
-			<style>
-				.closed span {
-					padding: 2px;
-					display: block;
-				}
-
-				.closed input, .closed div, .opened span {
-					display: none;
-				}
-
-				.opened input {
-					width: 80%;
-					margin-right: 2px;
-				}
-			</style>
 			<script>
 				function openUserPanel() {
 					document.getElementById('user').className = 'opened';
@@ -386,40 +318,46 @@
 			</script>
 		</div>
 
-		<div class="widget">
-			<b>Действия</b>
-			<a class="widget_bottom_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
-			@if (user.UName == "vtg" || user.UName == "void")
-			{
-				<a class="widget_bottom_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
-			}
-			else if (user.UName == "esmal" || user.UName == "crow")
-			{
-				<a class="widget_bottom_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
-			}
-			<span class="widget_break"> </span>
-			<a class="widget_bottom_link" onclick="watchAllNews()">Отметить все новости как прочитанные</a>
-			<a class="widget_bottom_link" onclick="changeTheme()">Изменить цветовую схему сайта</a>
-			@using (var devin = new DatabaseLayer.Devin.DevinContext())
-			{
-				var printers = devin.Devices
-					.Where(x => x.Users.Contains(user.UName))
-					.ToList();
-
-				int numberOfPrinters = printers
-					.Where(x => x.Users.Split(';').Contains(user.UName))
-					.Count();
-
-				if (numberOfPrinters > 0 || user.IsAdmin)
+		<div class="widget" onclick="document.getElementById('actions').style.display = 'block'">
+			<div class="actions_button" title="Нажмите, чтобы увидеть список действий">
+				<span class="material-icons">api</span>
+				&emsp;
+				<b>Действия</b>
+			</div>
+			<div id="actions" onmouseleave="this.style.display = 'none'" onclick="this.style.display = 'none'">
+				<a class="widget_bottom_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
+				@if (user.UName == "vtg" || user.UName == "void")
 				{
-					<span class="widget_break"> </span>
-					if (numberOfPrinters > 0)
-					{
-						<a class="widget_bottom_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
-					}
-					<a class="widget_bottom_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
+					<a class="widget_bottom_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
 				}
-			}
+				else if (user.UName == "esmal" || user.UName == "crow")
+				{
+					<a class="widget_bottom_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
+				}
+				<span class="widget_break"> </span>
+				<a class="widget_bottom_link" onclick="watchAllNews()">Отметить все новости как прочитанные</a>
+				<a class="widget_bottom_link" onclick="changeTheme()">Изменить цветовую схему сайта</a>
+				@using (var devin = new DatabaseLayer.Devin.DevinContext())
+				{
+					var printers = devin.Devices
+						.Where(x => x.Users.Contains(user.UName))
+						.ToList();
+
+					int numberOfPrinters = printers
+						.Where(x => x.Users.Split(';').Contains(user.UName))
+						.Count();
+
+					if (numberOfPrinters > 0 || user.IsAdmin)
+					{
+						<span class="widget_break"> </span>
+						if (numberOfPrinters > 0)
+						{
+							<a class="widget_bottom_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
+						}
+						<a class="widget_bottom_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
+					}
+				}
+			</div>
 		</div>
 
 		<div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://asu.vst.vitebsk.energo.net/#/http://insql.vst.vitebsk.energo.net/mnemonica/sonar/'">
