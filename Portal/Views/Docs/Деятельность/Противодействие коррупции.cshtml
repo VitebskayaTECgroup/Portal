@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = "Противодействие коррупции";
-    Layout = "~/Views/Shared/_DocsLayout.cshtml";
+	ViewBag.Title = "Противодействие коррупции";
+	Layout = "~/Views/Shared/_DocsLayout.cshtml";
 
-    string parentPath = @"Деятельность\2. Противодействие коррупции\";
+	string parentPath = @"Деятельность\2. Противодействие коррупции\";
 }
 
 <style>
@@ -20,103 +20,110 @@
 			padding: 0 5px;
 		}
 
-        .corruptionDate textarea {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+		.corruptionDate textarea {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
 </style>
 
 @using (var db = new SiteContext())
 {
-    var win = Request.Cookies.Get("win");
-    var user = db.Authorize(win?.Value ?? "guest");
+	var win = Request.Cookies.Get("win");
+	var user = db.Authorize(win?.Value ?? "guest");
 
-    var corruptionDate = db.Constants
-        .Where(x => x.Keyword == "CorruptionDate")
-        .Select(x => x.Value)
-        .FirstOrDefault();
+	var corruptionDate = db.Constants
+		.Where(x => x.Keyword == "CorruptionDate")
+		.Select(x => x.Value)
+		.FirstOrDefault();
 
-    var corruptionTarget = db.Constants
-        .Where(x => x.Keyword == "CorruptionTarget")
-        .Select(x => x.Value)
-        .FirstOrDefault();
+	var corruptionTarget = db.Constants
+		.Where(x => x.Keyword == "CorruptionTarget")
+		.Select(x => x.Value)
+		.FirstOrDefault();
 
-    <div class="corruptionDate">
-        @if (user.UName == "uri" || user.UName == "void" || user.UName == "kadry" || user.UName == "speckadr")
-        {
-            <div>
-                <span>Дата следующего заседания комиссии по противодействию коррупции</span>
-                <input id="date" class="datepick" value="@corruptionDate" style="width: 6em; padding: .25em .5em"/>
-            </div>
-            <div>
-                <span>Повестка дня</span>
-                <br />
-                <textarea id="target" rows="5" style="width: 50em;">@corruptionTarget</textarea>
-            </div>
+	<div class="corruptionDate">
+		@if (user.UName == "uri" || user.UName == "void" || user.UName == "kadry" || user.UName == "speckadr")
+		{
+			<div>
+				<span>Дата следующего заседания комиссии по противодействию коррупции</span>
+				<input id="date" class="datepick" value="@corruptionDate" style="width: 6em; padding: .25em .5em" />
+			</div>
+			<div>
+				<span>Повестка дня</span>
+				<br />
+				<textarea id="target" rows="5" style="width: 50em;">@corruptionTarget</textarea>
+			</div>
 
-            <button onclick="save()">Сохранить</button>
+			<button onclick="save()">Сохранить</button>
 
-            <link rel="stylesheet" href="~/Content/lib/widgets/datepicker.css" />
-            <script src="~/Content/lib/widgets/datepicker.js"></script>
-            <script>
-                    new DatePicker({
-                        el: '#date'
-                    })
+			<link rel="stylesheet" href="~/Content/lib/widgets/datepicker.css" />
+			<script src="~/Content/lib/widgets/datepicker.js"></script>
+			<script>
+					new DatePicker({
+						el: '#date'
+					})
 
-                    function save() {
-                        var form = new FormData()
-                        form.append('date', document.getElementById('date').value)
-                        form.append('target', document.getElementById('target').value)
+					function save() {
+						var form = new FormData()
+						form.append('date', document.getElementById('date').value)
+						form.append('target', document.getElementById('target').value)
 
-                        fetch('@Url.Action("CorruptionDateUpdate", "Site")', { method: 'POST', body: form })
-                            .then(res => res.text())
-                            .then(text => alert(text))
-                    }
-            </script>
-        }
-        else
-        {
-            <div>
-                <span>Дата следующего заседания комиссии по противодействию коррупции: @corruptionDate</span>
-            </div>
-            <div>
-                <span>Повестка дня: @corruptionTarget</span>
-            </div>
-        }
-    </div>
+						fetch('@Url.Action("CorruptionDateUpdate", "Site")', { method: 'POST', body: form })
+							.then(res => res.text())
+							.then(text => alert(text))
+					}
+			</script>
+		}
+		else
+		{
+			<div>
+				<span>Дата следующего заседания комиссии по противодействию коррупции: @corruptionDate</span>
+			</div>
+			<div>
+				<span>Повестка дня: @corruptionTarget</span>
+			</div>
+		}
+	</div>
 }
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-    Name = "Нормативно-правовые акты",
-    RelativePath = parentPath + "НПА\\",
+	Name = "Материалы",
+	RelativePath = parentPath + "Материалы\\",
+	WriteImageBox = true
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-    Name = "Руководящие документы",
-    RelativePath = parentPath + "Руководящие документы\\",
+	Name = "Нормативно-правовые акты",
+	RelativePath = parentPath + "НПА\\",
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-    Name = "Планы меропритий по противодействию коррупции в филиале (основной и текущий) и график работы комиссии",
-    RelativePath = parentPath + "Планы меропритий по противодействию коррупции в филиале (основной и текущий) и график работы комиссии\\",
+	Name = "Руководящие документы",
+	RelativePath = parentPath + "Руководящие документы\\",
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-    Name = "Протоколы комиссии",
-    RelativePath = parentPath + "Протоколы комиссии\\",
+	Name = "Планы меропритий по противодействию коррупции в филиале (основной и текущий) и график работы комиссии",
+	RelativePath = parentPath + "Планы меропритий по противодействию коррупции в филиале (основной и текущий) и график работы комиссии\\",
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-    Name = "Сообщения в СМИ и других источниках о фактах коррупции",
-    RelativePath = parentPath + "Сообщения в СМИ и других источниках о фактах коррупции\\",
+	Name = "Протоколы комиссии",
+	RelativePath = parentPath + "Протоколы комиссии\\",
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-    Name = "Состав комиссии по противодействию коррупции в филиале",
-    RelativePath = parentPath + "Состав комиссии по противодействию коррупции в филиале\\",
+	Name = "Сообщения в СМИ и других источниках о фактах коррупции",
+	RelativePath = parentPath + "Сообщения в СМИ и других источниках о фактах коррупции\\",
+})
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+	Name = "Состав комиссии по противодействию коррупции в филиале",
+	RelativePath = parentPath + "Состав комиссии по противодействию коррупции в филиале\\",
 })

@@ -37,7 +37,7 @@
 				if (Model.WriteImageBox)
 				{
 					<div class="imager">
-						<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" />
+						<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" onclick="" />
 						@if (Model.WriteImageCaptions)
 						{
 							<span>@text</span>
@@ -57,6 +57,7 @@
 			{
 				<div class="link">
 					<b>@entry.Date.ToString("dd.MM.yyyy")</b>
+					<span><span class="link_type">@type</span></span>
 					<a href="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)">@text</a>
 				</div>
 			}
@@ -82,7 +83,9 @@
 				if (Model.WriteImageBox)
 				{
 					<div class="imager">
-						<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" />
+						<a href="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" target="_blank">
+							<img src="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)" title="@text" />
+						</a>
 						@if (Model.WriteImageCaptions)
 						{
 							<span>@text</span>
@@ -101,6 +104,7 @@
 			else if ("doc docx pdf rtf".Contains(type))
 			{
 				<div class="link">
+					<span><span class="link_type">@type</span></span>
 					<a href="http://www.vst.vitebsk.energo.net/files/Одно окно/@(Model.RelativePath.Replace("\\", "/") + name)">@text</a>
 				</div>
 			}
