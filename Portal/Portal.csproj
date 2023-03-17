@@ -547,7 +547,6 @@
     <Content Include="Views\Docs\Обращения\Запись на прием.cshtml" />
     <Content Include="Views\Docs\Обращения\Нормативно-правовые акты.cshtml" />
     <Content Include="Views\Docs\Обращения\Порядок рассмотрения.cshtml" />
-    <Content Include="Views\Docs\Обращения\Электронное обращение.cshtml" />
     <Content Include="Views\News\Edit.cshtml" />
     <Content Include="Views\News\Index.cshtml" />
     <Content Include="Views\Phonebook\Index.cshtml" />
