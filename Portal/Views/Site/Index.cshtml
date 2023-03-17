@@ -37,35 +37,30 @@
 					</table>
 				</div>
 				<div class="menu_body" id="admins">
-					<a href="https://10.178.97.9">
-						<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
+					@*<a href="https://10.178.97.9">
+			<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
+		</a>
+		<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
+			<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
+		</a>*@
+
+					<a href="https://frw.vst.vitebsk.energo.net:4081/admin">
+						<span class="material-icons" style="color: #e73a27;">security</span> Kerio Control
 					</a>
 					<a href="http://jabber.vst.vitebsk.energo.net:9090/login.jsp?url=%2Findex.jsp">
-						<span class="material-icons" style="color: #9c27b0">headset_mic</span> Openfire
-					</a>
-					@*<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
-						<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
-					</a>*@
-					<a href="http://develop.vst.vitebsk.energo.net/">
-						<span class="material-icons" style="color: #7867ff;">send</span> Logger
-					</a>
-					<a href="https://frw.vst.vitebsk.energo.net:4081/admin">
-						<span class="material-icons" style="color: #2196f3">security</span> Kerio Control
-					</a>
-					<a href="http://remote.vst.vitebsk.energo.net:8080">
-						<span class="material-icons" style="color: #00bcd4">call</span> OnCell Central Manager
-					</a>
-					<a href="https://backup.vst.vitebsk.energo.net:10001/ui/">
-						<span class="material-icons" style="color: #009688">backup</span> BACKUP vCenter Server
+						<span class="material-icons" style="color: #f47431;">headset_mic</span> Openfire
 					</a>
 					<a href="http://www.vst.vitebsk.energo.net/devin/devices/">
-						<span class="material-icons" style="color: #4caf50">album</span> DEVIN
+						<span class="material-icons" style="color: #e6b451;">desktop_windows</span> DEVIN
 					</a>
-					<a href="http://www.vst.vitebsk.energo.net/scanlan">
-						<span class="material-icons" style="color: #909e00">wifi_tethering</span> ScanLan
+					<a href="@Url.Action("", "admin")">
+						<span class="material-icons" style="color: #16c94d;">admin_panel_settings</span> Настройки сайта
+					</a>
+					<a href="https://backup.vst.vitebsk.energo.net:10001/ui/">
+						<span class="material-icons" style="color: #6abeff;">backup</span> BACKUP vCenter Server
 					</a>
 					<a onclick="document.getElementById('opc_panel').style.display = 'block'">
-						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC
+						<span class="material-icons" style="color: #129fca;">gamepad</span> iNOPC
 					</a>
 					<div id="opc_panel" onclick="document.getElementById('opc_panel').style.display = 'none'" onmouseleave="document.getElementById('opc_panel').style.display = 'none'">
 						<a href="http://alpha.vst.vitebsk.energo.net:81">ALPHA</a>
@@ -73,15 +68,18 @@
 						<a href="http://opc.vst.vitebsk.energo.net:81">OPC</a>
 						<a href="http://remote.vst.vitebsk.energo.net:81">REMOTE</a>
 					</div>
+					<a href="http://develop.vst.vitebsk.energo.net/">
+						<span class="material-icons" style="color: #0074d5; ">send</span> Logger
+					</a>
+					<a href="http://www.vst.vitebsk.energo.net/scanlan">
+						<span class="material-icons" style="color: #b270ed;">wifi_tethering</span> ScanLan
+					</a>
 					@*<a href="http://ic1.vst.vitebsk.energo.net:81/">
-						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
-					</a>
-					<a href="http://ups.vst.vitebsk.energo.net:81/">
-						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
-					</a>*@
-					<a href="@Url.Action("", "admin")">
-						<span class="material-icons">admin_panel_settings</span> Настройки сайта
-					</a>
+			<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
+		</a>
+		<a href="http://ups.vst.vitebsk.energo.net:81/">
+			<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
+		</a>*@
 				</div>
 			</div>
 		}
@@ -134,7 +132,11 @@
 						<span class="material-icons" style="color: #37d953;">info</span> Информационные сообщения
 						@if (notViewedAccidents > 0)
 						{
-							<i class="counter">@notViewedAccidents</i>
+							<i class="counter" title="Есть непросмотренные сообщения">@notViewedAccidents</i>
+						}
+						else
+						{
+							<i title="Всё просмотрено!" style="display: inline-block; position: relative; top: -.5em;"><span class="material-icons" style="color: #20b332; font-size: 18px;">done</span></i>
 						}
 					</a>
 				}
