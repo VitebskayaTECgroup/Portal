@@ -134,8 +134,8 @@ namespace Portal.Areas.Directive.Controllers
 						.Where(x => x.Id == id)
 						.Delete();
 
-					if (Directory.Exists(@"\\web\files\Директива №1\" + id))
-						Directory.Delete(@"\\web\files\Директива №1\" + id, true);
+					//if (Directory.Exists(@"\\web\files\Директива №1\" + id))
+						//Directory.Delete(@"\\web\files\Директива №1\" + id, true);
 
 					db.Insert(new DirectiveLog
 					{
