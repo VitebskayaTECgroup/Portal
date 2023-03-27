@@ -80,15 +80,15 @@
 				text-align: center;
 			}
 
-			.theme_black .content .link > span > span {
-				width: 3em;
-				display: inline-block;
-				border: 1px solid #999;
-				background: #999;
-				color: #000;
-				border-radius: 5px;
-				text-align: center;
-			}
+.theme_black .content .link > span > span {
+	width: 3em;
+	display: inline-block;
+	border: 1px solid #555;
+	background: #333;
+	color: #fff;
+	border-radius: 5px;
+	text-align: center;
+}
 
 	.content .link a:hover {
 		text-decoration: underline;
