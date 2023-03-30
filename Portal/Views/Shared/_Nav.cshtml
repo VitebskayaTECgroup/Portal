@@ -1,4 +1,9 @@
-﻿<div class="nav">
+﻿@{ 
+	bool onlyIntranet = ViewBag.OnlyIntranet ?? false;
+	bool hasUnseenDirectiveDocuments = ViewBag.HasUnseenDirectiveDocuments ?? false;
+}
+
+<div class="nav">
 	<a href="~/">ГЛАВНАЯ</a>
 	<div class="nav_block">
 		<a>О ФИЛИАЛЕ</a>
@@ -35,9 +40,12 @@
 			<a href="~/docs/Административные_процедуры/Нормативно-правовые_акты/">Нормативно-правовые акты</a>
 		</div>
 	</div>
+	@if (onlyIntranet)
+	{
 	<div class="nav_block">
-		<a href="~/directive">ДИРЕКТИВА №1</a>
+		<a href="~/directive">ДИРЕКТИВА №1<span id="directive-new" style="margin-left: 5px; color: #ff4700; text-shadow: 0 0 10px #ff4700; display: @(hasUnseenDirectiveDocuments ? "inline" : "none");">new</span></a>
 	</div>
+	}
 	<div class="nav_block">
 		<a>ДЕЯТЕЛЬНОСТЬ</a>
 		<div>

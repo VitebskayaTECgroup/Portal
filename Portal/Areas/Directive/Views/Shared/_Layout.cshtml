@@ -42,17 +42,25 @@
 		<a class="link back" href="~/directive">
 			<span icon>menu</span> К содержанию
 		</a>
+		<div class="right-links">
+			@RenderSection("links", false)
+		</div>
 	}
 	else
 	{
 		<a class="link back" href="~/site/">
 			<span icon>home</span> На главную
 		</a>
-		<a class="link admin" href="~/directive/search">
-			<span icon>search</span> Поиск
-		</a>
+		<div class="right-links">
+			<a class="link admin" href="~/directive/search">
+				<span icon>search</span> Поиск
+			</a>
+			@RenderSection("links", false)
+		</div>
+		
 	}
-	@RenderSection("links", false)
+
+
 
 	<div class="content-center">
 		@RenderBody()

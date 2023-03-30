@@ -11,7 +11,13 @@
 	{
 		<a href="~/directive/page/@page.Url">
 			<img src="~/Areas/Directive/Content/images/@(page.Url).png" />
-			<span>@page.Caption</span>
+			<span>
+				@page.Caption
+				@if (page.HasUnviewedDocs)
+				{
+					<span class="new" style="display: inline-block;">new</span>
+				}
+			</span>
 		</a>
 	}
 </div>

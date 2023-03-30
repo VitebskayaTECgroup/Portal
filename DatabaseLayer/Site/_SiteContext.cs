@@ -97,6 +97,9 @@ namespace DatabaseLayer.Site
 		public ITable<UsersToPages> UsersToPages
 			=> GetTable<UsersToPages>();
 
+		public ITable<DirectiveDocumentView> DirectiveDocumentsViews
+			=> GetTable<DirectiveDocumentView>();
+
 		// Час ТБ
 
 		public ITable<AccidentRecord> AccidentsRecords

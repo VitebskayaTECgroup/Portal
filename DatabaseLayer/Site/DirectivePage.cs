@@ -27,8 +27,12 @@ namespace DatabaseLayer.Site
 
 		public bool IsAdmin { get; set; } = false;
 
+		public bool HasUnviewedDocs { get; set; } = false;
+
 		public List<User> Redactors { get; set; } = new List<User>();
 
 		public List<DirectiveSection> Sections { get; set; } = new List<DirectiveSection>();
+
+		public List<int> Viewed { get; set;} = new List<int>();
 	}
 }

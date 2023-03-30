@@ -23,6 +23,30 @@ namespace Portal.Areas.Directive.Controllers
 						.Where(x => string.IsNullOrEmpty(x.AllowedGroup) || user.GroupsArray.Contains(x.AllowedGroup))
 						.ToList();
 
+					var viewedDocuments = db.DirectiveDocumentsViews
+						.Where(x => x.UserId == user.UID)
+						.Select(x => x.DocumentId)
+						.ToList();
+
+					var unviewedSections = db.DirectiveDocuments
+						.Where(x => !viewedDocuments.Contains(x.Id))
+						.Select(x => x.SectionId)
+						.ToList()
+						.Distinct();
+
+					foreach (var page in pages)
+					{
+						var sectionsId = db.DirectiveSections
+							.Where(x => x.PageId == page.Id)
+							.Select(x => x.Id)
+							.ToList();
+
+						if (sectionsId.Count(x => unviewedSections.Contains(x)) > 0)
+						{
+							page.HasUnviewedDocs = true;
+						}
+					}
+
 					db.Insert(new DirectiveLog
 					{
 						Text = "Пользователь " + (user.DisplayName ?? user.UName) + " перешел на корневой раздел",
@@ -87,14 +111,93 @@ namespace Portal.Areas.Directive.Controllers
 							.ToList();
 					}
 
+					page.Viewed = db.DirectiveDocumentsViews
+						.Where(x => x.UserId == user.UID)
+						.Select(x => x.DocumentId)
+						.ToList();
+
 					db.Insert(new DirectiveLog
 					{
 						Text = "Пользователь " + (user.DisplayName ?? user.UName) 
 						+ " перешел в раздел [" + page.Id + "] \"" + page.Caption 
-						+ "\" как " + (page.IsRedactor ? "редактор" : "пользователь"),
+						+ "\" как пользователь",
 					});
 
-					return View(page.IsRedactor ? "Redactor" : "Page", page);
+					return View("Page", page);
+				}
+			}
+			catch (Exception e)
+			{
+				return Content("Произошла ошибка!\n" + e.Message);
+			}
+		}
+
+		public ActionResult Redactor(string pageName)
+		{
+			try
+			{
+				using (var db = new SiteContext())
+				{
+					var user = db.Authorize(User);
+
+					var page = db.DirectivePages
+						.Where(x => x.Url == pageName)
+						.FirstOrDefault();
+
+					if (page == null)
+						return Content("Раздел с таким наименованием не определён");
+
+					if (!string.IsNullOrEmpty(page.AllowedGroup))
+					{
+						if (!user.GroupsArray.Contains(page.AllowedGroup.ToLower()))
+							return Content(//"Page: " + pageName + "\n" +
+										   //"AllowedGroup: " + page.AllowedGroup + "\n" +
+										   //"GroupsArray: " + string.Join(" ", user.GroupsArray) + "\n" +
+								"Доступ запрещён");
+					}
+
+					var redactors = db.UsersToPages
+						.Where(x => x.PageId == page.Id)
+						.Select(x => x.UID);
+
+					page.Redactors = db.Users
+						.Where(x => redactors.Contains(x.UID))
+						.ToList();
+
+					page.IsRedactor = db.UsersToPages
+						.Count(x => x.UID == user.UID && x.PageId == page.Id) > 0;
+
+					if (!page.IsRedactor)
+						return Content("Нет доступа к редактированию");
+
+					page.IsAdmin = user.IsAdmin;
+
+					page.Sections = db.DirectiveSections
+						.Where(x => x.PageId == page.Id)
+						.OrderBy(x => x.OrderValue)
+						.ToList();
+
+					foreach (var sect in page.Sections)
+					{
+						sect.Documents = db.DirectiveDocuments
+							.Where(x => x.SectionId == sect.Id)
+							.OrderBy(x => x.OrderValue)
+							.ToList();
+					}
+
+					page.Viewed = db.DirectiveDocumentsViews
+						.Where(x => x.UserId == user.UID)
+						.Select(x => x.DocumentId)
+						.ToList();
+
+					db.Insert(new DirectiveLog
+					{
+						Text = "Пользователь " + (user.DisplayName ?? user.UName)
+						+ " перешел в раздел [" + page.Id + "] \"" + page.Caption
+						+ "\" как редактор",
+					});
+
+					return View("Redactor", page);
 				}
 			}
 			catch (Exception e)

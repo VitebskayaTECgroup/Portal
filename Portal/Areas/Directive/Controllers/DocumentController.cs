@@ -62,6 +62,12 @@ namespace Portal.Areas.Directive.Controllers
 						WhenUpdated = DateTime.Now,
 					});
 
+					db.DirectiveDocumentsViews
+						.Value(x => x.UserId, user.UID)
+						.Value(x => x.DocumentId, id)
+						.Value(x => x.WhenSeen, DateTime.Now)
+						.Insert();
+
 					db.Insert(new DirectiveLog
 					{
 						Text = "Пользователь " + (user.DisplayName ?? user.UName)
@@ -178,6 +184,32 @@ namespace Portal.Areas.Directive.Controllers
 						Text = "Пользователь " + (user.DisplayName ?? user.UName)
 						+ " удалил файл [" + id + "] c наименованием \"" + oldName + "\"",
 					});
+
+					return Content("done");
+				}
+			}
+			catch (Exception e)
+			{
+				return Content("Произошла ошибка!\n" + e.Message);
+			}
+		}
+
+		public ActionResult SetViewed(int docId)
+		{
+			try
+			{
+				using (var db = new SiteContext())
+				{
+					var user = db.Authorize(User);
+
+					if (!db.DirectiveDocumentsViews.Any(x => x.UserId == user.UID && x.DocumentId == docId))
+					{
+						db.DirectiveDocumentsViews
+							.Value(x => x.UserId, user.UID)
+							.Value(x => x.DocumentId, docId)
+							.Value(x => x.WhenSeen, DateTime.Now)
+							.Insert();
+					}
 
 					return Content("done");
 				}

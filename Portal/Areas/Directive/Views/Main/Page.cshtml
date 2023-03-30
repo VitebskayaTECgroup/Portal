@@ -4,9 +4,11 @@
 	Layout = "~/Areas/Directive/Views/Shared/_Layout.cshtml";
 }
 
-@if (Model.IsAdmin)
-{
-	@section links {
+
+@section links {
+	<a class="link admin" href="~/directive/redactor/@Model.Url">Редактировать</a>
+	@if (Model.IsAdmin)
+	{
 		<a class="link admin" href="~/directive/admin/@Model.Id">Настройка</a>
 	}
 }
@@ -17,9 +19,10 @@
 	<div id="sections">
 		@foreach (var sect in Model.Sections)
 		{
-			bool isExpanded = (Request.Cookies[ "expand" + sect.Id ]?.Value ?? "") == "1";
+			bool isExpanded = (Request.Cookies["expand" + sect.Id]?.Value ?? "") == "1";
+			bool hasUnviewed = sect.Documents.Count(x => !Model.Viewed.Contains(x.Id)) > 0;
 
-			<div class="section" data-id="@sect.Id">
+			<div class="section @(hasUnviewed ? "new-section" : "")" data-id="@sect.Id">
 				<div class="caption">
 
 					<span btn icon
@@ -31,16 +34,32 @@
 						  toggle-el="expand@(sect.Id)"
 						  style="@(isExpanded ? "" : "display: none;")">expand_less</span>
 
-					<span>@sect.Caption</span>
+					<span>
+						@if (hasUnviewed)
+						{
+							<span class="new">new</span>
+						}
+						@sect.Caption
+					</span>
 				</div>
 				<div class="files no-hover files-sort" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
 					@if (sect.Documents.Count > 0)
 					{
 						foreach (var doc in sect.Documents.Where(x => x != null))
 						{
-							<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
-								<a href="@doc.FileUrl">@doc.Name</a>
-							</div>
+							if (!Model.Viewed.Contains(doc.Id))
+							{
+								<div class="file new-document" data-id="@doc.Id" data-order="@doc.OrderValue" onmouseover="setViewed(this, @doc.Id)">
+									<span class="new observe">new</span>
+									<a href="@doc.FileUrl">@doc.Name</a>
+								</div>
+							}
+							else
+							{
+								<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
+									<a href="@doc.FileUrl">@doc.Name</a>
+								</div>
+							}
 						}
 					}
 				</div>
@@ -61,4 +80,18 @@
 	</div>
 
 	<div></div>
+
+	<script>
+		function setViewed(el, docId) {
+			fetch('@Url.Action("SetViewed", "Document")?docId=' + docId)
+			el.removeAttribute('onmouseover')
+			el.classList.remove('new-document')
+			var section = el.closest('.new-section')
+			if (section) {
+				if (section.querySelectorAll('.new-document').length == 0) {
+					section.classList.remove('new-section')
+				}
+			}
+		}
+	</script>
 </div>

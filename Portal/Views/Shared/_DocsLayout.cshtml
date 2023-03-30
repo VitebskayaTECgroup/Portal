@@ -2,6 +2,21 @@
 	int r = new Random().Next();
 	string theme = Request.Cookies.Get("theme")?.Value ?? "white";
 	if (theme == "") { theme = "white"; }
+
+	bool onlyIntranet = ViewBag.OnlyIntranet;
+
+	if (onlyIntranet)
+	{
+		using (var db = new SiteContext())
+		{
+			var user = db.Authorize(User);
+
+			var viewed = db.DirectiveDocumentsViews.Where(x => x.UserId == user.UID).Select(x => x.DocumentId).ToList();
+			var hasUnseenDirectiveDocuments = db.DirectiveDocuments.Where(x => !viewed.Contains(x.Id)).Any();
+
+			ViewBag.HasUnseenDirectiveDocuments = hasUnseenDirectiveDocuments;
+		}
+	}
 }
 <!DOCTYPE html>
 <html>

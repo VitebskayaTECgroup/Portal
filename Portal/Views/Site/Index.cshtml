@@ -7,6 +7,7 @@
 
 	var random = new Random();
 	bool open;
+	bool hasUnseenDirectiveDocuments = false;
 }
 
 @section styles {
@@ -23,6 +24,9 @@
 		values[constant.Keyword] = constant.Value;
 	}
 
+	var viewed = db.DirectiveDocumentsViews.Where(x => x.UserId == user.UID).Select(x => x.DocumentId).ToList();
+	hasUnseenDirectiveDocuments = db.DirectiveDocuments.Where(x => !viewed.Contains(x.Id)).Any();
+
 	<div class="layout_left">
 		@if (user.IsAdmin)
 		{
@@ -38,11 +42,11 @@
 				</div>
 				<div class="menu_body" id="admins">
 					@*<a href="https://10.178.97.9">
-			<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
-		</a>
-		<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
-			<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
-		</a>*@
+							<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
+						</a>
+						<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
+							<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
+						</a>*@
 
 					<a href="https://frw.vst.vitebsk.energo.net:4081/admin">
 						<span class="material-icons" style="color: #e73a27;">security</span> Kerio Control
@@ -75,11 +79,11 @@
 						<span class="material-icons" style="color: #b270ed;">wifi_tethering</span> ScanLan
 					</a>
 					@*<a href="http://ic1.vst.vitebsk.energo.net:81/">
-			<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
-		</a>
-		<a href="http://ups.vst.vitebsk.energo.net:81/">
-			<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
-		</a>*@
+							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
+						</a>
+						<a href="http://ups.vst.vitebsk.energo.net:81/">
+							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
+						</a>*@
 				</div>
 			</div>
 		}
@@ -193,14 +197,14 @@
 					</script>
 				}
 				@*@if (user.Groups.Contains("group_violations"))
-				{
-					<a href="~/violations/">
-						<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
-					</a>
-				}*@
+					{
+						<a href="~/violations/">
+							<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
+						</a>
+					}*@
 				@*<a href="http://web.vst.vitebsk.energo.net:88">
-					<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
-				</a>*@
+						<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
+					</a>*@
 			</div>
 		</div>
 
@@ -631,4 +635,11 @@
 				})
 		}
 	</script>
+	@if (hasUnseenDirectiveDocuments)
+	{
+		<script>
+			var directiveNew = document.getElementById('directive-new')
+			if (directiveNew) directiveNew.style.display = 'inline'
+		</script>
+	}
 }

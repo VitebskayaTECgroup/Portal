@@ -81,9 +81,17 @@ header {
 	top: .2em;
 }
 
-.admin {
+.right-links {
+	position: absolute;
+	background: #fff;
 	top: .2em;
 	right: .2em;
+	display: flex;
+	z-index: 1;
+}
+
+.right-links > a {
+	position: relative;
 }
 
 /*#endregion*/
@@ -160,18 +168,19 @@ header {
 
 .section:first-child {
 	/* Табличный режим */
-	border-top: 1px solid #ccc;
+	/*border-top: 1px solid #ccc;*/
 }
 
 .section {
 	margin-bottom: 1em;
-	padding: .2em 0;
+	/*padding: .2em 0;*/
+	padding: 1em 0;
 	background: #fff;
 	
 	/* Табличный режим */
-	border: 1px solid #ccc;
-	border-top: 0;
-	margin-bottom: 0;
+	/*border: 1px solid #ccc;
+	border-top: 0;*/
+	/*margin-bottom: 0;*/
 	border-collapse: collapse;
 }
 
@@ -241,6 +250,21 @@ header {
 
 .sign span {
 	font-weight: 500;
+}
+
+.new {
+	color: #ff4700;
+	text-shadow: 0 0 10px #ff4700;
+	display: none;
+}
+
+.new-document .new,
+.new-section .caption .new {
+	display: inline;
+}
+
+.caption .new {
+	font-size: .9em;
 }
 
 .black .container {

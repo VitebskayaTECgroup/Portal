@@ -45,6 +45,13 @@ namespace Portal.Areas.Directive
 				action = "Page",
 				pageName = UrlParameter.Optional
 			});
+
+			context.MapRoute("Redactors", "directive/redactor/{pageName}", new
+			{
+				controller = "Main",
+				action = "Redactor",
+				pageName = UrlParameter.Optional
+			});
 		}
 	}
 }

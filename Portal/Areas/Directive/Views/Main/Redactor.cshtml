@@ -4,12 +4,11 @@
 	Layout = "~/Areas/Directive/Views/Shared/_Layout.cshtml";
 }
 
-@if (Model.IsAdmin)
-{
-	@section links {
-		<a class="link admin" href="~/directive/admin/@Model.Id">
-			<span icon>settings</span> Настройка
-		</a>
+@section links {
+	<a class="link admin" href="~/directive/page/@Model.Url">К просмотру</a>
+	@if (Model.IsAdmin)
+	{
+		<a class="link admin" href="~/directive/admin/@Model.Id">Настройка</a>
 	}
 }
 
@@ -24,7 +23,7 @@
 	<div id="sections">
 		@foreach (var sect in Model.Sections)
 		{
-			bool isExpanded = (Request.Cookies[ "expand" + sect.Id ]?.Value ?? "") == "1";
+			bool isExpanded = (Request.Cookies["expand" + sect.Id]?.Value ?? "") == "1";
 
 			<div class="section" data-id="@sect.Id">
 				<div class="caption">
