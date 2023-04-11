@@ -193,5 +193,40 @@ namespace DatabaseLayer.Site
 				}
 			}
 		}
+
+		public bool HasUnviewedDocsInDirective(User user)
+		{
+			var pages = DirectivePages
+				.OrderBy(x => x.OrderValue)
+				.Where(x => string.IsNullOrEmpty(x.AllowedGroup) || user.GroupsArray.Contains(x.AllowedGroup))
+				.Select(x => x.Id)
+				.ToList();
+
+			var viewedDocuments = DirectiveDocumentsViews
+				.Where(x => x.UserId == user.UID)
+				.Select(x => x.DocumentId)
+				.ToList();
+
+			var unviewedSections = DirectiveDocuments
+				.Where(x => !viewedDocuments.Contains(x.Id))
+				.Select(x => x.SectionId)
+				.ToList()
+				.Distinct();
+
+			foreach (var pageId in pages)
+			{
+				var sectionsId = DirectiveSections
+					.Where(x => x.PageId == pageId)
+					.Select(x => x.Id)
+					.ToList();
+
+				if (sectionsId.Count(x => unviewedSections.Contains(x)) > 0)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
 	}
 }

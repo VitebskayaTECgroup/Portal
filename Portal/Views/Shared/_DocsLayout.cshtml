@@ -10,9 +10,7 @@
 		using (var db = new SiteContext())
 		{
 			var user = db.Authorize(User);
-
-			var viewed = db.DirectiveDocumentsViews.Where(x => x.UserId == user.UID).Select(x => x.DocumentId).ToList();
-			var hasUnseenDirectiveDocuments = db.DirectiveDocuments.Where(x => !viewed.Contains(x.Id)).Any();
+			var hasUnseenDirectiveDocuments = db.HasUnviewedDocsInDirective(user);
 
 			ViewBag.HasUnseenDirectiveDocuments = hasUnseenDirectiveDocuments;
 		}

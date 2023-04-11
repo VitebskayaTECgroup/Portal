@@ -24,8 +24,7 @@
 		values[constant.Keyword] = constant.Value;
 	}
 
-	var viewed = db.DirectiveDocumentsViews.Where(x => x.UserId == user.UID).Select(x => x.DocumentId).ToList();
-	hasUnseenDirectiveDocuments = db.DirectiveDocuments.Where(x => !viewed.Contains(x.Id)).Any();
+	hasUnseenDirectiveDocuments = db.HasUnviewedDocsInDirective(user);
 
 	<div class="layout_left">
 		@if (user.IsAdmin)
