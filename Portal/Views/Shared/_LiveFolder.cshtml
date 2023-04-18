@@ -13,6 +13,7 @@
 	string absolutePath = @"\\web\Files\Одно окно\" + Model.RelativePath;
 	var files = System.IO.Directory
 		.GetFiles(absolutePath)
+		.Where(x => !x.Contains("~$"))
 		.Select(x => new FileInfo(x))
 		.OrderByDescending(x => x.LastWriteTime)
 		.ToList();
@@ -76,7 +77,7 @@
 		{
 			string name = file.Name.Replace(absolutePath, "");
 			string type = name.Substring(name.LastIndexOf('.') + 1);
-			string text = name.Substring(0, name.LastIndexOf('.'));
+			string text = name.Substring(0, name.LastIndexOf('.')).Replace(type, "");
 
 			if (!Model.NoImages && "jpg jpeg png gif bmp".Contains(type))
 			{
@@ -110,4 +111,28 @@
 			}
 		}
 	}
-}
+
+	if (Model.ViewNested)
+	{
+		var directories = System.IO.Directory
+			.GetDirectories(absolutePath)
+			.Select(x => x.Replace("/", "\\").Replace(absolutePath, "").Replace(@"\\web\Files\Одно окно\", ""))
+			.ToList();
+
+		foreach (var dir in directories)
+		{
+			<div style="padding-left: 15px;">
+				@Html.Partial("_LiveFolder", new LiveFolder
+				{
+					Name = dir.Substring(dir.LastIndexOf("\\") + 1),
+					RelativePath = dir,
+					NoImages = Model.NoImages,
+					SortByDate = Model.SortByDate,
+					SortByName = Model.SortByName,
+					WriteImageBox = Model.WriteImageBox,
+					WriteImageCaptions = Model.WriteImageCaptions,
+				})
+			</div>
+			}
+		}
+	}

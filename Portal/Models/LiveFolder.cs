@@ -15,5 +15,7 @@
 		public bool SortByDate { get; set; } = false;
 
 		public bool SortByName { get; set; } = false;
+
+		public bool ViewNested { get; set; } = false;
 	}
 }
