@@ -52,6 +52,8 @@ namespace DatabaseLayer.Site
 
 		public bool IsPhonebookAdmin => UClass.Contains("phonebook");
 
+		public bool IsDocsAdmin => UClass.Contains("docs_admin") || IsAdmin;
+
 		// fields
 
 		public string[] GroupsArray => Groups.ToLower().Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);

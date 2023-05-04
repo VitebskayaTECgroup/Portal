@@ -1,0 +1,50 @@
+﻿@model DocsPage
+@{
+	Layout = "~/Views/Shared/_PageLayout.cshtml";
+	ViewBag.Title = "Страница";
+}
+
+@using (var db = new SiteContext())
+{
+	<div class="page page-view">
+		<div class="header">
+			<span>@Model.Name</span>
+			@if (ViewBag.IsDocsAdmin ?? false)
+			{
+				<a href="~/pages/redactor/@Model.Id" style="margin-left: 1em;">
+					<i icon>settings</i>
+				</a>
+			}
+		</div>
+		@foreach (var sub in Model.Elements.OrderBy(x => x.OrderValue))
+		{
+			if (typeof(DocsSection) == sub.GetType())
+			{
+				@RenderSection((DocsSection)sub)
+			}
+			else
+			{
+				@Html.Partial("_Document", (DocsDocument)sub)
+			}
+		}
+	</div>
+}
+
+@helper RenderSection(DocsSection docsSection)
+{
+	<div class="section">
+		<div class="section-header">
+			<b>@docsSection.Title</b>
+		</div>
+		<div class="section-body">
+			@foreach (var sub in docsSection.Sections.OrderBy(x => x.OrderValue))
+			{
+				@RenderSection(sub)
+			}
+			@foreach (var doc in docsSection.Documents.OrderBy(x => x.OrderValue))
+			{
+				@Html.Partial("_Document", doc)
+			}
+		</div>
+	</div>
+}

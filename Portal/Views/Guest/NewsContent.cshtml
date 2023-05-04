@@ -1,0 +1,27 @@
+﻿@model News
+
+<div class="news-author">
+	&copy; @(string.IsNullOrEmpty(Model.UserName) 
+		? Model.Creator.DisplayName 
+		: Model.UserName == " " ? "Витебская ТЭЦ" : Model.UserName)
+</div>
+
+<div class="news-message">
+	@Html.Raw(Model.Message)
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Links))
+{
+	var links = (Model.Links ?? "").Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+	<div class="news-files">
+		@foreach (string link in links)
+		{
+			<div>
+				<a href="http://www.vst.vitebsk.energo.net/files/Новости/@Model.Id/@link">
+					<i class="material-icons">file_download</i> @link
+				</a>
+			</div>
+		}
+	</div>
+}

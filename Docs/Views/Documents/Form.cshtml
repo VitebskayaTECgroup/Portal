@@ -1,0 +1,46 @@
+﻿@model DocsDocument
+@{ 
+	ViewBag.Title = Model.IsTemplate ? "Новый документ" : ("Документ #" + Model.Id);
+	Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+<div>
+	<div form>
+		<input type="hidden" name="@nameof(Model.Id)" value="@Model.Id" />
+		<input type="hidden" name="@nameof(Model.PageId)" value="@Model.PageId" />
+		<input type="hidden" name="@nameof(Model.SectionId)" value="@Model.SectionId" />
+		<div>
+			<div>Тип</div>
+			<div>
+				<select name="@nameof(Model.Type)" onchange="reform(this.value)">
+					@foreach (var type in DocsDocument.Types)
+					{
+						<option value="@type.Key" @(type.Key == Model.Type ? "selected" : "")>@type.Value.ToLower()</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div reform="text,document,link">
+			<div>Текст</div>
+			<div>
+				<textarea name="@nameof(Model.Text)">@Model.Text</textarea>
+			</div>
+		</div>
+	</div>
+	<div file reform="document,link,image">
+		<div>Файл</div>
+		<div>
+			<input disabled value="@Model.Link" id="link" />
+			<label>
+				<input type="file" onchange="submit('@Url.Action("Upload", "Documents", new { Id = Model.Id })', '[file]', data => { document.getElementById('link').value = data.Link })" />
+				<span>загрузить</span>
+			</label>
+		</div>
+	</div>
+</div>
+
+@section buttons {
+	<button onclick="submit('@Url.Action("Edit", "Documents")', '[form]', () => location.reload())">
+		<i icon>save</i>
+		<span>сохранить</span>
+	</button>
+}

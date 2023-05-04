@@ -1,5 +1,7 @@
-﻿using DatabaseLayer.Site;
+﻿using DatabaseLayer.Phonebook;
+using DatabaseLayer.Site;
 using LinqToDB;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Data.Odbc;
@@ -13,29 +15,32 @@ namespace Portal.Controllers
 	{
 		public ActionResult Index() => View();
 
-		public ActionResult News(int Id)
+		public ActionResult News(int take, int skip = 0)
 		{
 			using (var db = new SiteContext())
 			{
-				var query = from n in db.News
-							from u in db.Users.Where(x => x.UID == n.UserId).DefaultIfEmpty()
-							where n.Id == Id && n.Priority != "back" && n.GuildId == 0
-							select new News
-							{
-								Id = n.Id,
-								Priority = n.Priority,
-								DateAdd = n.DateAdd,
-								DateExpire = n.DateExpire,
-								Title = n.Title,
-								Message = n.Message,
-								Links = n.Links,
-								GuildId = n.GuildId,
-								UserName = string.IsNullOrEmpty(n.UserName) ? (string.IsNullOrEmpty(u.DisplayName) ? u.UName : u.DisplayName) : n.UserName,
-							};
+				ViewBag.NewsTags = db.NewsTags
+					.ToDictionary(x => x.Token, x => x.Name);
 
-				var news = query.FirstOrDefault();
+				var news = db.News
+					.Where(x => !x.IsTemplate)
+					.Where(x => x.DateExpire <= x.DateAdd || x.DateExpire > DateTime.Now)
+					.Where(x => skip == 0 || x.Id < skip)
+					.OrderByDescending(x => x.DateAdd)
+					.Select(x => new News
+					{
+						Id = x.Id,
+						DateAdd = x.DateAdd,
+						DateExpire = x.DateExpire,
+						Title = x.Title,
+						Tags = x.Tags,
+						Priority = x.Priority,
+						Links = x.Links,
+					})
+					.Take(take)
+					.ToList();
 
-				return View("News", news);
+				return View("NewsBlock", news);
 			}
 		}
 
@@ -65,11 +70,9 @@ namespace Portal.Controllers
 								}
 							};
 
-				var news = query.First();
+				var news = query.FirstOrDefault();
 
-				ViewBag.Tags = db.NewsTags.ToList();
-
-				return View("NewsBody", news);
+				return View("NewsContent", news);
 			}
 		}
 
@@ -89,61 +92,17 @@ namespace Portal.Controllers
 					}
 				}
 			}
-			catch (Exception e)
+			catch
 			{
-				return Content(e.Message);
+				return Content("?");
 			}
 		}
 
-		public JsonResult GetNews(int skip = 0, int count = 10, int guild = 0, string search = null)
+		public ActionResult Contacts(string search)
 		{
-			try
-			{
-				using (var db = new SiteContext())
-				{
-					var query = from n in db.News
-								from u in db.Users.Where(x => x.UID == n.UserId).DefaultIfEmpty()
-								where n.Priority != "back"
-									&& n.IsTemplate == false
-									&& n.GuildId == guild
-									&& (n.DateAdd >= n.DateExpire || DateTime.Now <= n.DateExpire)
-								orderby n.DateAdd descending
-								select new News
-								{
-									Id = n.Id,
-									Priority = n.Priority,
-									DateAdd = n.DateAdd,
-									DateExpire = n.DateExpire,
-									Title = n.Title,
-									Message = n.Message,
-									Links = n.Links,
-									GuildId = n.GuildId,
-									UserName = string.IsNullOrEmpty(n.UserName) ? (string.IsNullOrEmpty(u.DisplayName) ? u.UName : u.DisplayName) : n.UserName,
-								};
+			if (string.IsNullOrEmpty(search)) return Content("");
 
-					if (string.IsNullOrEmpty(search))
-					{
-						query = query
-							.Skip(skip)
-							.Take(count);
-					}
-					else
-					{
-						query = query
-							.Where(x => (x.Title + x.Message + x.Links).ToLower().Contains(search.ToLower()));
-					}
-
-					var news = query
-						.ToList();
-
-					return Json(new { News = news, Error = "" }, JsonRequestBehavior.AllowGet);
-				}
-
-			}
-			catch (Exception e)
-			{
-				return Json(new { News = new List<News>(), Error = e }, JsonRequestBehavior.AllowGet);
-			}
+			return View(model: search);
 		}
 	}
 }

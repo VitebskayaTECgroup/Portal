@@ -1,0 +1,310 @@
+@font-face {
+	font-family: 'Material Icons';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Material Icons'), local('MaterialIcons-Regular'), url(MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons,
+[icon] {
+	font-family: 'Material Icons';
+	font-weight: normal;
+	font-style: normal;
+	/* font-size: 24px; */ /* Preferred icon size */
+	display: inline-block;
+	/* line-height: 1; */
+	/* text-transform: none; */
+	/* letter-spacing: normal; */
+	/* word-wrap: normal; */
+	/* white-space: nowrap; */
+	/* direction: ltr; */
+	/* Support for all WebKit browsers. */
+	/* -webkit-font-smoothing: antialiased; */
+	/* Support for Safari and Chrome. */
+	/* text-rendering: optimizeLegibility; */
+	/* Support for Firefox. */
+	-moz-osx-font-smoothing: grayscale;
+	/* Support for IE. */
+	font-feature-settings: 'liga';
+}
+
+* {
+	box-sizing: border-box;
+}
+
+
+body {
+	background: #eee;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	margin: 0;
+}
+
+button {
+	background: #fff;
+	border: 1px solid #ddd;
+	padding: 4px .5em;
+}
+
+button[no-border] {
+	border: 1px solid transparent;
+}
+
+button * {
+	vertical-align: middle;
+}
+
+button [icon] {
+	margin-right: 4px;
+	font-size: 20px;
+}
+
+	button:hover {
+		border-color: #0094ff;
+		cursor: pointer;
+	}
+
+	button[no-border]:hover {
+		border-color: transparent;
+		color: #0094ff;
+	}
+
+
+input,
+select,
+textarea {
+	width: 100%;
+	padding: .5em 1em;
+	margin: 2px 0;
+	border: 1px solid #ddd;
+}
+
+input {
+	border: 0;
+	border-bottom: 1px solid #ddd;
+}
+
+textarea {
+	resize: vertical;
+	min-height: 5.5em;
+	max-height: 30em;
+}
+
+	input:focus,
+	select:focus,
+	textarea:focus {
+		border-color: #0094ff;
+		outline: none;
+	}
+
+label {
+	background: #fff;
+	border: 1px solid #ddd;
+	padding: 4px .5em;
+	display: inline-block;
+}
+
+label input[type="file"] {
+	display: none;
+}
+
+a {
+	color: #0094ff;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+b {
+	font-weight: 500;
+}
+
+
+.show {
+	display: flex !important;
+}
+
+
+.page {
+	width: 80%;
+	max-width: 60em;
+	margin: 0 auto;
+	margin-top: 2em;
+	padding: 1em;
+	padding-top: .5em;
+	margin-bottom: 4em;
+	min-height: 40em;
+
+	background: #fff;
+	border: 1px solid #ddd;
+}
+
+.header {
+	padding: .5em;
+	text-align: center;
+	margin: 0 1em;
+	position: relative;
+}
+
+	.header span {
+		cursor: text;
+		font-size: 1.1em;
+		font-weight: 500;
+	}
+
+.header input {
+	display: none;
+	
+}
+
+.header.edit input {
+	display: inherit;
+}
+
+.header.edit span {
+	display: none;
+}
+
+.section {
+	/* border: 1px solid #ccc; */
+	background: #fff;
+	margin: .5em 0;
+	border-left: 3px solid transparent;
+	padding-left: .5em;
+}
+
+	.section:hover {
+		border-color: #0094ff;
+	}
+
+.section-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.section-header-text {
+	display: flex;
+	align-items: center;
+}
+
+.section-header-text i {
+	margin-right: .5em;
+}
+
+.section-body {
+	padding-left: 1.5em;
+}
+
+.section-item {
+	padding: .25em 0;
+}
+
+
+.page-row {
+	display: flex;
+	justify-content: space-between;
+	padding-left: .5em;
+	border-left: 2px solid transparent;
+}
+
+.page-row:hover {
+	/* color: #0094ff; */
+	border-color: #0094ff;
+}
+
+.page-row-text {
+	display: flex;
+	align-items: center;
+}
+
+	.page-row-text i {
+		margin-right: .5em;
+	}
+
+
+.page-view .section {
+	/*margin: 1em 0;*/
+}
+
+.page-view .section-header {
+	padding: .5em 0;
+}
+
+.page-view .page-row {
+	padding-top: .5em;
+	padding-bottom: .5em;
+}
+
+.page-view .section:hover,
+.page-view .page-row:hover {
+	border-color: transparent;
+}
+
+
+#preloader {
+	animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+#overlay {
+	display: none;
+	z-index: 1;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: #00000026;
+	justify-content: center;
+}
+
+#modal {
+	display: none;
+	position: fixed;
+	top: 4em;
+	min-width: 30em;
+	background: #fff;
+	flex-direction: column;
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.modal-header > div {
+	padding: .5em 1em;
+}
+
+.modal-caption {
+	font-size: 1.1em;
+	font-weight: 500;
+}
+
+.modal-body {
+	padding: 1em;
+	/* min-height: 16em; */
+}
+
+.modal-buttons {
+	text-align: right;
+	padding: 1em;
+}
+
+
+
+
+.handler {
+	cursor: move;
+}
+
+.drop {
+	padding-bottom: 1em;
+}

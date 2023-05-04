@@ -1,0 +1,22 @@
+﻿@model int
+@{
+	ViewBag.Title = "Удаление документа #" + Model;
+	Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+<div>
+	<div form>
+		<input type="hidden" name="Id" value="@Model" />
+		<div>Вы уверены, что хотите удалить этот документ?</div>
+	</div>
+</div>
+
+@section buttons {
+	<button onclick="submit('@Url.Action("Remove", "Documents")', '[form]', () => location.reload())">
+		<i icon>delete</i>
+		<span>Удалить</span>
+	</button>
+	<button onclick="modal()">
+		<i icon>clear</i>
+		<span>Отмена</span>
+	</button>
+}

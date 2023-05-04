@@ -1,0 +1,92 @@
+﻿@model string
+
+@using (var db = new SiteContext())
+{
+	var phones = new List<DatabaseLayer.Phonebook.Phone>();
+	var guilds = new List<string>();
+
+	using (var phonedb = new DatabaseLayer.Phonebook.PhonebookContext())
+	{
+		guilds = phonedb.Phones
+			.Where(x => !string.IsNullOrEmpty(x.Guild))
+			.OrderByDescending(x => x.GuildPriority)
+			.Select(x => new { x.Guild, x.GuildPriority })
+			.ToList()
+			.GroupBy(x => x.Guild.Trim())
+			.Select(x => x.Key)
+			.ToList();
+
+		phones = phonedb.Phones
+			.Where(x => x.Name.Contains(Model) || x.Guild.Contains(Model) || x.InnerPhone.Contains(Model) || x.Position.Contains(Model) || x.Email.Contains(Model) || x.OuterPhone.Contains(Model))
+			.OrderByDescending(x => x.GuildPriority)
+			.ThenByDescending(x => x.OrderPriority)
+			.ToList();
+	}
+
+	var persons = db.Persons
+		.Select(x => new
+		{
+			x.TabId,
+			x.Family
+		})
+		.ToList();
+
+	var vacations = db.Vacations
+		.Where(x => x.DateStart <= DateTime.Today)
+		.Where(x => x.DateEnd >= DateTime.Today)
+		.ToList()
+		.Select(x => new
+		{
+			Family = persons.FirstOrDefault(y => y.TabId == x.TabId)?.Family ?? "",
+			x.DateStart,
+			x.DateEnd,
+		})
+		.ToList();
+
+	if (phones.Count() == 0)
+	{
+		<div>По данному запросу ничего не найдено</div>
+		return;
+	}
+
+	foreach (var phone in phones)
+	{
+		var vacation = vacations
+			.Where(x => x.Family == phone.Name)
+			.FirstOrDefault();
+
+		<div class="phone" style="min-height: 155px">
+			<div class="phone-image">
+				<img src="@phone.Image()" title="@phone.Name" />
+			</div>
+			<div class="phone-text">
+				@if (!string.IsNullOrEmpty(phone.Name))
+				{
+					<div class="number">@phone.Name</div>
+					<div class="normal">@phone.Position</div>
+				}
+				else
+				{
+					<div class="number">@phone.Position</div>
+					<div></div>
+				}
+				@if (!string.IsNullOrEmpty(phone.InnerPhone))
+				{
+					<div>внутренний телефон: <span class="number">@phone.InnerPhone</span></div>
+				}
+				@if (!string.IsNullOrEmpty(phone.OuterPhone))
+				{
+					<div>городской телефон: <span class="number">@phone.OuterPhone</span></div>
+				}
+				@if (!string.IsNullOrEmpty(phone.Email))
+				{
+					<div>email: <a href="mailto:@phone.Email">@phone.Email</a></div>
+				}
+				@if (vacation != null)
+				{
+					<div class="red">в отпуске с @vacation.DateStart.ToString("dd.MM.yyyy") по @vacation.DateEnd.ToString("dd.MM.yyyy")</div>
+				}
+			</div>
+		</div>
+	}
+}

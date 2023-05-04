@@ -3,88 +3,88 @@ using LinqToDB.Data;
 
 namespace DatabaseLayer.Devin
 {
-    public class DevinContext : DataConnection
-    {
-        public DevinContext() : base("Devin") { }
+	public class DevinContext : DataConnection
+	{
+		public DevinContext() : base("Devin") { }
 
-        public ITable<Activity> Activity
-            => GetTable<Activity>();
+		public ITable<Activity> Activity
+			=> this.GetTable<Activity>();
 
-        public ITable<Elm> Elm
-            => GetTable<Elm>();
+		public ITable<Elm> Elm
+			=> this.GetTable<Elm>();
 
-        public ITable<AidaDescription> AidaDescriptions
-            => GetTable<AidaDescription>();
+		public ITable<AidaDescription> AidaDescriptions
+			=> this.GetTable<AidaDescription>();
 
-        public ITable<Report> Report
-            => GetTable<Report>();
+		public ITable<Report> Report
+			=> this.GetTable<Report>();
 
-        public ITable<Item> Item
-            => GetTable<Item>();
+		public ITable<Item> Item
+			=> this.GetTable<Item>();
 
-        public ITable<Cartridge> Cartridges
-            => GetTable<Cartridge>();
+		public ITable<Cartridge> Cartridges
+			=> this.GetTable<Cartridge>();
 
-        public ITable<Device> Devices
-            => GetTable<Device>();
+		public ITable<Device> Devices
+			=> this.GetTable<Device>();
 
-        public ITable<Folder> Folders
-            => GetTable<Folder>();
+		public ITable<Folder> Folders
+			=> this.GetTable<Folder>();
 
-        public ITable<Hardware> Hardware
-           => GetTable<Hardware>();
+		public ITable<Hardware> Hardware
+		   => this.GetTable<Hardware>();
 
-        public ITable<Object1C> Objects1C
-            => GetTable<Object1C>();
+		public ITable<Object1C> Objects1C
+			=> this.GetTable<Object1C>();
 
-        public ITable<Printer> Printers
-            => GetTable<Printer>();
+		public ITable<Printer> Printers
+			=> this.GetTable<Printer>();
 
-        public ITable<Repair> Repairs
-            => GetTable<Repair>();
+		public ITable<Repair> Repairs
+			=> this.GetTable<Repair>();
 
-        public ITable<Storage> Storages
-            => GetTable<Storage>();
+		public ITable<Storage> Storages
+			=> this.GetTable<Storage>();
 
-        public ITable<WorkPlace> WorkPlaces
-            => GetTable<WorkPlace>();
+		public ITable<WorkPlace> WorkPlaces
+			=> this.GetTable<WorkPlace>();
 
-        public ITable<Writeoff> Writeoffs
-            => GetTable<Writeoff>();
+		public ITable<Writeoff> Writeoffs
+			=> this.GetTable<Writeoff>();
 
-        public ITable<WriteoffMark> WriteoffsMarks
-            => GetTable<WriteoffMark>();
+		public ITable<WriteoffMark> WriteoffsMarks
+			=> this.GetTable<WriteoffMark>();
 
-        public ITable<Software> Software
-            => GetTable<Software>();
+		public ITable<Software> Software
+			=> this.GetTable<Software>();
 
-        public ITable<Employee> Employees
-            => GetTable<Employee>();
+		public ITable<Employee> Employees
+			=> this.GetTable<Employee>();
 
-        public ITable<Official> Officials
-            => GetTable<Official>();
+		public ITable<Official> Officials
+			=> this.GetTable<Official>();
 
-        // relationship tables
+		// relationship tables
 
-        public ITable<PrinterCartridge> _PrinterCartridge
-            => GetTable<PrinterCartridge>();
+		public ITable<PrinterCartridge> _PrinterCartridge
+			=> this.GetTable<PrinterCartridge>();
 
-        public ITable<TypeCartridge> _CartridgeTypes
-            => GetTable<TypeCartridge>();
+		public ITable<TypeCartridge> _CartridgeTypes
+			=> this.GetTable<TypeCartridge>();
 
-        public ITable<TypeDevice> _DeviceTypes
-            => GetTable<TypeDevice>();
+		public ITable<TypeDevice> _DeviceTypes
+			=> this.GetTable<TypeDevice>();
 
-        public ITable<TypeSystem> _SystemTypes
-            => GetTable<TypeSystem>();
+		public ITable<TypeSystem> _SystemTypes
+			=> this.GetTable<TypeSystem>();
 
-        public ITable<TypeWriteoff> _WriteoffTypes
-            => GetTable<TypeWriteoff>();
+		public ITable<TypeWriteoff> _WriteoffTypes
+			=> this.GetTable<TypeWriteoff>();
 
-        public ITable<DeviceSoftware> _DeviceSoftware
-            => GetTable<DeviceSoftware>();
+		public ITable<DeviceSoftware> _DeviceSoftware
+			=> this.GetTable<DeviceSoftware>();
 
-        public ITable<Relation_Official_Employee> Relation_Officials_Employees
-            => GetTable<Relation_Official_Employee>();
-    }
+		public ITable<Relation_Official_Employee> Relation_Officials_Employees
+			=> this.GetTable<Relation_Official_Employee>();
+	}
 }

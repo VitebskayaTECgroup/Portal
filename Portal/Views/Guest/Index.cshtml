@@ -1,14 +1,20 @@
 ﻿@{
-	Layout = null;
-}
+	var values = new Dictionary<string, string>();
+	List<News> news;
 
-@using (var db = new SiteContext())
-{
-	db.Guests
-		.Value(x => x.Ip, Request.ServerVariables.Get("REMOTE_ADDR"))
-		.Value(x => x.UserAgent, Request.ServerVariables.Get("HTTP_USER_AGENT"))
-		.Value(x => x.Date, DateTime.Now)
-		.Insert();
+	using (var db = new SiteContext())
+	{
+		db.Guests
+			.Value(x => x.Ip, Request.ServerVariables.Get("REMOTE_ADDR"))
+			.Value(x => x.UserAgent, Request.ServerVariables.Get("HTTP_USER_AGENT"))
+			.Value(x => x.Date, DateTime.Now)
+			.Insert();
+
+		foreach (var constant in db.Constants.ToList())
+		{
+			values[constant.Keyword] = constant.Value;
+		}
+	}
 }
 
 <!DOCTYPE html>
@@ -17,287 +23,267 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Главная | Витебская ТЭЦ</title>
+	<title>Витебская ТЭЦ</title>
 	<link rel="icon" href="~/Content/Guest/img/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="~/Content/Guest/css/style.css" />
-	<link rel="stylesheet" href="~/Content/Guest/css/styleIE.css" />
-	<link href="https://fonts.googleapis.com/css2?family=Istok+Web:wght@400;700&display=swap"
-		  rel="stylesheet" />
 </head>
 
 <body>
-	<header>
-		<div class="logo"></div>
-		<nav class="navigation">
-			<div class="nav_block">
-				<div class="nav_links hidden">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%9e%d1%84%d0%b8%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%be%d0%b5_%d0%bd%d0%b0%d0%b8%d0%bc%d0%b5%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d0%b5/">Общая информация</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%a1%d1%82%d1%80%d1%83%d0%ba%d1%82%d1%83%d1%80%d0%b0/">Структура филиала "Витебская ТЭЦ" РУП "Витебскэнерго"</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%97%d0%b0%d0%b4%d0%b0%d1%87%d0%b8_%d0%b8_%d1%84%d1%83%d0%bd%d0%ba%d1%86%d0%b8%d0%b8/">Задачи и функции филиала "Витебская ТЭЦ" РУП "Витебскэнерго"</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%a0%d1%83%d0%ba%d0%be%d0%b2%d0%be%d0%b4%d0%b8%d1%82%d0%b5%d0%bb%d0%b8/">
-						Сведения о руководителях филиала "Витебская ТЭЦ" РУП
-						"Витебскэнерго"
-					</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%98%d1%81%d1%82%d0%be%d1%80%d0%b8%d1%8f/">История филиала</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%92%d0%b5%d1%82%d0%b5%d1%80%d0%b0%d0%bd%d1%8b%20%D0%A2%D0%AD%D0%A6/">Ветераны ТЭЦ</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%94%d0%be%d1%81%d0%ba%d0%b0_%d0%bf%d0%be%d1%87%d0%b5%d1%82%d0%b0/">Доска почета</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%94%d0%be%d0%ba%d1%83%d0%bc%d0%b5%d0%bd%d1%82%d1%8b/">Официальные документы</a>
-				</div>
-				<img src="~/Content/Guest/img/polygon.png" alt="Список" />
-				<p>О филиале</p>
-			</div>
-			<div class="nav_block">
-				<div class="nav_links hidden">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9e_%d1%82%d0%be%d0%b2%d0%b0%d1%80%d0%b0%d1%85,_%d1%80%d0%b0%d0%b1%d0%be%d1%82%d0%b0%d1%85,_%d1%83%d1%81%d0%bb%d1%83%d0%b3%d0%b0%d1%85/">Порядок реализации</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9f%d1%80%d0%be%d1%82%d0%b8%d0%b2%d0%be%d0%b4%d0%b5%d0%b9%d1%81%d1%82%d0%b2%d0%b8%d0%b5%20%D0%BA%D0%BE%D1%80%D1%80%D1%83%D0%BF%D1%86%D0%B8%D0%B8/">Противодействие коррупции</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%97%d0%b0%d0%ba%d1%83%d0%bf%d0%ba%d0%b8/">Закупки</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%92%d1%85%d0%be%d0%b4%d0%bd%d0%be%d0%b9_%d0%ba%d0%be%d0%bd%d1%82%d1%80%d0%be%d0%bb%d1%8c/">Входной контроль</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%95%d0%b4%d0%b8%d0%bd%d1%8b%d0%b9_%d0%b4%d0%b5%d0%bd%d1%8c_%d0%b8%d0%bd%d1%84%d0%be%d1%80%d0%bc%d0%b8%d1%80%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d1%8f/">Единый день информирования</a>
-					<a href="http://www.vitebsk.energo.net/OTD/IDEOL/polit.htm">ЕДИ - РУП Витебскэнерго</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9e%d1%82%d0%b4%d1%8b%d1%85/">Отдых, оздоровление</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9f%d1%80%d0%be%d1%84%d0%ba%d0%be%d0%bc/">Профком</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%91%d0%a0%d0%a1%d0%9c/">БРСМ</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%97%d0%b4%d0%be%d1%80%d0%be%d0%b2%d1%8b%d0%b9_%d0%be%d0%b1%d1%80%d0%b0%d0%b7_%d0%b6%d0%b8%d0%b7%d0%bd%d0%b8/">Здоровый образ жизни</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9f%d0%bb%d0%b0%d0%bd%d1%8b%20%D1%80%D0%B0%D0%B7%D0%B2%D0%B8%D1%82%D0%B8%D1%8F%20%D1%84%D0%B8%D0%BB%D0%B8%D0%B0%D0%BB%D0%B0/">Планы развития филиала</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%94%d0%b8%d1%80%d0%b5%d0%ba%d1%82%d0%b8%d0%b2%d0%b01">Директива №1</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%a1%d0%be%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%b0%d1%8f%20%D1%80%D0%B5%D0%BA%D0%BB%D0%B0%D0%BC%D0%B0">Социальная реклама</a>
-				</div>
-				<img src="~/Content/Guest/img/polygon.png" alt="Список" />
-				<p>Деятельность</p>
-			</div>
-			<div class="nav_block">
-				<div class="nav_links hidden">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%9f%d0%b5%d1%80%d0%b5%d1%87%d0%b5%d0%bd%d1%8c/">Перечень административных процедур</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%91%d0%bb%d0%b0%d0%bd%d0%ba%d0%b8/">Формы (бланки) документов, необходимых для обращения</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%a1%d0%bf%d0%b5%d1%86%d0%b8%d0%b0%d0%bb%d0%b8%d1%81%d1%82%d1%8b/">
-						Специалисты филиала осуществляющие прием заявлений
-						заинтересованных лиц
-					</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%92%d1%8b%d1%88%d0%b5%d1%81%d1%82%d0%be%d1%8f%d1%89%d0%b0%d1%8f_%d0%be%d1%80%d0%b3%d0%b0%d0%bd%d0%b8%d0%b7%d0%b0%d1%86%d0%b8%d1%8f/">Вышестоящая организация</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%9d%d0%be%d1%80%d0%bc%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d0%be-%d0%bf%d1%80%d0%b0%d0%b2%d0%be%d0%b2%d1%8b%d0%b5_%d0%b0%d0%ba%d1%82%d1%8b/">Нормативно-правовые акты</a>
-				</div>
-				<img src="~/Content/Guest/img/polygon.png" alt="Список" />
-				<p>Административные процедуры</p>
-			</div>
-			<div class="nav_block">
-				<div class="nav_links hidden">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%a0%d0%b5%d1%81%d1%83%d1%80%d1%81%d1%8b/%d0%9a%d0%b0%d1%80%d1%82%d1%8b%20%D0%BE%D1%86%D0%B5%D0%BD%D0%BA%D0%B8%20%D0%BE%D0%BF%D0%B0%D1%81%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9%20%D0%B8%20%D1%80%D0%B8%D1%81%D0%BA%D0%BE%D0%B2/">Карты оценки опасностей и рисков</a>
-				</div>
-				<img src="~/Content/Guest/img/polygon.png" alt="Список" />
-				<p>Ресурсы</p>
-			</div>
-			<div class="nav_block">
-				<div class="nav_links hidden">
-					<a href="http://www.vst.vitebsk.energo.net/phonebook/">Телефонный справочник</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9a%d0%be%d0%bd%d1%82%d0%b0%d0%ba%d1%82%d1%8b/%d0%9e%d0%b1%d1%80%d0%b0%d1%82%d0%bd%d0%b0%d1%8f_%d1%81%d0%b2%d1%8f%d0%b7%d1%8c/">Обратная связь</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%9e%d1%84%d0%b8%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%be%d0%b5_%d0%bd%d0%b0%d0%b8%d0%bc%d0%b5%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d0%b5/">Контакты</a>
-				</div>
-				<img src="~/Content/Guest/img/polygon.png" alt="Список" />
-				<p>Контакты</p>
-			</div>
-		</nav>
-		<div class="louver"><div class="menu-button"></div></div>
-		<nav class="navigation_mobile" style="display: none">
-			<div class="close"></div>
-			<div class="navigation_mobile__block">
-				<div class="navigation_mobile__title">О филиале</div>
-				<div class="navigation_mobile__links">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%9e%d1%84%d0%b8%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%be%d0%b5_%d0%bd%d0%b0%d0%b8%d0%bc%d0%b5%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d0%b5/">Общая информация</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%a1%d1%82%d1%80%d1%83%d0%ba%d1%82%d1%83%d1%80%d0%b0/">Структура филиала "Витебская ТЭЦ" РУП "Витебскэнерго"</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%97%d0%b0%d0%b4%d0%b0%d1%87%d0%b8_%d0%b8_%d1%84%d1%83%d0%bd%d0%ba%d1%86%d0%b8%d0%b8/">Задачи и функции филиала "Витебская ТЭЦ" РУП "Витебскэнерго"</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%a0%d1%83%d0%ba%d0%be%d0%b2%d0%be%d0%b4%d0%b8%d1%82%d0%b5%d0%bb%d0%b8/">
-						Сведения о руководителях филиала "Витебская ТЭЦ" РУП
-						"Витебскэнерго"
-					</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%98%d1%81%d1%82%d0%be%d1%80%d0%b8%d1%8f/">История филиала</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%92%d0%b5%d1%82%d0%b5%d1%80%d0%b0%d0%bd%d1%8b%20%D0%A2%D0%AD%D0%A6/">Ветераны ТЭЦ</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%94%d0%be%d1%81%d0%ba%d0%b0_%d0%bf%d0%be%d1%87%d0%b5%d1%82%d0%b0/">Доска почета</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%94%d0%be%d0%ba%d1%83%d0%bc%d0%b5%d0%bd%d1%82%d1%8b/">Официальные документы</a>
-				</div>
-			</div>
-			<div class="navigation_mobile__block">
-				<div class="navigation_mobile__title">Деятельность</div>
-				<div class="navigation_mobile__links">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9e_%d1%82%d0%be%d0%b2%d0%b0%d1%80%d0%b0%d1%85,_%d1%80%d0%b0%d0%b1%d0%be%d1%82%d0%b0%d1%85,_%d1%83%d1%81%d0%bb%d1%83%d0%b3%d0%b0%d1%85/">Порядок реализации</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9f%d1%80%d0%be%d1%82%d0%b8%d0%b2%d0%be%d0%b4%d0%b5%d0%b9%d1%81%d1%82%d0%b2%d0%b8%d0%b5%20%D0%BA%D0%BE%D1%80%D1%80%D1%83%D0%BF%D1%86%D0%B8%D0%B8/">Противодействие коррупции</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%97%d0%b0%d0%ba%d1%83%d0%bf%d0%ba%d0%b8/">Закупки</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%92%d1%85%d0%be%d0%b4%d0%bd%d0%be%d0%b9_%d0%ba%d0%be%d0%bd%d1%82%d1%80%d0%be%d0%bb%d1%8c/">Входной контроль</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%95%d0%b4%d0%b8%d0%bd%d1%8b%d0%b9_%d0%b4%d0%b5%d0%bd%d1%8c_%d0%b8%d0%bd%d1%84%d0%be%d1%80%d0%bc%d0%b8%d1%80%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d1%8f/">Единый день информирования</a>
-					<a href="http://www.vitebsk.energo.net/OTD/IDEOL/polit.htm">ЕДИ - РУП Витебскэнерго</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9e%d1%82%d0%b4%d1%8b%d1%85/">Отдых, оздоровление</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9f%d1%80%d0%be%d1%84%d0%ba%d0%be%d0%bc/">Профком</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%91%d0%a0%d0%a1%d0%9c/">БРСМ</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%97%d0%b4%d0%be%d1%80%d0%be%d0%b2%d1%8b%d0%b9_%d0%be%d0%b1%d1%80%d0%b0%d0%b7_%d0%b6%d0%b8%d0%b7%d0%bd%d0%b8/">Здоровый образ жизни</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%9f%d0%bb%d0%b0%d0%bd%d1%8b%20%D1%80%D0%B0%D0%B7%D0%B2%D0%B8%D1%82%D0%B8%D1%8F%20%D1%84%D0%B8%D0%BB%D0%B8%D0%B0%D0%BB%D0%B0/">Планы развития филиала</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%94%d0%b8%d1%80%d0%b5%d0%ba%d1%82%d0%b8%d0%b2%d0%b01">Директива №1</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%94%d0%b5%d1%8f%d1%82%d0%b5%d0%bb%d1%8c%d0%bd%d0%be%d1%81%d1%82%d1%8c/%d0%a1%d0%be%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%b0%d1%8f%20%D1%80%D0%B5%D0%BA%D0%BB%D0%B0%D0%BC%D0%B0">Социальная реклама</a>
-				</div>
-			</div>
-			<div class="navigation_mobile__block">
-				<div class="navigation_mobile__title">Административные процедуры</div>
-				<div class="navigation_mobile__links">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%9f%d0%b5%d1%80%d0%b5%d1%87%d0%b5%d0%bd%d1%8c/">Перечень административных процедур</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%91%d0%bb%d0%b0%d0%bd%d0%ba%d0%b8/">Формы (бланки) документов, необходимых для обращения</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%a1%d0%bf%d0%b5%d1%86%d0%b8%d0%b0%d0%bb%d0%b8%d1%81%d1%82%d1%8b/">
-						Специалисты филиала осуществляющие прием заявлений
-						заинтересованных лиц
-					</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%92%d1%8b%d1%88%d0%b5%d1%81%d1%82%d0%be%d1%8f%d1%89%d0%b0%d1%8f_%d0%be%d1%80%d0%b3%d0%b0%d0%bd%d0%b8%d0%b7%d0%b0%d1%86%d0%b8%d1%8f/">Вышестоящая организация</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%90%d0%b4%d0%bc%d0%b8%d0%bd%d0%b8%d1%81%d1%82%d1%80%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d1%8b%d0%b5_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d0%b4%d1%83%d1%80%d1%8b/%d0%9d%d0%be%d1%80%d0%bc%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d0%be-%d0%bf%d1%80%d0%b0%d0%b2%d0%be%d0%b2%d1%8b%d0%b5_%d0%b0%d0%ba%d1%82%d1%8b/">Нормативно-правовые акты</a>
-				</div>
-			</div>
-			<div class="navigation_mobile__block">
-				<div class="navigation_mobile__title">Ресурсы</div>
-				<div class="navigation_mobile__links">
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%a0%d0%b5%d1%81%d1%83%d1%80%d1%81%d1%8b/%d0%9a%d0%b0%d1%80%d1%82%d1%8b%20%D0%BE%D1%86%D0%B5%D0%BD%D0%BA%D0%B8%20%D0%BE%D0%BF%D0%B0%D1%81%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9%20%D0%B8%20%D1%80%D0%B8%D1%81%D0%BA%D0%BE%D0%B2/">Карты оценки опасностей и рисков</a>
-				</div>
-			</div>
-			<div class="navigation_mobile__block">
-				<div class="navigation_mobile__title">Контакты</div>
-				<div class="navigation_mobile__links">
-					<a href="http://www.vst.vitebsk.energo.net/phonebook/">Телефонный справочник</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9a%d0%be%d0%bd%d1%82%d0%b0%d0%ba%d1%82%d1%8b/%d0%9e%d0%b1%d1%80%d0%b0%d1%82%d0%bd%d0%b0%d1%8f_%d1%81%d0%b2%d1%8f%d0%b7%d1%8c/">Обратная связь</a>
-					<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%9e%d1%84%d0%b8%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%be%d0%b5_%d0%bd%d0%b0%d0%b8%d0%bc%d0%b5%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d0%b5/">Контакты</a>
-				</div>
-			</div>
-		</nav>
-	</header>
-	<main>
-		<div class="main_top">
-			<div class="slider">
-				<div class="sim-slider-arrow-left"></div>
-				<div class="sim-slider-arrow-right"></div>
-				<div class="slider_switches">
-					<div data-switcher="0"
-						 class="slider_switcher slider_switcher__active"></div>
-					<div data-switcher="1" class="slider_switcher"></div>
-					<div data-switcher="2" class="slider_switcher"></div>
-				</div>
-				<div class="carousel" style="transform: translate(0px, 0px)">
-					<div class="slider_image">
-						<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%98%d1%81%d1%82%d0%be%d1%80%d0%b8%d1%8f/"
-						   class="slider_image__text">История организации</a>
-						<img src="~/Content/Guest/img/slide3.jpg" alt="" />
-					</div>
-					<div class="slider_image">
-						<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e%d0%b1%d1%80%d0%b0%d1%89%d0%b5%d0%bd%d0%b8%d1%8f/%d0%9d%d0%be%d1%80%d0%bc%d0%b0%d1%82%d0%b8%d0%b2%d0%bd%d0%be-%d0%bf%d1%80%d0%b0%d0%b2%d0%be%d0%b2%d1%8b%d0%b5_%d0%b0%d0%ba%d1%82%d1%8b/"
-						   class="slider_image__text">
-							Нормативно-правовые акты по работе с обращениями граждан
-						</a>
-						<img src="~/Content/Guest/img/slide2.jpg" alt="" />
-					</div>
-					<div class="slider_image">
-						<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%92%d0%b5%d1%82%d0%b5%d1%80%d0%b0%d0%bd%d1%8b%20%D0%A2%D0%AD%D0%A6/"
-						   class="slider_image__text">Ветераны ТЭЦ</a>
-						<img src="~/Content/Guest/img/slide1.jpg" alt="" />
-					</div>
-				</div>
-			</div>
-			<div class="panels">
-				<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e%d0%b1%d1%80%d0%b0%d1%89%d0%b5%d0%bd%d0%b8%d1%8f/%d0%93%d1%80%d0%b0%d1%84%d0%b8%d0%ba_%d0%bf%d1%80%d0%b8%d0%b5%d0%bc%d0%b0/">
-					<div>
-						<img class="panel_img" src="~/Content/Guest/img/panel1.png" alt="Панель" />
-					</div>
-					<div>График приема граждан и предпринимателей</div>
-				</a>
-				<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e%d0%b1%d1%80%d0%b0%d1%89%d0%b5%d0%bd%d0%b8%d1%8f/%d0%97%d0%b0%d0%bf%d0%b8%d1%81%d1%8c_%d0%bd%d0%b0_%d0%bf%d1%80%d0%b8%d0%b5%d0%bc/">
-					<div>
-						<img class="panel_img" src="~/Content/Guest/img/panel2.png" alt="Панель" />
-					</div>
-					<div>Запись на прием к руководству</div>
-				</a>
-				<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e%d0%b1%d1%80%d0%b0%d1%89%d0%b5%d0%bd%d0%b8%d1%8f/%d0%ad%d0%bb%d0%b5%d0%ba%d1%82%d1%80%d0%be%d0%bd%d0%bd%d0%be%d0%b5_%d0%be%d0%b1%d1%80%d0%b0%d1%89%d0%b5%d0%bd%d0%b8%d0%b5/">
-					<div>
-						<img class="panel_img" src="~/Content/Guest/img/panel3.png" alt="Панель" />
-					</div>
-					<div>Электронное обращение</div>
-				</a>
-				<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e%d0%b1%d1%80%d0%b0%d1%89%d0%b5%d0%bd%d0%b8%d1%8f/%d0%93%d0%be%d1%80%d1%8f%d1%87%d0%b0%d1%8f_%d0%bb%d0%b8%d0%bd%d0%b8%d1%8f/">
-					<div>
-						<img class="panel_img" src="~/Content/Guest/img/panel4.png" alt="Панель" />
-					</div>
-					<div>Телефоны горячей линии</div>
-				</a>
-				<a href="http://www.vst.vitebsk.energo.net/phonebook/">
-					<div>
-						<img class="panel_img" src="~/Content/Guest/img/panel5.png" alt="Панель" />
-					</div>
-					<div>Телефонный справочник</div>
-				</a>
-				<a href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%9e%d1%84%d0%b8%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%be%d0%b5_%d0%bd%d0%b0%d0%b8%d0%bc%d0%b5%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d0%b5/">
-					<div>
-						<img class="panel_img" src="~/Content/Guest/img/panel6.png" alt="Панель" />
-					</div>
-					<div>Контакты</div>
-				</a>
-			</div>
-		</div>
-		<div class="main_down">
-			<div class="main_down__news">
-				<div class="news_buttons">
-					<div class="all_news__button active_news_button">Все новости</div>
-				</div>
-				<div class="columns"></div>
-				<div class="spinner-wave" style="display: block">
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-				</div>
-			</div>
-		</div>
-	</main>
-	<footer>
-		<div>
-			<div class="footer_title">
-				<a class="link"
-				   href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%9e%d1%84%d0%b8%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%be%d0%b5_%d0%bd%d0%b0%d0%b8%d0%bc%d0%b5%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d0%b5/">Конктакты</a>
-			</div>
-			<div>
-				210604, Витебск, ул. М.Горького, 104 <br />
-				Тел. приёмной (городской): +375 (212) 37-34-01 <br />
-				Тел. приёмной (внутренний): 3-59 <br />
-				Факс: 8 (0212) 37-34-41 <br />
-				E-mail: vst@vitebsk.energo.by <br />
-			</div>
-		</div>
-		<div>
-			<div class="footer_title">
-				<a class="link"
-				   href="http://www.vst.vitebsk.energo.net/docs/%d0%9e_%d1%84%d0%b8%d0%bb%d0%b8%d0%b0%d0%bb%d0%b5/%d0%9e%d1%84%d0%b8%d1%86%d0%b8%d0%b0%d0%bb%d1%8c%d0%bd%d0%be%d0%b5_%d0%bd%d0%b0%d0%b8%d0%bc%d0%b5%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b8%d0%b5/">Время работы</a>
-			</div>
-			<div>
-				ПН-ПТ: с 8:00 до 17:00.<br />
-				Обеденный перерыв: 12:30 - 13:30. <br />
-			</div>
-			<div class="footer_title">
-				<a class="link" href="http://www.vst.vitebsk.energo.net/phonebook/">Телефонный справочник</a>
-			</div>
-		</div>
-	</footer>
-	<script id="polyfillsIO-script"></script>
-	<script id="navigation-script"></script>
-	<script id="news-script"></script>
-	<script id="slider-script"></script>
-	<script type="text/javascript">
-		var isIE = !!window.MSInputMethodContext && !!document.documentMode;
-		var navigation = document.querySelector("#navigation-script");
-		var news = document.querySelector("#news-script");
-		var slider = document.querySelector("#slider-script");
-		var polyfillsIO = document.querySelector("#polyfillsIO-script");
+	<a class="header" href="~/">
+		<img title='Филиал "Витебская ТЭЦ" РУП "Витебскэнерго"' src="~/Content/Guest/img/logo.png" />
+	</a>
 
-		if (isIE || navigator.appVersion.indexOf("MSIE 10") !== -1) {
-			navigation.src = "/content/guest/scriptsIE/navigation.js";
-			news.src = "/content/guest/scriptsIE/news.js";
-			slider.src = "/content/guest/scriptsIE/slider.js";
-			polyfillsIO.src =
-				"/content/guest/scriptsIE/polyfills.js";
-		} else {
-			navigation.src = "/content/guest/scripts/navigation.js";
-			news.src = "/content/guest/scripts/news.js";
-			slider.src = "/content/guest/scripts/slider.js";
-		}
+	<div class="nav">
+
+		<div class="nav-button">
+			<span>О филиале</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/О_филиале/Официальное_наименование/">Официальное наименование "Витебская ТЭЦ" РУП "Витебскэнерго", почтовый адрес, адрес электронной почты, банковские реквизиты</a>
+				<a href="~/docs/О_филиале/Структура/">Структура филиала "Витебская ТЭЦ" РУП "Витебскэнерго"</a>
+				<a href="~/docs/О_филиале/Задачи_и_функции/">Задачи и функции  филиала "Витебская ТЭЦ"  РУП "Витебскэнерго"</a>
+				<a href="~/docs/О_филиале/Руководители/">Сведения о руководителях  филиала "Витебская ТЭЦ"  РУП "Витебскэнерго"</a>
+				<a href="~/docs/О_филиале/История/">История филиала</a>
+				<a href="~/docs/О_филиале/Ветераны ТЭЦ/">Ветераны ТЭЦ</a>
+				<a href="~/docs/О_филиале/Доска_почета/">Доска почета</a>
+				<a href="~/docs/О_филиале/Документы/">Официальные документы</a>
+			</div>
+		</div>
+
+		<div class="nav-button">
+			<span>Обращения</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Обращения/Запись_на_прием/">Запись на прием к руководству</a>
+				<a href="~/docs/Обращения/График_приема/">График личного приема граждан, в том числе индивидуальных предпринимателей, их представителей, представителей юридических лиц</a>
+				<a href="~/docs/Обращения/Порядок_рассмотрения/">Порядок рассмотрения обращений</a>
+				<a href="https://xn--80abnmycp7evc.xn--90ais/">Электронное обращение</a>
+				<a href="~/docs/Обращения/Горячая_линия/">Телефоны "Горячей линии"</a>
+				<a href="~/docs/Обращения/Вышестоящая_организация/">Вышестоящая организация</a>
+				<a href="~/docs/Обращения/Нормативно-правовые_акты/">Нормативно-правовые акты</a>
+			</div>
+		</div>
+		<div class="nav-button">
+			<span>Административные процедуры</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Административные_процедуры/Перечень/">Перечень административных процедур</a>
+				<a href="~/docs/Административные_процедуры/Бланки/">Формы (бланки) документов, необходимых для обращения, порядок их заполнения и представления</a>
+				<a href="~/docs/Административные_процедуры/Специалисты/">Специалисты филиала осуществляющие прием заявлений заинтересованных лиц</a>
+				<a href="~/docs/Административные_процедуры/Вышестоящая_организация/">Вышестоящая организация</a>
+				<a href="~/docs/Административные_процедуры/Нормативно-правовые_акты/">Нормативно-правовые акты</a>
+			</div>
+		</div>
+
+		<div class="nav-button">
+			<span>Деятельность</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Деятельность/О_товарах,_работах,_услугах/">Порядок реализации</a>
+				<a href="~/docs/Деятельность/Противодействие коррупции/">Противодействие коррупции</a>
+				<a href="~/docs/Деятельность/Закупки/">Закупки</a>
+				<a href="~/docs/Деятельность/Входной_контроль/">Входной контроль</a>
+				<a href="~/docs/Деятельность/Единый_день_информирования/">Единый день информирования</a>
+				<a href="http://www.vitebsk.energo.net/OTD/IDEOL/polit.htm">ЕДИ - РУП Витебскэнерго</a>
+				<a href="~/docs/Деятельность/Отдых/">Отдых, оздоровление</a>
+				<a href="~/docs/Деятельность/БРСМ/">БРСМ</a>
+				<a href="~/docs/Деятельность/Здоровый_образ_жизни/">Здоровый образ жизни</a>
+				<a href="~/docs/Деятельность/Планы развития филиала/">Планы развития филиала</a>
+				<a href="~/docs/Деятельность/Директива1">Директива №1</a>
+				<a href="~/docs/Деятельность/Социальная реклама">Социальная реклама</a>
+			</div>
+		</div>
+
+		<div class="nav-button">
+			<span>Ресурсы</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Деятельность/Профком/">Профком</a>
+				<a href="~/docs/Ресурсы/Карты оценки опасностей и рисков/">Карты оценки опасностей и рисков</a>
+				<a href="~/docs/Ресурсы/Реестр экологической информации/">Реестр экологической информации</a>
+			</div>
+		</div>
+
+		<div class="nav-button last">
+			<span>Контакты</span>
+			<div class="nav-dropdown">
+				<a href="~/phonebook/">Телефонный справочник</a>
+				<a href="~/docs/Контакты/Обратная_связь/">Обратная связь</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="body">
+		<div class="left">
+			<div class="left-block">
+				<a href="~/phonebook" class="link">
+					Телефонный справочник 
+					<i class="material-icons preloader" id="preloader">sync</i>
+				</a>
+				<input type="search" class="search" placeholder="введите запрос и нажмите Enter" />
+			</div>
+
+			<div class="left-block">
+				<a href="~/docs/О_филиале/Официальное_наименование/" class="link">Реквизиты</a>
+				<p>Телефон: <span class="number">3-59</span></p>
+				<p>Факс: <span class="number">37-34-41</span></p>
+				<p>Городской телефон: <span class="number">+375 (212) 37-34-01</span></p>
+				<p>
+					Email: <a href="mailto:vst@vitebsk.energo.net" style="color: #206fb6;">vst@vitebsk.energo.net</a>
+				</p>
+				<p>
+					<br />
+					Режим работы:
+					<br />
+					понедельник-четверг: <span class="number">8:00 - 17:00</span>
+					<br />
+					пятница: <span class="number">8:00 - 15:45</span>
+					<br />
+					обед: <span class="number">12:30 - 13:15</span>
+					<br />
+					выходные: <span class="number">суббота, воскресенье</span>
+				</p>
+			</div>
+
+			<div class="left-block">
+				<a class="link" href="http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды</a>
+				@{
+					try
+					{
+						var html = File.ReadAllText(@"\\web\wwwroot\Content\html\weather\index.html");
+						<div>
+							@Html.Raw(html)
+						</div>
+					}
+					catch (Exception e)
+					{
+						<div class="hide">@e.Message</div>
+					}
+				}
+				<p style="padding-top: .5em;">
+					Текущая температура на улице <span id="weather" class="weather-table__temp">?</span> °C
+				</p>
+			</div>
+
+			<div class="left-block">
+				<a class="link">Курсы валют</a>
+				<table class="money">
+					<tr>
+						<td width="40px"><img src="~/Content/images/money.rub.gif" /></td>
+						<td>100 российских рублей</td>
+						<td class="number">@Convert.ToSingle(values["RUB"]).ToString("0.00")</td>
+					</tr>
+					<tr>
+						<td><img src="~/Content/images/money.eur.gif" /></td>
+						<td>1 евро</td>
+						<td class="number">@Convert.ToSingle(values["EUR"]).ToString("0.00")</td>
+					</tr>
+					<tr>
+						<td><img src="~/Content/images/money.usd.gif" /></td>
+						<td>1 доллар США</td>
+						<td class="number">@Convert.ToSingle(values["USD"]).ToString("0.00")</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="right">
+			<div id="contacts"></div>
+			<div id="news">
+				@Html.Action("News", new { take = 20 })
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.querySelectorAll('.nav-button').forEach(function (el) {
+			var timeout = 0
+			el.addEventListener('mouseenter', function () {
+				timeout = setTimeout(function () {
+					el.classList.add('visible')
+					document.querySelector('.body').classList.add('visible')
+				}, 250)
+			})
+			el.addEventListener('mouseleave', function () {
+				clearTimeout(timeout)
+				el.classList.remove('visible')
+				document.querySelector('.body').classList.remove('visible')
+			})
+		})
+
+		setInterval(function () {
+			fetch('@Url.Action("weather", "guest")?r=' + Math.random())
+				.then(function (res) { return res.text() })
+				.then(function (text) { document.getElementById('weather').innerHTML = Number(text).toFixed(2) })
+		}, 1000)
+
+		document.addEventListener('click', function (ev) {
+			var el = ev.target
+			if (el.classList.contains('news-preview')) {
+				var body = el.parentNode
+				fetch('@Url.Action("body", "guest")?id=' + body.getAttribute('news-id'))
+					.then(function (res) { return res.text() })
+					.then(function (text) { body.innerHTML = text })
+			}
+		})
+
+		var isLoading = false
+
+		window.addEventListener('scroll', function () {
+			if (isLoading) return
+
+			var scrollHeight = Math.max(
+				document.body.scrollHeight, document.documentElement.scrollHeight,
+				document.body.offsetHeight, document.documentElement.offsetHeight,
+				document.body.clientHeight, document.documentElement.clientHeight
+			)
+			if (scrollHeight - this.window.pageYOffset < 1200) {
+				isLoading = true
+
+				var news = document.querySelectorAll('[news-id]')
+				var last = news.length > 0 ? (news[news.length - 1]).getAttribute('news-id') : 0
+
+				fetch('@Url.Action("news", "guest")?take=10&skip=' + last)
+					.then(function (res) { return res.text() })
+					.then(function (text) {
+						document.getElementById('news').insertAdjacentHTML('beforeend', text)
+						isLoading = false
+					})
+			}
+		})
+
+		document.querySelector('.search').addEventListener('search', function (ev) {
+			var value = ev.target.value
+			if (value.length > 1) {
+				preload()
+				fetch('@Url.Action("contacts", "guest")?search=' + encodeURIComponent(value))
+					.then(function (res) { return res.text() })
+					.then(function (text) {
+						if (text.length > 0) {
+							show(text)
+						}
+						else {
+							hide()
+						}
+					})
+			}
+			else {
+				hide()
+			}
+
+			function preload() {
+				document.getElementById('preloader').style.display = 'block'
+			}
+
+			function show(text) {
+				document.getElementById('preloader').style.display = 'none'
+				document.getElementById('news').style.display = 'none'
+				document.getElementById('contacts').innerHTML = text
+				document.getElementById('contacts').style.display = 'block'
+			}
+
+			function hide() {
+				document.getElementById('preloader').style.display = 'none'
+				document.getElementById('contacts').style.display = 'none'
+				document.getElementById('contacts').innerHTML = ''
+				document.getElementById('news').style.display = 'block'
+			}
+		})
 	</script>
 </body>
 </html>

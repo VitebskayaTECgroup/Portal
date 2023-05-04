@@ -1,0 +1,40 @@
+﻿@{
+	ViewBag.Title = "Разметка";
+	Layout = "~/Views/Shared/_PageLayout.cshtml";
+}
+
+<div class="page">
+
+	<div>
+		<input type="search" onchange="load(this.value)" />
+	</div>
+
+	<div id="preloader" style="display: none;">
+		<i icon>autorenew</i>
+	</div>
+	<div id="results"></div>
+</div>
+
+
+
+
+@section scripts {
+	<script>
+		var preloader = document.getElementById('preloader')
+
+		function load(query) {
+
+			preloader.style.display = 'block'
+
+			let form = new FormData()
+			form.append('query', query)
+
+			fetch('@Url.Action("SearchResult", "Default")', { method: 'POST', body: form })
+				.then(res => res.text())
+				.then(text => {
+					preloader.style.display = 'none'
+					document.getElementById('results').innerHTML = text
+				})
+		}
+	</script>
+}

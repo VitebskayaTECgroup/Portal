@@ -26,19 +26,28 @@ namespace Schreduler.Actions
 				{
 					try
 					{
-						string key = row.QuerySelector(".country")?.TextContent ?? null;
+						string key = row.QuerySelector(".curAmount")?.TextContent ?? null;
 						string value = row.QuerySelector(".curCours div")?.TextContent ?? null;
 
 						if (key != null)
 						{
 							key = key.Trim();
 
-							if (key == "Доллар США")
+							if (key.Contains("USD"))
+							{
 								conn.Execute("UPDATE Constants SET Value = @Value WHERE Keyword = @Keyword", new { Keyword = "USD", Value = value.Trim() });
-							if (key == "Евро")
+								Console.WriteLine("USD: " + value.Trim());
+							}
+							if (key.Contains("EUR"))
+							{
 								conn.Execute("UPDATE Constants SET Value = @Value WHERE Keyword = @Keyword", new { Keyword = "EUR", Value = value.Trim() });
-							if (key == "Российский рубль")
+								Console.WriteLine("EUR: " + value.Trim());
+							}
+							if (key.Contains("RUB"))
+							{
 								conn.Execute("UPDATE Constants SET Value = @Value WHERE Keyword = @Keyword", new { Keyword = "RUB", Value = value.Trim() });
+								Console.WriteLine("RUB: " + value.Trim());
+							}
 						}
 					}
 					catch (Exception) { }

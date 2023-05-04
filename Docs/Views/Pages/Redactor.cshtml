@@ -1,0 +1,188 @@
+﻿@model DocsPage
+@{
+	Layout = "~/Views/Shared/_PageLayout.cshtml";
+	ViewBag.Title = "Страница";
+}
+
+@using (var db = new SiteContext())
+{
+	<div class="page" data-id="0">
+		<div class="header">
+			<span onclick="showHeaderEdit(this)">@Model.Name</span>
+			<input type="text" value="@Model.Name" onchange="endHeaderEdit(this)" />
+			<a href="~/page/@Model.Id" style="margin-left: 1em;">
+				<i icon>visibility</i>
+			</a>
+		</div>
+		<div id="sort-container" class="drop drop-section">
+			@foreach (var sub in Model.Elements.OrderBy(x => x.OrderValue))
+			{
+				if (typeof(DocsSection) == sub.GetType())
+				{
+					@RenderSection((DocsSection)sub)
+				}
+				else
+				{
+					@Html.Partial("_Document", (DocsDocument)sub)
+				}
+			}
+		</div>
+		<button onclick="addSection(@Model.Id, 0)">
+			<i icon>add</i>
+			<span>раздел</span>
+		</button>
+		<button onclick="modal('@Url.Action("Add", "Documents", new { PageId = Model.Id, SectionId = 0 })')">
+			<i icon>add</i>
+			<span>документ</span>
+		</button>
+	</div>
+}
+
+@section scripts {
+	<script>
+
+	function showHeaderEdit(span) {
+		let header = span.parentNode
+		header.classList.add('edit')
+		header.querySelector('input').focus()
+	}
+
+	function endHeaderEdit(input) {
+		let header = input.parentNode
+
+		if (input.value != header.querySelector('span').innerHTML) {
+			action('@Url.Action("Edit", "Pages")', { id: @Model, name: input.value }, () => location.reload())
+		}
+		else {
+			header.classList.remove('edit')
+		}
+	}
+
+	function addSection(pageId, sectionId) {
+		let title = prompt('Введите наименование раздела')
+		if (!title) return
+
+		action('@Url.Action("Add", "Sections")', { title, pageId, sectionId }, () => location.reload())
+	}
+
+	function editSection(id, defTitle) {
+		let title = prompt('Введите наименование раздела', defTitle)
+		if (!title) return
+
+		action('@Url.Action("Edit", "Sections")', { title, id }, () => location.reload())
+	}
+
+	function removeSection(id) {
+		if (!confirm('Удалить раздел?')) return
+
+		action('@Url.Action("Remove", "Sections")', { id }, () => location.reload())
+	}
+
+	$(function () {
+		$('.drop').sortable({
+			items: '.section,.page-row',
+			handle: '.handler',
+			placeholder: "ui-state-highlight",
+			forcePlaceholderSize: true,
+			connectWith: '.drop',
+			stop(event, ui) {
+				let $el = ui.item
+				let $section = $el.parent().closest('.section,.page')
+
+				action($el.hasClass('section') ? '@Url.Action("Move", "Sections")' : '@Url.Action("Move", "Documents")', {
+					id: $el.data('id'),
+					sectionId: $section.data('id')
+				})
+
+				let $elements = $section.data('id') == 0
+					? $section.find('> .drop').children('.page-row,.section')
+					: $section.find('> .section-body > .drop').children('.page-row,.section')
+				let orderModel = Array.from($elements).map(el => ({
+						Id: el.getAttribute('data-id'),
+						IsSection: el.classList.contains('section')
+					})
+				)
+
+				action('@Url.Action("Reorder", "Sections")', {
+					json: JSON.stringify(orderModel)
+				})
+			},
+		})
+
+		@*$('.drop-document').sortable({
+			handle: '.handler-document',
+			placeholder: "ui-state-highlight",
+			forcePlaceholderSize: true,
+			connectWith: '.drop-document',
+			stop(event, ui) {
+				let $doc = ui.item
+				let $section = $doc.closest('.section')
+
+				action('@Url.Action("Move", "Documents")', {
+					id: $doc.data('id'),
+					sectionId: $section.data('id')
+				})
+
+				let $elements = $section.find('> .section-body > .drop').find('.page-row,.section')
+				let orderModel = Array.from($elements).map(el => ({
+						Id: el.getAttribute('data-id'),
+						IsSection: el.classList.contains('section')
+					})
+				)
+
+				action('@Url.Action("Reorder", "Sections")', {
+					json: JSON.stringify(orderModel)
+				})
+			},
+		})*@
+	})
+	</script>
+}
+
+@helper RenderSection(DocsSection docsSection)
+{
+	docsSection.Elements.AddRange(docsSection.Sections);
+	docsSection.Elements.AddRange(docsSection.Documents);
+
+	<div class="section" data-id="@docsSection.Id">
+		<div class="section-header">
+			<div class="section-header-text">
+				<i icon title="Переместить раздел" class="handler handler-section">drag_indicator</i>
+				<b>@docsSection.Title</b>
+			</div>
+			<div>
+				<button onclick="removeSection(@docsSection.Id)">
+					<i icon>delete</i>
+					<span>удалить</span>
+				</button>
+				<button onclick="editSection(@docsSection.Id, '@docsSection.Title')">
+					<i icon>edit</i>
+					<span>редакт.</span>
+				</button>
+			</div>
+		</div>
+		<div class="section-body">
+			<div class="drop drop-section drop-document">
+				@foreach (var sub in docsSection.Elements.OrderBy(x => x.OrderValue))
+				{
+					if (typeof(DocsSection) == sub.GetType())
+					{
+						@RenderSection((DocsSection)sub)
+					}
+					else
+					{
+						@Html.Partial("_Document", (DocsDocument)sub)
+					}
+				}
+			</div>
+			<button onclick="addSection(@Model, @docsSection.Id)">
+				<i icon>add</i>
+				<span>раздел</span>
+			</button>
+			<button onclick="modal('@Url.Action("Form", "Documents", new { Id = 0, PageId = Model, SectionId = docsSection.Id })')">
+				<i icon>add</i>
+				<span>документ</span>
+			</button>
+		</div>
+	</div>
+}

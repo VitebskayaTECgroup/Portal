@@ -1,0 +1,6 @@
+﻿@model List<DocsDocument>
+
+@foreach (var doc in Model)
+{
+	@Html.Partial("_Document", doc)
+}

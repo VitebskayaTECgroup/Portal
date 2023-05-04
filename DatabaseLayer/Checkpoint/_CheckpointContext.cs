@@ -8,9 +8,9 @@ namespace DatabaseLayer.Checkpoint
 		public CheckpointContext() : base("Checkpoint") { }
 
 		public ITable<OWNERS> OWNERS
-			=> GetTable<OWNERS>();
+			=> this.GetTable<OWNERS>();
 
 		public ITable<EVENTS> EVENTS
-			=> GetTable<EVENTS>();
+			=> this.GetTable<EVENTS>();
 	}
 }

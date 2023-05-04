@@ -12,121 +12,135 @@ namespace DatabaseLayer.Site
 		public SiteContext() : base("Site") { }
 
 		public ITable<User> Users
-			=> GetTable<User>();
+			=> this.GetTable<User>();
 
 		public ITable<Person> Persons
-			=> GetTable<Person>();
+			=> this.GetTable<Person>();
 
 		public ITable<Vacation> Vacations
-			=> GetTable<Vacation>();
+			=> this.GetTable<Vacation>();
 
 		public ITable<Guest> Guests
-			=> GetTable<Guest>();
+			=> this.GetTable<Guest>();
 
 		public ITable<Appeal> Appeals
-			=> GetTable<Appeal>();
+			=> this.GetTable<Appeal>();
 
 		public ITable<Violation> Violations
-			=> GetTable<Violation>();
+			=> this.GetTable<Violation>();
 
 		public ITable<UsersToGuilds> UsersToGuilds
-			=> GetTable<UsersToGuilds>();
+			=> this.GetTable<UsersToGuilds>();
 
 
 		public ITable<News> News
-			=> GetTable<News>();
+			=> this.GetTable<News>();
 
 		public ITable<NewsGuild> NewsGuilds
-			=> GetTable<NewsGuild>();
+			=> this.GetTable<NewsGuild>();
 
 		public ITable<NewsView> NewsViews
-			=> GetTable<NewsView>();
+			=> this.GetTable<NewsView>();
 
 		public ITable<NewsHide> NewsHides
-			=> GetTable<NewsHide>();
+			=> this.GetTable<NewsHide>();
 
 		public ITable<NewsPin> NewsPins
-			=> GetTable<NewsPin>();
+			=> this.GetTable<NewsPin>();
 
 		public ITable<NewsTags> NewsTags
-			=> GetTable<NewsTags>();
+			=> this.GetTable<NewsTags>();
 
 
 		public ITable<MetalsCost> MetalsCosts
-			=> GetTable<MetalsCost>();
+			=> this.GetTable<MetalsCost>();
 
 		public ITable<Constant> Constants
-			=> GetTable<Constant>();
+			=> this.GetTable<Constant>();
 
 		public ITable<Notification> Notes
-			=> GetTable<Notification>();
+			=> this.GetTable<Notification>();
 
 		public ITable<Error> Errors
-			=> GetTable<Error>();
+			=> this.GetTable<Error>();
 
 
 		public ITable<Request> AutoRequests
-			=> GetTable<Request>();
+			=> this.GetTable<Request>();
 
 		public ITable<Car> AutoCars
-			=> GetTable<Car>();
+			=> this.GetTable<Car>();
 
 		public ITable<Driver> AutoDrivers
-			=> GetTable<Driver>();
+			=> this.GetTable<Driver>();
 
 		public ITable<Order> Orders
-			=> GetTable<Order>();
+			=> this.GetTable<Order>();
 
 		public ITable<OrderRecord> OrdersRecords
-			=> GetTable<OrderRecord>();
+			=> this.GetTable<OrderRecord>();
 
 		// Директива №1
 
 		public ITable<DirectivePage> DirectivePages
-			=> GetTable<DirectivePage>();
+			=> this.GetTable<DirectivePage>();
 
 		public ITable<DirectiveSection> DirectiveSections
-			=> GetTable<DirectiveSection>();
+			=> this.GetTable<DirectiveSection>();
 
 		public ITable<DirectiveDocument> DirectiveDocuments
-			=> GetTable<DirectiveDocument>();
+			=> this.GetTable<DirectiveDocument>();
 
 		public ITable<DirectiveLog> DirectiveLogs
-			=> GetTable<DirectiveLog>();
+			=> this.GetTable<DirectiveLog>();
 
 		public ITable<UsersToPages> UsersToPages
-			=> GetTable<UsersToPages>();
+			=> this.GetTable<UsersToPages>();
 
 		public ITable<DirectiveDocumentView> DirectiveDocumentsViews
-			=> GetTable<DirectiveDocumentView>();
+			=> this.GetTable<DirectiveDocumentView>();
 
 		// Час ТБ
 
 		public ITable<AccidentRecord> AccidentsRecords
-			=> GetTable<AccidentRecord>();
+			=> this.GetTable<AccidentRecord>();
 
 		public ITable<AccidentLog> AccidentsLogs
-			=> GetTable<AccidentLog>();
+			=> this.GetTable<AccidentLog>();
 
 		public ITable<AccidentView> AccidentsViews
-			=> GetTable<AccidentView>();
+			=> this.GetTable<AccidentView>();
 
 		public ITable<AccidentList> AccidentsLists
-			=> GetTable<AccidentList>();
+			=> this.GetTable<AccidentList>();
 
 		public ITable<AccidentRecordList> AccidentsRecordsLists
-			=> GetTable<AccidentRecordList>();
+			=> this.GetTable<AccidentRecordList>();
 
 		public ITable<AccidentUserList> AccidentsUsersLists
-			=> GetTable<AccidentUserList>();
+			=> this.GetTable<AccidentUserList>();
 
 		// Телефонный справочник
 
 		public ITable<PhonebookGuild> PhonebookGuilds
-			=> GetTable<PhonebookGuild>();
+			=> this.GetTable<PhonebookGuild>();
 
 		public ITable<PhonebookPosition> PhonebookPositions
-			=> GetTable<PhonebookPosition>();
+			=> this.GetTable<PhonebookPosition>();
+
+		// Документы
+
+		public ITable<DocsMenu> DocsMenu
+			=> this.GetTable<DocsMenu>();
+
+		public ITable<DocsPage> DocsPages
+			=> this.GetTable<DocsPage>();
+
+		public ITable<DocsSection> DocsSections
+			=> this.GetTable<DocsSection>();
+
+		public ITable<DocsDocument> DocsDocuments
+			=> this.GetTable<DocsDocument>();
 
 
 		public User Authorize(IPrincipal principal) => Authorize(principal.Identity.Name);

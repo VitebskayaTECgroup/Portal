@@ -41,11 +41,11 @@
 				</div>
 				<div class="menu_body" id="admins">
 					@*<a href="https://10.178.97.9">
-							<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
-						</a>
-						<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
-							<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
-						</a>*@
+						<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
+					</a>
+					<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
+						<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
+					</a>*@
 
 					<a href="https://frw.vst.vitebsk.energo.net:4081/admin">
 						<span class="material-icons" style="color: #e73a27;">security</span> Kerio Control
@@ -78,14 +78,34 @@
 						<span class="material-icons" style="color: #b270ed;">wifi_tethering</span> ScanLan
 					</a>
 					@*<a href="http://ic1.vst.vitebsk.energo.net:81/">
-							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
-						</a>
-						<a href="http://ups.vst.vitebsk.energo.net:81/">
-							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
-						</a>*@
+						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
+					</a>
+					<a href="http://ups.vst.vitebsk.energo.net:81/">
+						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
+					</a>*@
 				</div>
 			</div>
 		}
+
+		@{ open = Request.Cookies.Get("rup-links")?.Value != "0"; }
+		<div class="menu @(open ? "open" : "")">
+			<div class="menu_header">
+				<table onclick="toggleMenu(this, 'rup-links')">
+					<tr>
+						<td>Ресурсы РУП "Витебскэнерго"</td>
+						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+					</tr>
+				</table>
+			</div>
+			<div class="menu_body" id="rup-links">
+				<a href="http://cloud.vitebsk.energo.net/">
+					<span class="material-icons" style="color: #03a9f4;">cloud_upload</span> Облачное хранилище
+				</a>
+				<a href="http://chat.vitebsk.energo.net/">
+					<span class="material-icons" style="color: #1e6bf7;">forum</span> Корпоративный чат
+				</a>
+			</div>
+		</div>
 
 		@{ open = Request.Cookies.Get("operations")?.Value != "0"; }
 		<div class="menu @(open ? "open" : "")">
@@ -157,9 +177,6 @@
 						<span class="material-icons" style="color: #3a7ffd;">bolt</span> Главная электрическая схема ТЭЦ
 					</a>
 				}
-				<a href="http://chat.vitebsk.energo.net/">
-					<span class="material-icons" style="color: #1e6bf7;">forum</span> Корпоративный чат
-				</a>
 				@if (user.Groups.Contains("group_uchet") || user.Groups.Contains("group_ASUP"))
 				{
 					<a href="http://info.energo.net:9858/Home/Identificate">
@@ -196,14 +213,14 @@
 					</script>
 				}
 				@*@if (user.Groups.Contains("group_violations"))
-					{
-						<a href="~/violations/">
-							<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
-						</a>
-					}*@
+				{
+					<a href="~/violations/">
+						<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
+					</a>
+				}*@
 				@*<a href="http://web.vst.vitebsk.energo.net:88">
-						<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
-					</a>*@
+					<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
+				</a>*@
 			</div>
 		</div>
 

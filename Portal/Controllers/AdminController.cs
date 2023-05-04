@@ -353,45 +353,12 @@ namespace Portal.Controllers
 		{
             try
             {
-                var lines = new List<string>();
-
                 using (var db = new SiteContext())
                 {
-                    using (var context = new PrincipalContext(ContextType.Domain))
-                    {
-                        using (var searcher = new PrincipalSearcher(new UserPrincipal(context)))
-                        {
-                            foreach (var usr in searcher.FindAll())
-                            {
-                                var groups = string.Join("|", usr.GetGroups().Select(x => x.Name).ToArray());
-
-                                if (db.Users.Count(x => x.UName == usr.Name) > 0)
-                                {
-                                    //db.Users
-                                    //    .Where(x => x.UName == usr.Name)
-                                    //    .Set(x => x.DisplayName, usr.DisplayName)
-                                    //    .Set(x => x.Groups, groups)
-                                    //    .Update();
-
-                                    lines.Add(string.Format("UPDATE {0} [{1}, {2}]", usr.Name, usr.DisplayName, groups));
-                                }
-                                else
-                                {
-                                    //db.Insert(new User
-                                    //{
-                                    //    UName = usr.Name,
-                                    //    DisplayName = usr.DisplayName,
-                                    //    Groups = groups
-                                    //});
-
-                                    lines.Add(string.Format("INSERT {0} [{1}, {2}]", usr.Name, usr.DisplayName, groups));
-                                }
-                            }
-                        }
-                    }
+                    db.RescanUsers();
                 }
 
-                return Json(new { Done = true, lines });
+                return Json(new { Done = true });
             }
             catch (Exception e)
             {

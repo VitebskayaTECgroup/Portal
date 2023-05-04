@@ -1,0 +1,53 @@
+﻿@model DocsDocument
+
+@{
+	string src = "http://www.vst.vitebsk.energo.net/files/docs/" + Model.Id + "/" + Model.Link;
+}
+
+<div class="page-row" data-id="@Model.Id">
+	<div class="page-row-text">
+		@if (Model.IsRedactor)
+		{
+			<i icon title="Переместить документ" class="handler handler-document">drag_indicator</i>
+		}
+		@switch (Model.Type)
+		{
+			case "text":
+				<span>@Model.Text</span>
+				break;
+
+			case "document":
+				<span>Model.Text</span>
+				if (src.EndsWith(".pdf"))
+				{
+					<iframe src="@src"></iframe>
+				}
+				else
+				{
+					<a href="@src" download>Скачать</a>
+				}
+				break;
+
+			case "link":
+				<a href="@src">@Model.Text</a>
+				break;
+
+			case "image":
+				<img src="@src" style="width: 10em; border: 1px solid #ccc;" />
+				break;
+		}
+	</div>
+	@if (Model.IsRedactor)
+	{
+		<div>
+			<button onclick="modal('@Url.Action("Delete", "Documents", new { Id = Model.Id })')">
+				<i icon>delete</i>
+				<span>удалить</span>
+			</button>
+			<button onclick="modal('@Url.Action("Form", "Documents", new { Id = Model.Id })')">
+				<i icon>edit</i>
+				<span>редакт.</span>
+			</button>
+		</div>
+	}
+</div>
