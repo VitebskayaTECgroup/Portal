@@ -8,6 +8,7 @@ $(window).on('error', function (e) {
 	})
 })
 
+
 function printReportCart() {
 	$.get('/devin/devices/PrintRecordCartByIp?Ip=' + document.getElementById('hostName').innerHTML, function (json) {
 		if (json.Error) alert(json.Error)
@@ -35,7 +36,7 @@ function toggleMenu(obj, name) {
 		$menu.addClass('open')
 		state = 1
 	}
-	setCookie(name, state, { expires: 9999999999 })
+	setCookie(name, state)
 	$arrow.toggleClass('ic-arrow-up ic-arrow-down')
 }
 
@@ -45,7 +46,7 @@ function getCookie(name) {
 }
 
 function setCookie(name, value, options) {
-	options = options || {}
+	options = options || { expires: 99999999999 }
 	var expires = options.expires
 	options.SameSite = "Lax"
 	if (typeof expires == "number" && expires) {

@@ -236,22 +236,22 @@
 	<script src="~/Content/lib/ckeditor/ckeditor.js"></script>
 	<script src="~/Content/lib/widgets/datepicker.js"></script>
 	<script>
-        $(function () {
-            CKEDITOR.replace('message');
-            new DatePicker({ el: '#form-date-add' });
-            new DatePicker({ el: '#form-date-expire' });
-        })
+		$(function () {
+			CKEDITOR.replace('message');
+			new DatePicker({ el: '#form-date-add' });
+			new DatePicker({ el: '#form-date-expire' });
+		})
 
-        function save(url) {
-            var form = []
-            var fields = document.querySelectorAll('select,input');
+		function save(url) {
 
-            for (var i = 0; i < fields.length; i++) {
-                var type = fields[i].type
-                if (type != 'file') {
-                    form.push(fields[i].name + '=' + encodeURIComponent(type == 'checkbox' ? fields[i].checked : fields[i].value))
-                }
-			}
+			var form = new FormData()
+
+			form.append('Message', CKEDITOR.instances['message'].getData())
+
+			document.querySelector('.form').querySelectorAll('select,input').forEach(function (el) {
+				if (el.type == 'file') return
+				form.append(el.name, el.type === 'checkbox' ? el.checked : el.value)
+			});
 
 			var labels = document.querySelectorAll('.tags')
 			var tags = []
@@ -259,35 +259,33 @@
 				if (el.checked) tags.push(el.name)
 			})
 			if (tags.length > 0) {
-				form.push('tags=' + tags.join('|'))
+				form.append('tags', tags.join('|'))
 			}
 
-            form.push('message=' + encodeURIComponent(CKEDITOR.instances['message'].getData()))
+			fetch(url, { method: 'POST', body: form })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Done) document.location = '@Url.Action(null, "news")'
+					else {
+						try { console.log(json) } catch (e) { }
+					}
+				})
+		}
 
-            $.post(url, form.join('&'))
-                .fail(function (data) { try { console.log(data) } catch (e) { } })
-                .done(function (data) {
-                    if (data.Done) document.location = '@Url.Action(null, "news")'
-                    else {
-                        try { console.log(data) } catch (e) { }
-                    }
-                })
-        }
+		function del(url) {
+			if (!confirm('Данная новость будет безвозратно удалена для всех пользователей. Продолжить?')) return
+			$.post(url)
+				.fail(function (data) { try { console.log(data) } catch (e) { } })
+				.done(function (data) {
+					if (data.Done) document.location = '@Url.Action("index", "news")'
+					else {
+						try { console.log(data) } catch (e) { }
+					}
+				})
+		}
 
-        function del(url) {
-            if (!confirm('Данная новость будет безвозратно удалена для всех пользователей. Продолжить?')) return
-            $.post(url)
-                .fail(function (data) { try { console.log(data) } catch (e) { } })
-                .done(function (data) {
-                    if (data.Done) document.location = '@Url.Action("index", "news")'
-                    else {
-                        try { console.log(data) } catch (e) { }
-                    }
-                })
-        }
-
-        function removeFile(obj) {
-            $(obj).closest('table').remove();
+		function removeFile(obj) {
+			$(obj).closest('table').remove();
 		}
 
 		function setCategoriesToNothing(input) {

@@ -11,7 +11,7 @@ body {
 	background-color: #eee;
 }
 
-	body.black {
+	body.dark {
 		background: #333;
 		color: #fff;
 	}
@@ -62,14 +62,14 @@ header {
 		border: 2px solid #0072ff;
 	}
 
-.black .link {
+.dark .link {
 	background: #444;
 	color: #fff;
 	border: 2px solid #222;
 	box-shadow: 0 4px 6px 0 #222;
 }
 
-.black .link:hover {
+.dark .link:hover {
 	box-shadow: 0px 0px 10px 1px #222;
 	transition: box-shadow .2s ease;
 	border-color: #0072ff;
@@ -137,20 +137,20 @@ header {
 			text-shadow: 0 0 2px #0072ff;
 		}
 
-.black .menu > a {
+.dark .menu > a {
 	background: #444;
 	border: 2px solid #222;
 	box-shadow: 0px 4px 6px 0px #222;
 }
 
-	.black .menu > a:hover {
+	.dark .menu > a:hover {
 		box-shadow: 0px 0px 10px 1px #222;
 		transition: box-shadow .2s ease;
 		border-color: #0072ff;
 		border: 2px solid #0072ff;
 	}
 
-		.black .menu > a:hover > span {
+		.dark .menu > a:hover > span {
 			text-shadow: 0 0 2px #0072ff;
 		}
 
@@ -267,35 +267,35 @@ header {
 	font-size: .9em;
 }
 
-.black .container {
+.dark .container {
 	background: #333;
 	border: 1px solid #000;
 	box-shadow: 0px 4px 6px 0px #222;
 }
 
-.black .section {
+.dark .section {
 	background: #333;
 }
 
-	.black .section .number {
+	.dark .section .number {
 		border: 1px solid #222;
 		background-color: #555;
 		color: #fff;
 	}
 
-	.black .section:hover {
+	.dark .section:hover {
 		box-shadow: 0 1px 4px #000;
 	}
 
-.black .section .files a {
+.dark .section .files a {
 	color: #6daeff;
 }
 
-	.black .section .files > div:hover {
+	.dark .section .files > div:hover {
 		box-shadow: 0 1px 4px #000;
 	}
 
-	.black .section .files.no-hover > div:hover {
+	.dark .section .files.no-hover > div:hover {
 		box-shadow: none;
 	}
 
@@ -374,34 +374,34 @@ input[type=file] {
 		color: #0072ff;
 	}
 
-.black textarea {
+.dark textarea {
 	background: #444;
 	color: #fff;
 	border: 1px solid #555;
 }
 
-	.black textarea:hover,
-	.black textarea:focus {
+	.dark textarea:hover,
+	.dark textarea:focus {
 		border-color: #0072ff;
 		outline: none;
 	}
 
-.black button {
+.dark button {
 	background: #444;
 	color: #fff;
 	border: 2px solid #222;
 	box-shadow: 0px 2px 4px 0px #222;
 }
 
-	.black button:hover {
+	.dark button:hover {
 		border-color: #0072ff;
 	}
 
-.black .form label {
+.dark .form label {
 	border: 1px solid #555;
 }
 
-.black .form label:hover {
+.dark .form label:hover {
 	border-color: #0072ff;
 	color: #fff;
 }
@@ -441,7 +441,7 @@ input[type=file] {
 	vertical-align: middle;
 }
 
-.black [icon] {
+.dark [icon] {
 	color: #aaa;
 }
 
@@ -456,7 +456,7 @@ input[type=file] {
 		color: #0072ff;
 	}
 
-.black [btn]:hover {
+.dark [btn]:hover {
 	color: #0072ff;
 }
 
@@ -485,7 +485,7 @@ input[type=file] {
 		box-shadow: none;
 	}
 
-	.black .user:hover {
+	.dark .user:hover {
 		box-shadow: 0 1px 4px #000;
 	}
 
@@ -518,7 +518,7 @@ input[type=file] {
 	width: 40em;
 }
 
-.black [modal] {
+.dark [modal] {
 	background: #333;
 	color: #fff;
 	border: 1px solid #000;
@@ -570,27 +570,27 @@ input[type=file] {
 	}
 
 
-.black #search {
+.dark #search {
 	border: 1px solid #555;
 	background: #444;
 	color: #fff;
 }
 
-	.black #search:focus,
-	.black #search:hover {
+	.dark #search:focus,
+	.dark #search:hover {
 		border-color: #0072ff;
 		outline: none;
 	}
 
-	.black .result:hover {
+	.dark .result:hover {
 		box-shadow: 0 1px 4px #000;
 	}
 
-.black .result a.a {
+.dark .result a.a {
 	color: #6daeff;
 }
 
-.black ::placeholder {
+.dark ::placeholder {
 	color: #aaa;
 }
 

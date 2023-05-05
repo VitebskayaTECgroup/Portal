@@ -84,14 +84,14 @@ iframe {
 }
 
 
-.theme_black .layout {
+.dark .layout {
     color: #eee;
 }
 
-.theme_black .layout a {
+.dark .layout a {
     color: #2196f3;
 }
 
-.theme_black .layout a:hover {
+.dark .layout a:hover {
     color: #00bcd4;
 }

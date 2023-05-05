@@ -1,0 +1,113 @@
+﻿@{
+	int r = new Random().Next();
+	string theme = Request.Cookies.Get("theme")?.Value ?? "white";
+	if (theme == "") { theme = "white"; }
+}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta charset="utf-8" />
+	<title>@ViewBag.Title | Витебская ТЭЦ</title>
+	<link rel="shortcut icon" href="~/Content/images/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="~/Content/css/layout.css?@r" />
+	@RenderSection("styles", false)
+</head>
+
+<body class="@theme">
+	<div class="header">
+		<a href="~/">
+			<img title='Филиал "Витебская ТЭЦ" РУП "Витебскэнерго"' src="~/Content/images/styled-logo.png" />
+		</a>
+		<div class="button rounded" style="margin-top: -.25em;" onclick="setTheme()" title="Изменить цветовую гамму">
+			<i class="material-icons">dark_mode</i>
+		</div>
+	</div>
+
+	<div class="nav">
+
+		<div class="nav-button">
+			<span>О филиале</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/О_филиале/Официальное_наименование/">Официальное наименование "Витебская ТЭЦ" РУП "Витебскэнерго", почтовый адрес, адрес электронной почты, банковские реквизиты</a>
+				<a href="~/docs/О_филиале/Структура/">Структура филиала "Витебская ТЭЦ" РУП "Витебскэнерго"</a>
+				<a href="~/docs/О_филиале/Задачи_и_функции/">Задачи и функции  филиала "Витебская ТЭЦ"  РУП "Витебскэнерго"</a>
+				<a href="~/docs/О_филиале/Руководители/">Сведения о руководителях  филиала "Витебская ТЭЦ"  РУП "Витебскэнерго"</a>
+				<a href="~/docs/О_филиале/История/">История филиала</a>
+				<a href="~/docs/О_филиале/Ветераны ТЭЦ/">Ветераны ТЭЦ</a>
+				<a href="~/docs/О_филиале/Доска_почета/">Доска почета</a>
+				<a href="~/docs/О_филиале/Документы/">Официальные документы</a>
+			</div>
+		</div>
+
+		<div class="nav-button">
+			<span>Обращения</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Обращения/Запись_на_прием/">Запись на прием к руководству</a>
+				<a href="~/docs/Обращения/График_приема/">График личного приема граждан, в том числе индивидуальных предпринимателей, их представителей, представителей юридических лиц</a>
+				<a href="~/docs/Обращения/Порядок_рассмотрения/">Порядок рассмотрения обращений</a>
+				<a href="https://xn--80abnmycp7evc.xn--90ais/">Электронное обращение</a>
+				<a href="~/docs/Обращения/Горячая_линия/">Телефоны "Горячей линии"</a>
+				<a href="~/docs/Обращения/Вышестоящая_организация/">Вышестоящая организация</a>
+				<a href="~/docs/Обращения/Нормативно-правовые_акты/">Нормативно-правовые акты</a>
+			</div>
+		</div>
+		<div class="nav-button">
+			<span>Административные процедуры</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Административные_процедуры/Перечень/">Перечень административных процедур</a>
+				<a href="~/docs/Административные_процедуры/Бланки/">Формы (бланки) документов, необходимых для обращения, порядок их заполнения и представления</a>
+				<a href="~/docs/Административные_процедуры/Специалисты/">Специалисты филиала осуществляющие прием заявлений заинтересованных лиц</a>
+				<a href="~/docs/Административные_процедуры/Вышестоящая_организация/">Вышестоящая организация</a>
+				<a href="~/docs/Административные_процедуры/Нормативно-правовые_акты/">Нормативно-правовые акты</a>
+			</div>
+		</div>
+
+		<div class="nav-button">
+			<span>Деятельность</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Деятельность/О_товарах,_работах,_услугах/">Порядок реализации</a>
+				<a href="~/docs/Деятельность/Противодействие коррупции/">Противодействие коррупции</a>
+				<a href="~/docs/Деятельность/Закупки/">Закупки</a>
+				<a href="~/docs/Деятельность/Входной_контроль/">Входной контроль</a>
+				<a href="~/docs/Деятельность/Единый_день_информирования/">Единый день информирования</a>
+				<a href="http://www.vitebsk.energo.net/OTD/IDEOL/polit.htm">ЕДИ - РУП Витебскэнерго</a>
+				<a href="~/docs/Деятельность/Отдых/">Отдых, оздоровление</a>
+				<a href="~/docs/Деятельность/БРСМ/">БРСМ</a>
+				<a href="~/docs/Деятельность/Здоровый_образ_жизни/">Здоровый образ жизни</a>
+				<a href="~/docs/Деятельность/Планы развития филиала/">Планы развития филиала</a>
+				<a href="~/docs/Деятельность/Директива1">Директива №1</a>
+				<a href="~/docs/Деятельность/Социальная реклама">Социальная реклама</a>
+			</div>
+		</div>
+
+		<div class="nav-button">
+			<span>Ресурсы</span>
+			<div class="nav-dropdown">
+				<a href="~/docs/Деятельность/Профком/">Профком</a>
+				<a href="~/docs/Ресурсы/Карты оценки опасностей и рисков/">Карты оценки опасностей и рисков</a>
+				<a href="~/docs/Ресурсы/Реестр экологической информации/">Реестр экологической информации</a>
+			</div>
+		</div>
+
+		<div class="nav-button last">
+			<span>Контакты</span>
+			<div class="nav-dropdown">
+				<a href="~/phonebook/">Телефонный справочник</a>
+				<a href="~/docs/Контакты/Обратная_связь/">Обратная связь</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="body">
+		@RenderBody()
+	</div>
+
+	<script>var host = '@Url.Action(null, "")';</script>
+	<script src="~/Content/js/layout.js"></script>
+	@RenderSection("scripts", false)
+</body>
+
+</html>

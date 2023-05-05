@@ -72,19 +72,19 @@
     display: inline-block;
 }
 
-.theme_black .auto_block {
+.dark .auto_block {
     background: #333;
     color: #ddd;
     border: 1px solid #000;
 }
 
-.theme_black .auto_form {
+.dark .auto_form {
     background: #333;
     color: #ddd;
     border-color: #000;
 }
 
-.theme_black .auto_nothing {
+.dark .auto_nothing {
     background: #333;
     color: #ddd;
     border-color: #000;

@@ -107,72 +107,72 @@
 			.ToList();
 	}
 
-    <div class="layout_left">
+	<div class="layout_left">
 
-        @if (user.UClass.Contains("site_red"))
-        {
-            <div class="menu open">
-                <div class="menu_header">
-                    <table>
-                        <tr>
-                            <td>Новости</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="menu_body">
-                    <a href="~/news/create">Создать новую новость</a>
-                </div>
-            </div>
-        }
+		@if (user.UClass.Contains("site_red"))
+		{
+			<div class="menu open">
+				<div class="menu_header">
+					<table>
+						<tr>
+							<td>Новости</td>
+						</tr>
+					</table>
+				</div>
+				<div class="menu_body">
+					<a href="~/news/create">Создать новую новость</a>
+				</div>
+			</div>
+		}
 
-        @{ open = Request.Cookies.Get("news-filter")?.Value != "0"; }
-        <div data-mode="view" class="menu @(open ? "open" : "")" id="news-filter">
-            <div class="menu_header" onclick="toggleMenu(this, 'news-filter')">
-                <table>
-                    <tr>
-                        <td>Фильтр</td>
-                        <td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="menu_body">
-                <input id="keyword" placeholder="Введите запрос" value="@keyword" onkeyup="keyword()" />
-                <select id="guildId" onchange="filter()">
-                    <option value="0" @(guildId == 0 ? "selected" : "")>Все подразделения</option>
-                    @foreach (var g in pinnedGuilds)
-                    {
-                        var guild = guilds.FirstOrDefault(x => x.Id == g);
-                        if (guild != null)
-                        {
-                            if (guildId == guild.Id)
-                            {
-                                <option value="@guild.Id" selected>@guild.Name</option>
-                            }
-                            else
-                            {
-                                <option value="@guild.Id">@guild.Name</option>
-                            }
-                        }
+		@{ open = Request.Cookies.Get("news-filter")?.Value != "0"; }
+		<div data-mode="view" class="menu @(open ? "open" : "")" id="news-filter">
+			<div class="menu_header" onclick="toggleMenu(this, 'news-filter')">
+				<table>
+					<tr>
+						<td>Фильтр</td>
+						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+					</tr>
+				</table>
+			</div>
+			<div class="menu_body">
+				<input id="keyword" placeholder="Введите запрос" value="@keyword" onkeyup="keyword()" />
+				<select id="guildId" onchange="filter()">
+					<option value="0" @(guildId == 0 ? "selected" : "")>Все подразделения</option>
+					@foreach (var g in pinnedGuilds)
+					{
+						var guild = guilds.FirstOrDefault(x => x.Id == g);
+						if (guild != null)
+						{
+							if (guildId == guild.Id)
+							{
+								<option value="@guild.Id" selected>@guild.Name</option>
+							}
+							else
+							{
+								<option value="@guild.Id">@guild.Name</option>
+							}
+						}
 
-                    }
-                </select>
-                <label><input type="checkbox" onchange="filter()" id="hided" @(enableHided ? "checked" : "")/>Отображать скрытые</label>
-                <label><input type="checkbox" onchange="filter()" id="expired" @(enableExpired ? "checked" : "") />Отображать устаревшие</label>
-                <label><input type="checkbox" onchange="filter()" id="self" @(onlySelf ? "checked" : "")/>Только свои</label>
-                <a href="~/news/">Сброс параметров</a>
-            </div>
-        </div>
+					}
+				</select>
+				<label><input type="checkbox" onchange="filter()" id="hided" @(enableHided ? "checked" : "")/>Отображать скрытые</label>
+				<label><input type="checkbox" onchange="filter()" id="expired" @(enableExpired ? "checked" : "") />Отображать устаревшие</label>
+				<label><input type="checkbox" onchange="filter()" id="self" @(onlySelf ? "checked" : "")/>Только свои</label>
+				<a href="~/news/">Сброс параметров</a>
+			</div>
+		</div>
 
 		@{ open = Request.Cookies.Get("news-tags")?.Value != "0"; }
-        <div data-mode="view" class="menu @(open ? "open" : "")">
-            <div class="menu_header" onclick="toggleMenu(this, 'news-tags')">
-                <table>
-                    <tr>
-                        <td>Теги</td>
-                        <td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
-                    </tr>
-                </table>
-            </div>
+		<div data-mode="view" class="menu @(open ? "open" : "")">
+			<div class="menu_header" onclick="toggleMenu(this, 'news-tags')">
+				<table>
+					<tr>
+						<td>Теги</td>
+						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+					</tr>
+				</table>
+			</div>
 			<div class="menu_body">
 				<label>
 					<input type="checkbox" onclick="setTagsToNothing(this)" />
@@ -186,50 +186,50 @@
 					</label>
 				}
 			</div>
-        </div>
+		</div>
 
-        <div class="widget">
-            <a class="widget_bottom_link" href="/files/Руководство по размещению новостей.mp4">Руководство по размещению новостей</a>
-        </div>
-    </div>
+		<div class="widget">
+			<a class="widget_bottom_link" href="/files/Руководство по размещению новостей.mp4">Руководство по размещению новостей</a>
+		</div>
+	</div>
 
-    <div class="layout_center_right">
-        @foreach (var n in news)
-        {
-            @Html.Partial("News", n)
-        }
-        @if (news.Count == 0)
-        {
-            <div class="news">Нет новостей для отображения</div>
-        }
-    </div>
+	<div class="layout_center_right">
+		@foreach (var n in news)
+		{
+			@Html.Partial("News", n)
+		}
+		@if (news.Count == 0)
+		{
+			<div class="news">Нет новостей для отображения</div>
+		}
+	</div>
 }
 
 
 @section scripts {
-    <script>
-        function keyword(e) {
-            var e = e || window.event
-            if (e.keyCode == 13) filter()
-        }
+	<script>
+		function keyword(e) {
+			var e = e || window.event
+			if (e.keyCode == 13) filter()
+		}
 
-        function filter() {
-            var host = '@Url.Action(null, "news")';
-            var filters = [];
+		function filter() {
+			var host = '@Url.Action(null, "news")';
+			var filters = [];
 
-            var key = document.getElementById('keyword').value
-            if (key && key != '') filters.push('k=' + encodeURIComponent(key))
+			var key = document.getElementById('keyword').value
+			if (key && key != '') filters.push('k=' + encodeURIComponent(key))
 
-            var hided = document.getElementById('hided').checked
-            if (hided) filters.push('h=1')
+			var hided = document.getElementById('hided').checked
+			if (hided) filters.push('h=1')
 
-            var expired = document.getElementById('expired').checked
-            if (expired) filters.push('e=1')
+			var expired = document.getElementById('expired').checked
+			if (expired) filters.push('e=1')
 
-            var self = document.getElementById('self').checked
-            if (self) filters.push('u=1')
+			var self = document.getElementById('self').checked
+			if (self) filters.push('u=1')
 
-            var guildId = document.getElementById('guildId').value
+			var guildId = document.getElementById('guildId').value
 			if (guildId && guildId != '0') filters.push('g=' + guildId)
 
 			var labels = document.querySelectorAll('.tags')
@@ -241,7 +241,7 @@
 				filters.push('tags=' + tags.join('|'))
 			}
 
-            document.location = host + (filters.length > 0 ? '?' : '') + filters.join('&')
+			document.location = host + (filters.length > 0 ? '?' : '') + filters.join('&')
 		}
 
 		function setTagsToNothing(input) {
@@ -251,5 +251,5 @@
 			})
 			filter()
 		}
-    </script>
+	</script>
 }

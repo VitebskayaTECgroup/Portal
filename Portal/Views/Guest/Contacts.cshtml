@@ -45,7 +45,7 @@
 
 	if (phones.Count() == 0)
 	{
-		<div>По данному запросу ничего не найдено</div>
+		<div class="block">По данному запросу ничего не найдено</div>
 		return;
 	}
 
@@ -55,7 +55,7 @@
 			.Where(x => x.Family == phone.Name)
 			.FirstOrDefault();
 
-		<div class="phone" style="min-height: 155px">
+		<div class="block phone" style="min-height: 155px">
 			<div class="phone-image">
 				<img src="@phone.Image()" title="@phone.Name" />
 			</div>

@@ -333,7 +333,7 @@
 				}
 				function changeTheme(value) {
 					var value = getCookie('theme');
-					if (value === 'black') value = 'white'; else value = 'black';
+					if (value === 'dark') value = 'white'; else value = 'dark';
 					setCookie('theme', value, { expires: 999999999, path: '/' });
 					document.body.className = 'theme_' + value;
 				}

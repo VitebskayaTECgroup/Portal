@@ -28,22 +28,22 @@
 			background: #eee;
 		}
 
-.theme_black #opc_panel {
+.dark #opc_panel {
 	background: #333;
 	color: #fff;
 	border: 1px solid #111;
 	box-shadow: 0 1px 15px 0 #000;
 }
 
-	.theme_black #opc_panel:hover {
+	.dark #opc_panel:hover {
 		background: #333;
 	}
 
-	.theme_black #opc_panel > a {
+	.dark #opc_panel > a {
 		color: #fff;
 	}
 
-		.theme_black #opc_panel > a:hover {
+		.dark #opc_panel > a:hover {
 			background: #444;
 		}
 

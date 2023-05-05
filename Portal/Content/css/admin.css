@@ -114,52 +114,52 @@ pre {
 
 /* Black theme */
 
-.theme_black .layout_center_right > table {
+.dark .layout_center_right > table {
     color: #eee;
 }
 
-.theme_black .layout_center_right > table thead {
+.dark .layout_center_right > table thead {
     background: #444;
     border-color: #111;
 }
 
-.theme_black .layout_center_right > table tbody {
+.dark .layout_center_right > table tbody {
     background: #333;
     border-color: #111;
 }
 
-.theme_black .layout_center_right > table td {
+.dark .layout_center_right > table td {
     border-color: #222;
 }
 
-.theme_black .layout_center_right > table tbody tr:hover td {
+.dark .layout_center_right > table tbody tr:hover td {
     background: #034a56;
 }
 
-.theme_black .cart {
+.dark .cart {
     background: #333;
     color: #eee;
     border-color: #111;
     box-shadow: 1px 1px 18px 2px #111;
 }
 
-.theme_black .sub-data table {
+.dark .sub-data table {
     border-color: #111;
     box-shadow: 0 0 0 0;
 }
 
-.theme_black .sub-data th {
+.dark .sub-data th {
     background: #444;
     color: #eee;
     border-color: #111;
 }
 
-.theme_black .sub-data td {
+.dark .sub-data td {
     background: #333;
     color: #eee;
 }
 
-.theme_black .sub-data select {
+.dark .sub-data select {
     background: #333;
     color: #fff;
 }

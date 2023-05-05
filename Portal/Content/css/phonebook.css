@@ -194,36 +194,36 @@
 }
 
 
-/* Black theme */
+/* dark theme */
 
-.theme_black .search {
+.dark .search {
     border-color: #000;
 }
 
-.theme_black  .search_caption {
+.dark  .search_caption {
     background: #444;
     color: #fff;
     border-color: #000;
 }
 
-.theme_black  .phone {
+.dark  .phone {
     border-color: #000;
     background: #333;
     color: #eee;
 }
 
-    .theme_black  .phone_name {
+    .dark  .phone_name {
         color: #03A9F4;
     }
 
-    .theme_black  .phone_number {
+    .dark  .phone_number {
         color: #fff;
     }
 
-    .theme_black  .phone a {
+    .dark  .phone a {
         color: #0ab3ff;
     }
 
-.theme_black .red {
+.dark .red {
     color: #fb6666;
 }
