@@ -115,6 +115,9 @@
     <Compile Include="Site\DirectiveSection.cs" />
     <Compile Include="Site\DocsMenu.cs" />
     <Compile Include="Site\DocsDocument.cs" />
+    <Compile Include="Site\SchemeTag.cs" />
+    <Compile Include="Site\SchemeDocument.cs" />
+    <Compile Include="Site\SchemeContainer.cs" />
     <Compile Include="Site\DocsSection.cs" />
     <Compile Include="Site\DocsPage.cs" />
     <Compile Include="Site\PhonebookPosition.cs" />

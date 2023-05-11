@@ -8,6 +8,22 @@ window.addEventListener('error', function (ev) {
 	fetch(host + 'site/error', { method: 'POST', body: form })
 })
 
+document.querySelectorAll('.nav-button').forEach(function (el) {
+	if (el.hasAttribute('unactive')) return
+	var timeout = 0
+	el.addEventListener('mouseenter', function () {
+		timeout = setTimeout(function () {
+			el.classList.add('visible')
+			document.querySelector('.body').classList.add('visible')
+		}, 250)
+	})
+	el.addEventListener('mouseleave', function () {
+		clearTimeout(timeout)
+		el.classList.remove('visible')
+		document.querySelector('.body').classList.remove('visible')
+	})
+})
+
 function toggleMenu(obj, name) {
 
 	var menu = obj.closest('.menu')

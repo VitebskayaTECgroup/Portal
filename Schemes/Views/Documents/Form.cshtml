@@ -1,0 +1,49 @@
+﻿@model DocumentForm
+
+<div class="view-title">
+	Редактирование документа "@(Model.Document.Name ?? "без названия")"
+</div>
+
+<hr />
+
+<div>
+	<div class="view-block">
+		<div class="view-caption">Название</div>
+		<div>
+			<textarea name="@nameof(Model.Document.Name)">@Model.Document.Name</textarea>
+		</div>
+	</div>
+	<div class="view-block">
+		<div class="view-caption">Теги</div>
+		<div class="tags">
+			<input type="hidden" name="@nameof(Model.Document.TagsString)" value="@Model.Document.TagsString" />
+			@foreach (var tag in Model.Tags)
+			{
+				<div class="tag @(Model.Document.Tags.Contains(tag.Id) ? "selected" : "")" data-id="@tag.Id" onclick="setTag(this)">@tag.Text</div>
+			}
+			<button onclick="addTag(this)">новый тег</button>
+		</div>
+	</div>
+	<div class="view-block">
+		<div class="view-caption">Закрепленный файл</div>
+		<div>
+			<label>
+				<input type="file" onchange="uploadFile(this, @Model.Document.Id)" />
+				@if (string.IsNullOrEmpty(Model.Document.Link))
+				{
+					<span>добавить документ</span>
+				}
+				else
+				{
+					<span>@Model.Document.Link</span>
+				}
+			</label>
+		</div>
+	</div>
+</div>
+
+<div class="buttons">
+	<button onclick="deleteDocument('@Url.Action("Delete", "Documents", new { Id = Model.Document.Id })')">Удалить</button>
+	<button onclick="submit('#modal-body', '@Url.Action("Edit", "Documents", new { Id = Model.Document.Id })')">Сохранить</button>
+	<button onclick="modal()">Закрыть</button>
+</div>

@@ -125,7 +125,7 @@
 				@Html.Partial("_LiveFolder", new LiveFolder
 				{
 					Name = dir.Substring(dir.LastIndexOf("\\") + 1),
-					RelativePath = dir,
+					RelativePath = dir + "/",
 					NoImages = Model.NoImages,
 					SortByDate = Model.SortByDate,
 					SortByName = Model.SortByName,

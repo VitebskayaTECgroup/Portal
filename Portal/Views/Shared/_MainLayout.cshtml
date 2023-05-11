@@ -2,6 +2,8 @@
 	int r = new Random().Next();
 	string theme = Request.Cookies.Get("theme")?.Value ?? "white";
 	if (theme == "") { theme = "white"; }
+
+	bool isGuest = ViewBag.IsGuest ?? false;
 }
 <!DOCTYPE html>
 <html lang="ru">
@@ -27,7 +29,9 @@
 	</div>
 
 	<div class="nav">
-
+		<div class="nav-button" unactive>
+			<a href="~/">Главная</a>
+		</div>
 		<div class="nav-button">
 			<span>О филиале</span>
 			<div class="nav-dropdown">
@@ -41,7 +45,6 @@
 				<a href="~/docs/О_филиале/Документы/">Официальные документы</a>
 			</div>
 		</div>
-
 		<div class="nav-button">
 			<span>Обращения</span>
 			<div class="nav-dropdown">
@@ -64,7 +67,12 @@
 				<a href="~/docs/Административные_процедуры/Нормативно-правовые_акты/">Нормативно-правовые акты</a>
 			</div>
 		</div>
-
+		@if (!isGuest)
+		{
+			<div class="nav-button" unactive>
+				<a href="~/directive">Директива №1</a>
+			</div>
+		}
 		<div class="nav-button">
 			<span>Деятельность</span>
 			<div class="nav-dropdown">
@@ -82,7 +90,12 @@
 				<a href="~/docs/Деятельность/Социальная реклама">Социальная реклама</a>
 			</div>
 		</div>
-
+		@if (!isGuest)
+		{
+			<div class="nav-button" unactive>
+				<a href="~/docs/Деятельность/Профком/">Профком</a>
+			</div>
+		}
 		<div class="nav-button">
 			<span>Ресурсы</span>
 			<div class="nav-dropdown">
@@ -91,7 +104,6 @@
 				<a href="~/docs/Ресурсы/Реестр экологической информации/">Реестр экологической информации</a>
 			</div>
 		</div>
-
 		<div class="nav-button last">
 			<span>Контакты</span>
 			<div class="nav-dropdown">

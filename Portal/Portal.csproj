@@ -68,7 +68,7 @@
       <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NPOI, Version=2.5.5.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.5.5\lib\net45\NPOI.dll</HintPath>
@@ -138,6 +138,7 @@
     <Content Include="Areas\Directive\Content\images\fire.png" />
     <Content Include="Areas\Directive\Content\images\destructive.png" />
     <Content Include="Areas\Directive\Content\images\factory.png" />
+    <Content Include="Areas\Directive\Content\images\perform.png" />
     <Content Include="Areas\Directive\Content\images\safe.png" />
     <Content Include="Areas\Directive\Content\images\other.png" />
     <Content Include="Areas\Directive\Content\images\emergency.png" />

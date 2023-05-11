@@ -1,0 +1,357 @@
+﻿@model Schemes.Models.UrlParams
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta charset="utf-8" />
+	<title>Схемы</title>
+	<link rel="shortcut icon" href="~/Content/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="~/Content/styles.css?@DateTime.Now.ToFileTimeUtc()" />
+</head>
+
+<body>
+	@using (var db = new SiteContext())
+	{
+		var user = db.Authorize(User);
+
+		var tags = db.SchemeTags
+			.ToList();
+
+		var containers = db.SchemeContainers
+			.ToList();
+
+		var rootContainers = containers
+			.Where(x => x.ContainerId == 0)
+			.ToList();
+
+		foreach (var container in containers)
+		{
+			container.Load(containers);
+		}
+
+		<div class="title">
+			Схемы
+		</div>
+
+		<div class="tree">
+			<div class="tree-block">
+				<div class="tree-item @(Model.Id == 0 ? "active" : "")">
+					<i icon>search</i>
+					<a href="~/">Поиск</a>
+				</div>
+			</div>
+			@foreach (var container in rootContainers)
+			{
+				@RenderTreeContainer(container, user.IsSchemeAdmin)
+			}
+			@if (user.IsSchemeAdmin)
+			{
+				<div class="tree-block">
+					<div class="tree-item">
+						<i icon onclick="addContainer(0)" title="Добавить раздел">add</i>
+						<span></span>
+					</div>
+				</div>
+			}
+		</div>
+
+		<div class="view">
+			@if (Model.Id == 0)
+			{
+				<div id="search" class="view-block">
+					<div class="view-title">Поиск</div>
+				</div>
+
+				<div class="view-block">
+					<div class="view-title">Поисковый запрос</div>
+					<input type="search" id="@nameof(Model.Query)" placeholder="Введите запрос" value="@Model.Query" />
+				</div>
+
+				<div class="view-block">
+					<div class="view-title">Необходимые теги</div>
+					<div class="tags">
+						<input type="hidden" id="@nameof(Model.TagsString)" value="@Model.TagsString" />
+						@foreach (var tag in tags)
+						{
+							<div data-id="@tag.Id" class="tag @(Model.Tags.Contains(tag.Id) ? "selected" : "")" onclick="setTag(this)">@tag.Text</div>
+						}
+					</div>
+				</div>
+
+				<div>
+					<button onclick="location = '@Url.Action(null, "")'">Сбросить</button>
+					<button onclick="doSearch()">Искать</button>
+				</div>
+
+				if (!string.IsNullOrEmpty(Model.Query) || !string.IsNullOrEmpty(Model.TagsString))
+				{
+					var documents = db.SchemeDocuments
+						.Where(x => string.IsNullOrEmpty(Model.Query) || x.Name.ToLower().Contains(Model.Query.ToLower()))
+						.Where(x => string.IsNullOrEmpty(Model.TagsString) || tags.Any(t => x.TagsString.Contains(t.Id.ToString())))
+						.ToList()
+						.Where(x => string.IsNullOrEmpty(Model.TagsString) || x.Tags.Intersect(Model.Tags).Count() > 0)
+						.ToList();
+
+					<div class="view-block" style="margin-top: 1em;">
+						<div class="view-title">Найдено</div>
+						@foreach (var doc in documents)
+						{
+							@RenderDocument(doc, user.IsSchemeAdmin, tags)
+						}
+					</div>
+				}
+			}
+			else
+			{
+				var modelContainer = containers
+					.FirstOrDefault(x => x.Id == Model.Id);
+
+				modelContainer.Documents = db.SchemeDocuments
+					.Where(x => x.ContainerId == Model.Id)
+					.ToList();
+
+				<div class="view-block">
+					<div class="view-title">Раздел "@modelContainer.Name"</div>
+				</div>
+
+				<div class="view-block">
+					<div class="view-title">Подразделы</div>
+					@foreach (var sub in modelContainer.Containers)
+					{
+						@RenderContainer(sub)
+					}
+				</div>
+
+				<div class="view-block">
+					<div class="view-title">Документы</div>
+					@foreach (var doc in modelContainer.Documents.Where(x => !string.IsNullOrEmpty(x.Link)))
+					{
+						@RenderDocument(doc, user.IsSchemeAdmin, tags)
+					}
+					@if (user.IsSchemeAdmin)
+					{
+						<div class="buttons">
+							<button onclick="modal('@Url.Action("Form", "Documents", new { ContainerId = modelContainer.Id, Id = 0 })')">Добавить документ</button>
+						</div>
+					}
+				</div>
+			}
+		</div>
+
+		<div id="modal">
+			<div id="modal-body"></div>
+		</div>
+
+		<script src="~/Content/index.js?@DateTime.Now.ToFileTimeUtc()"></script>
+		<script>
+			function addContainer(containerId) {
+				var name = prompt('Введите название раздела', '')
+				if (!name) return
+
+				var form = new FormData()
+				form.append('Name', name)
+				form.append('ContainerId', containerId)
+
+				fetch('@Url.Action("Create", "Containers")', { method: 'POST', body: form })
+					.then(res => res.json())
+					.then(json => {
+						if (json.Done) location.reload()
+						else console.log(json)
+					})
+			}
+
+			function editContainer(id, oldName) {
+				var name = prompt('Введите название раздела', oldName)
+				if (!name) return
+
+				var form = new FormData()
+				form.append('Name', name)
+				form.append('Id', id)
+
+				fetch('@Url.Action("Edit", "Containers")', { method: 'POST', body: form })
+					.then(res => res.json())
+					.then(json => {
+						if (json.Done) location.reload()
+						else console.log(json)
+					})
+			}
+
+			function deleteContainer(id, name) {
+				if (!confirm('Удалить раздел ' + name + '?')) return
+
+				var form = new FormData()
+				form.append('Id', id)
+
+				fetch('@Url.Action("Delete", "Containers")', { method: 'POST', body: form })
+					.then(res => res.json())
+					.then(json => {
+						if (json.Done) location.reload()
+						else console.log(json)
+					})
+			}
+
+			function doSearch() {
+				var query = document.getElementById('@nameof(Model.Query)').value
+				var tagsString = document.getElementById('@nameof(Model.TagsString)').value
+
+				var params = []
+				if (query) params.push('query=' + encodeURIComponent(query))
+				if (tagsString) params.push('tagsString=' + encodeURIComponent(tagsString))
+
+				location = '@Url.Action(null, "")' + (params.length > 0 ? ('?' + params.join('&')) : '')
+			}
+
+			function modal(url) {
+				if (!url) {
+					document.getElementById('modal').style.display = 'none'
+				}
+				else {
+					fetch(url)
+						.then(res => res.text())
+						.then(text => {
+							document.getElementById('modal-body').innerHTML = text
+							document.getElementById('modal').style.display = 'flex'
+						})
+				}
+			}
+
+			function submit(selector, url) {
+				var el = document.querySelector(selector)
+
+				var form = new FormData()
+				el.querySelectorAll('input[name],select[name],textarea[name]').forEach(input => {
+					form.append(input.name, input.type == 'checkbox' ? input.checked : input.value)
+				})
+
+				fetch(url, { method: 'POST', body: form })
+					.then(res => res.json())
+					.then(json => {
+						if (json.Done) location.reload()
+						else console.log(json)
+					})
+			}
+
+			function action(url) {
+				fetch(url, { method: 'POST' })
+					.then(res => res.json())
+					.then(json => {
+						if (json.Done) location.reload()
+						else console.log(json)
+					})
+			}
+
+			function uploadFile(input, documentId) {
+				var form = new FormData()
+				form.append('Id', documentId)
+				form.append('File', input.files[0])
+
+				fetch('@Url.Action("Upload", "Documents")', { method: 'POST', body: form })
+					.then(res => res.json())
+					.then(json => {
+						if (json.Done) {
+							input.parentNode.querySelector('span').innerHTML = json.Done
+						}
+						else console.log(json)
+					})
+			}
+
+			function addTag(button) {
+				var name = prompt('Введите название нового тега')
+				if (!name) return
+
+				var form = new FormData()
+				form.append('Text', name)
+
+				fetch('@Url.Action("Add", "Tags")', { method: 'POST', body: form })
+					.then(res => res.json())
+					.then(json => {
+						if (json.Done) {
+							button.insertAdjacentHTML('beforebegin', `<div class="tag" data-id="${json.Done}" onclick="setTag(this)">${name}</div>`)
+						}
+						else console.log(json)
+					})
+			}
+
+			function setTag(div) {
+				var container = div.parentNode
+				var input = container.querySelector('input')
+				div.classList.toggle('selected')
+
+				input.value = Array.from(container.querySelectorAll('.selected'))
+					.map(el => el.getAttribute('data-id'))
+					.join(',')
+			}
+
+			function deleteDocument(url) {
+				if (!confirm('Удалить документ?')) return
+				action(url)
+			}
+		</script>
+	}
+</body>
+
+</html>
+
+@helper RenderTreeContainer(SchemeContainer container, bool isAdmin)
+{
+	<div class="tree-block">
+		<div class="tree-item @(Model.Id == container.Id ? "active" : "")">
+			<i icon>folder</i>
+			<a href="~/?id=@container.Id">@container.Name</a>
+			@if (isAdmin)
+			{
+				<i icon onclick="addContainer(@container.Id)" title="Добавить подраздел">add</i>
+				<i icon onclick="deleteContainer(@container.Id, '@container.Name')" title="Удалить раздел">clear</i>
+				<i icon onclick="editContainer(@container.Id, '@container.Name')" title="Переименовать раздел">edit</i>
+			}
+		</div>
+		<div class="tree-sub">
+			@foreach (var sub in container.Containers)
+			{
+				@RenderTreeContainer(sub, isAdmin)
+			}
+		</div>
+	</div>
+}
+
+@helper RenderContainer(SchemeContainer container)
+{
+	<a href="~/?id=@container.Id" class="view-link" title="Нажмите, чтобы открыть подраздел">
+		<i icon>folder</i>
+		<span>@container.Name</span>
+	</a>
+}
+
+@helper RenderDocument(SchemeDocument document, bool isAdmin, List<SchemeTag> tags)
+{
+	if (isAdmin)
+	{
+		<div class="view-link-container">
+			<a class="view-link" title="Нажмите, чтобы просмотреть документ" href="http://www.vst.vitebsk.energo.net/files/Схемы/@document.Id/@document.Link">
+				<i icon>description</i>
+				<span>@document.Name</span>
+				@foreach (var tag in document.Tags)
+				{
+					<span class="tag">@(tags.FirstOrDefault(x => x.Id == tag)?.Text ?? "?")</span>
+				}
+			</a>
+			<a class="view-link" title="Нажмите, чтобы изменить документ" style="width: 3em; text-align: right;" onclick="modal('@Url.Action("Form", "Documents", new { Id = document.Id })')">
+				<i icon>edit</i>
+			</a>
+		</div>
+	}
+	else
+	{
+		<a class="view-link" title="Нажмите, чтобы просмотреть документ" href="http://www.vst.vitebsk.energo.net/files/Схемы/@document.Id/@document.Link">
+			<i icon>description</i>
+			<span>@document.Name</span>
+			@foreach (var tag in document.Tags)
+			{
+				<span class="tag">@(tags.FirstOrDefault(x => x.Id == tag)?.Text ?? "?")</span>
+			}
+		</a>
+	}
+}

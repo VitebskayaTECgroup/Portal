@@ -142,6 +142,16 @@ namespace DatabaseLayer.Site
 		public ITable<DocsDocument> DocsDocuments
 			=> this.GetTable<DocsDocument>();
 
+		// Схемы
+
+		public ITable<SchemeContainer> SchemeContainers
+			=> this.GetTable<SchemeContainer>();
+
+		public ITable<SchemeDocument> SchemeDocuments
+			=> this.GetTable<SchemeDocument>();
+
+		public ITable<SchemeTag> SchemeTags
+			=> this.GetTable<SchemeTag>();
 
 		public User Authorize(IPrincipal principal) => Authorize(principal.Identity.Name);
 
