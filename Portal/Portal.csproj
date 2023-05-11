@@ -154,8 +154,10 @@
     <Content Include="Content\css\admin.css" />
     <Content Include="Content\css\auto.css" />
     <Content Include="Content\css\big-photos.css" />
+    <Content Include="Content\css\birthdays.css" />
     <Content Include="Content\css\core.css" />
     <Content Include="Content\css\docs.css" />
+    <Content Include="Content\css\editor.css" />
     <Content Include="Content\css\guest.css" />
     <Content Include="Content\css\onewindow.css" />
     <Content Include="Content\css\orders.css" />
@@ -340,6 +342,7 @@
     <Content Include="Content\js\birthdays.js" />
     <Content Include="Content\js\layout.js" />
     <Content Include="Content\js\core.js" />
+    <Content Include="Content\js\news.js" />
     <Content Include="Content\js\safe.js" />
     <Content Include="Content\lib\ckeditor\adapters\jquery.js" />
     <Content Include="Content\lib\ckeditor\build-config.js" />
@@ -751,6 +754,7 @@
     </Compile>
     <Compile Include="Models\LiveDateFolder.cs" />
     <Compile Include="Models\LiveFolder.cs" />
+    <Compile Include="Models\StationParametersModel.cs" />
     <Compile Include="Models\ViolationsFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -874,7 +878,7 @@
     <Content Include="Views\Phonebook\Index.cshtml" />
     <Content Include="Views\Shared\_LiveFolder.cshtml" />
     <Content Include="Views\Shared\News.cshtml" />
-    <Content Include="Views\Shared\NewsBody.cshtml" />
+    <Content Include="Views\Guest\NewsBody.cshtml" />
     <Content Include="Views\Shared\_DocsLayout.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Site\Birthdays.cshtml" />
@@ -887,7 +891,6 @@
     <Content Include="Views\Docs\Деятельность\Планы развития филиала.cshtml" />
     <Content Include="Views\Orders\Index.cshtml" />
     <Content Include="Views\Docs\О филиале\Ветераны ТЭЦ.cshtml" />
-    <Content Include="Views\Docs\Деятельность\Директива1.cshtml" />
     <Content Include="Views\Docs\Деятельность\Социальная реклама.cshtml" />
     <Content Include="Areas\Accidents\Views\Records\Details.cshtml" />
     <Content Include="Areas\Accidents\Views\Logs\Index.cshtml" />
@@ -902,12 +905,14 @@
     <Content Include="Areas\Accidents\Views\List\Index.cshtml" />
     <Content Include="Areas\Accidents\Views\List\Edit.cshtml" />
     <Content Include="Areas\Accidents\Views\Records\List.cshtml" />
-    <Content Include="Views\Shared\MetalCosts.cshtml" />
+    <Content Include="Views\Site\MetalCosts.cshtml" />
     <Content Include="Views\Docs\Ресурсы\Реестр экологической информации.cshtml" />
-    <Content Include="Views\Shared\NewsBlock.cshtml" />
+    <Content Include="Views\Guest\NewsBlock.cshtml" />
     <Content Include="Views\Shared\NewsContent.cshtml" />
     <Content Include="Views\Guest\Contacts.cshtml" />
     <Content Include="Views\Shared\_MainLayout.cshtml" />
+    <Content Include="Views\Site\StationParameters.cshtml" />
+    <Content Include="Views\News\NewsBlock.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

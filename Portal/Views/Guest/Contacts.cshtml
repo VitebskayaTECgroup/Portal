@@ -62,21 +62,21 @@
 			<div class="phone-text">
 				@if (!string.IsNullOrEmpty(phone.Name))
 				{
-					<div class="number">@phone.Name</div>
+					<div class="blue">@phone.Name</div>
 					<div class="normal">@phone.Position</div>
 				}
 				else
 				{
-					<div class="number">@phone.Position</div>
+					<div class="blue">@phone.Position</div>
 					<div></div>
 				}
 				@if (!string.IsNullOrEmpty(phone.InnerPhone))
 				{
-					<div>внутренний телефон: <span class="number">@phone.InnerPhone</span></div>
+					<div>внутренний телефон: <span class="blue">@phone.InnerPhone</span></div>
 				}
 				@if (!string.IsNullOrEmpty(phone.OuterPhone))
 				{
-					<div>городской телефон: <span class="number">@phone.OuterPhone</span></div>
+					<div>городской телефон: <span class="blue">@phone.OuterPhone</span></div>
 				}
 				@if (!string.IsNullOrEmpty(phone.Email))
 				{

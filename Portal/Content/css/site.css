@@ -1,4 +1,166 @@
-﻿#opc_panel {
+
+
+/* Weather */
+
+.weather_today, .weather_another {
+	text-align: center;
+}
+
+	.weather_today b {
+		color: #1db123;
+		font-size: 1.1em;
+	}
+
+	.weather_another i {
+		font-size: .9em;
+	}
+
+.weather_table li {
+	background: #fff;
+	border: 1px solid #ccc;
+	margin-bottom: 10px;
+	padding: 5px 10px;
+}
+
+.weather_table .date {
+	font-size: .88em;
+	color: #333;
+	width: 70px;
+	float: left;
+	margin-top: 29px;
+	line-height: .9;
+	position: relative;
+}
+
+	.weather_table .date strong {
+		font-size: 42px;
+		font-weight: bold;
+	}
+
+	.weather_table .date span {
+		position: relative;
+		top: -22px;
+		left: 2px;
+		font-weight: bold;
+		color: #999;
+	}
+
+.h-weather {
+	position: relative;
+	margin-left: 65px;
+}
+
+.t-weather {
+	font-size: 12px;
+	color: #333;
+	width: 100%;
+	margin: -36px 0 0;
+}
+
+	.t-weather p {
+		display: inline-block;
+		margin: 0;
+		vertical-align: middle;
+	}
+
+	.t-weather .t {
+		display: none;
+	}
+
+	.t-weather nobr {
+		color: #1e8ef7;
+		font-size: 12pt;
+	}
+
+/* Notifications */
+
+.notifications {
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+}
+
+	.notifications table {
+		width: 100%;
+	}
+
+.notifications_header {
+	background: #eee;
+	cursor: pointer;
+}
+
+	.notifications_header th {
+		text-align: left;
+		padding: 8px;
+		padding-left: 15px;
+		color: #555;
+		transition: color linear .35s;
+	}
+
+.highlight .notifications_header th {
+	color: #20b332;
+	transition: color linear .35s;
+}
+
+.notifications_body {
+	display: none;
+	background: #fff;
+	font-size: 11pt;
+}
+
+	.notifications_body tr:hover {
+		background: #eee;
+	}
+
+	.notifications_body td {
+		padding: 3px 2px 3px 10px;
+	}
+
+	.notifications_body a {
+		color: #000;
+		text-decoration: none;
+	}
+
+.open .notifications_body {
+	display: block;
+}
+
+
+.notes .caption {
+	padding-left: 15px;
+	color: #555;
+	font-weight: bold;
+	transition: color linear .5s;
+}
+
+	.notes .caption.highlight {
+		color: #20b332;
+		transition: color linear .5s;
+	}
+
+.notes .note_table {
+	padding: 5px;
+}
+
+.notes th {
+	font: normal 8pt Segoe UI, sans-serif;
+}
+
+.notes td {
+	padding: 2px;
+	font: normal 10pt Segoe UI, sans-serif;
+}
+
+/* Another */
+
+.preloader {
+	display: none;
+	position: absolute;
+	top: 1em;
+	right: 1.3em;
+	animation: spin 4s linear infinite;
+}
+
+#opc_panel {
 	display: none;
 	position: absolute;
 	top: 14em;

@@ -1,0 +1,34 @@
+﻿@model StationParametersModel
+
+<table>
+	<tr>
+		<td>Мгновенная мощность:</td>
+		<td class="blue" style="width: 5em;">@Model.Power.ToString("0.000")</td>
+		<td>МВт</td>
+	</tr>
+	<tr>
+		<td>Частота ТГ-2:</td>
+		<td class="blue">@Model.FreqTA2.ToString("0.00")</td>
+		<td>Гц</td>
+	</tr>
+	<tr>
+		<td>Частота ТГ-3:</td>
+		<td class="blue">@Model.FreqTA3.ToString("0.00")</td>
+		<td>Гц</td>
+	</tr>
+	<tr>
+		<td>Расход газа:</td>
+		<td class="blue">@Model.Gas.ToString("0.000")</td>
+		<td>м<sup>3</sup>&middot;10<sup>3</sup></td>
+	</tr>
+	<tr>
+		<td>Выработка эл/эн (час.):</td>
+		<td class="blue">@Model.ProducedHour.ToString("0.000")</td>
+		<td>МВт</td>
+	</tr>
+	<tr>
+		<td>Выработка эл/эн (сут.):</td>
+		<td class="blue">@Model.ProducedDay.ToString("0.000")</td>
+		<td>МВт</td>
+	</tr>
+</table>

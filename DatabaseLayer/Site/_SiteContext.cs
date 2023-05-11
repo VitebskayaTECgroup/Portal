@@ -218,8 +218,10 @@ namespace DatabaseLayer.Site
 			}
 		}
 
-		public bool HasUnviewedDocsInDirective(User user)
+		public int HasUnviewedDocsInDirective(User user)
 		{
+			int count = 0;
+
 			var pages = DirectivePages
 				.OrderBy(x => x.OrderValue)
 				.Where(x => string.IsNullOrEmpty(x.AllowedGroup) || user.GroupsArray.Contains(x.AllowedGroup))
@@ -244,13 +246,10 @@ namespace DatabaseLayer.Site
 					.Select(x => x.Id)
 					.ToList();
 
-				if (sectionsId.Count(x => unviewedSections.Contains(x)) > 0)
-				{
-					return true;
-				}
+				count += sectionsId.Count(x => unviewedSections.Contains(x));
 			}
 
-			return false;
+			return count;
 		}
 	}
 }

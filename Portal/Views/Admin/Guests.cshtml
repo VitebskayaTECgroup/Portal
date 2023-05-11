@@ -1,88 +1,88 @@
 ﻿@{
-    ViewBag.Title = "Гости";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Гости";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @section styles {
-    <link rel="stylesheet" href="~/Content/css/admin.css" />
+	<link rel="stylesheet" href="~/Content/css/admin.css" />
 }
 
 @Html.Partial("Links", model: "guests")
 
-<div class="layout_center_right">
-    @using (var db = new SiteContext())
-    {
-        var user = db.Authorize(User);
+<div class="center-right">
+	@using (var db = new SiteContext())
+	{
+		var user = db.Authorize(User);
 
-        if (!user.IsAdmin)
-        {
-            <h3>Нет доступа</h3>
-            return;
-        }
+		if (!user.IsAdmin)
+		{
+			<h3>Нет доступа</h3>
+			return;
+		}
 
-        <div style="display: inline-block; width: 69%;">
-            <div class="title">Гости за сегодня</div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th data-type="date" width="200px">Дата</th>
-                        <th data-type="string">IP адрес</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        var today = db.Guests
-                            .Where(x => x.Date.Date == DateTime.Today)
-                            .OrderByDescending(x => x.Date)
-                            .ToList();
+		<div style="display: inline-block; width: 69%;">
+			<div class="title">Гости за сегодня</div>
+			<table class="data-table">
+				<thead>
+					<tr>
+						<th data-type="date" width="200px">Дата</th>
+						<th data-type="string">IP адрес</th>
+					</tr>
+				</thead>
+				<tbody>
+					@{
+						var today = db.Guests
+							.Where(x => x.Date.Date == DateTime.Today)
+							.OrderByDescending(x => x.Date)
+							.ToList();
 
-                        foreach (var guest in today)
-                        {
-                            <tr title="@guest.UserAgent">
-                                <td>@guest.Date.TimeOfDay</td>
-                                <td>@guest.Ip</td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-        <div style="display: inline-block; width: 30%;">
-            <div class="title">Гости по дням</div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th data-type="date" width="180px">День</th>
-                        <th data-type="string">Кол-во гостей</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        var days = db.Guests
-                            .GroupBy(x => x.Date.Date)
-                            .Select(g => new
-                            {
-                                Day = g.Key,
-                                Count = g.Select(x => x.Ip)
-                            })
-                            .ToList()
-                            .OrderByDescending(x => x.Day)
-                            .Select(x => new
-                            {
-                                x.Day,
-                                Count = x.Count.Distinct().Count()
-                            });
+						foreach (var guest in today)
+						{
+							<tr title="@guest.UserAgent">
+								<td>@guest.Date.TimeOfDay</td>
+								<td>@guest.Ip</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
+		</div>
+		<div style="display: inline-block; width: 30%;">
+			<div class="title">Гости по дням</div>
+			<table class="data-table">
+				<thead>
+					<tr>
+						<th data-type="date" width="180px">День</th>
+						<th data-type="string">Кол-во гостей</th>
+					</tr>
+				</thead>
+				<tbody>
+					@{
+						var days = db.Guests
+							.GroupBy(x => x.Date.Date)
+							.Select(g => new
+							{
+								Day = g.Key,
+								Count = g.Select(x => x.Ip)
+							})
+							.ToList()
+							.OrderByDescending(x => x.Day)
+							.Select(x => new
+							{
+								x.Day,
+								Count = x.Count.Distinct().Count()
+							});
 
-                        foreach (var day in days)
-                        {
-                            <tr>
-                                <td>@day.Day.ToString("d MMMM yyyy")</td>
-                                <td>@day.Count</td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
+						foreach (var day in days)
+						{
+							<tr>
+								<td>@day.Day.ToString("d MMMM yyyy")</td>
+								<td>@day.Count</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
+		</div>
+	}
 </div>

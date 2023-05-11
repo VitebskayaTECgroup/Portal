@@ -3,7 +3,9 @@
 	string theme = Request.Cookies.Get("theme")?.Value ?? "white";
 	if (theme == "") { theme = "white"; }
 
+	bool isDocs = ViewBag.IsDocs ?? false;
 	bool isGuest = ViewBag.IsGuest ?? false;
+	bool hasUnseenDirectiveDocuments = ViewBag.HasUnseenDirectiveDocuments ?? false;
 }
 <!DOCTYPE html>
 <html lang="ru">
@@ -15,6 +17,10 @@
 	<title>@ViewBag.Title | Витебская ТЭЦ</title>
 	<link rel="shortcut icon" href="~/Content/images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="~/Content/css/layout.css?@r" />
+	@if (isDocs)
+	{
+		<link rel="stylesheet" href="~/Content/css/docs.css?@r" />
+	}
 	@RenderSection("styles", false)
 </head>
 
@@ -57,7 +63,7 @@
 				<a href="~/docs/Обращения/Нормативно-правовые_акты/">Нормативно-правовые акты</a>
 			</div>
 		</div>
-		<div class="nav-button">
+		<div class="nav-button" style="min-width: 10em;">
 			<span>Административные процедуры</span>
 			<div class="nav-dropdown">
 				<a href="~/docs/Административные_процедуры/Перечень/">Перечень административных процедур</a>
@@ -70,7 +76,10 @@
 		@if (!isGuest)
 		{
 			<div class="nav-button" unactive>
-				<a href="~/directive">Директива №1</a>
+				<a href="~/directive">
+					Директива №1
+					<span id="directive-new" class="counter" style="display: @(hasUnseenDirectiveDocuments ? "inline-block" : "none"); ">new</span>
+				</a>
 			</div>
 		}
 		<div class="nav-button">
@@ -114,7 +123,16 @@
 	</div>
 
 	<div class="body">
-		@RenderBody()
+		@if (isDocs)
+		{
+			<div class="page">
+				@RenderBody()
+			</div>
+		}
+		else
+		{
+			@RenderBody()
+		}
 	</div>
 
 	<script>var host = '@Url.Action(null, "")';</script>

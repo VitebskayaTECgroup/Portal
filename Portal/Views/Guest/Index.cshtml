@@ -1,6 +1,7 @@
 ﻿@{
 	Layout = "~/Views/Shared/_MainLayout.cshtml";
 	ViewBag.Title = "Главная";
+	ViewBag.IsGuest = true;
 
 	var values = new Dictionary<string, string>();
 
@@ -92,7 +93,7 @@
 	</div>
 </div>
 
-<div class="right">
+<div class="center-right">
 	<div id="contacts"></div>
 	<div id="news">
 		@Html.Action("News", new { take = 20 })

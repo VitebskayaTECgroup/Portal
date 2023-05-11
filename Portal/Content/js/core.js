@@ -239,23 +239,7 @@ function expandNews(obj) {
 	}
 }
 
-function hideNews(id) {
-	$.get(host + 'news/hide/' + id, function () {
-		location.reload()
-	})
-}
 
-function pinNews(id) {
-	$.get(host + 'news/pin/' + id, function () {
-		location.reload()
-	})
-}
-
-function unpinNews(id) {
-	$.get(host + 'news/unpin/' + id, function () {
-		location.reload()
-	})
-}
 
 function watchNews(obj, id) {
 	var $news = $(obj).closest('.news')

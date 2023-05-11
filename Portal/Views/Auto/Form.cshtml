@@ -23,12 +23,12 @@
 		title = "Создание заявки";
 	}
 
-    <table>
-        <tr>
-            <th colspan="2">@title</th>
-        </tr>
-        <tr>
-            <td width="300px">Дата, на которую нужна машина: </td>
+	<table>
+		<tr>
+			<th colspan="2">@title</th>
+		</tr>
+		<tr>
+			<td width="300px">Дата, на которую нужна машина: </td>
 			<td>
 				@{
 					var minDate = DateTime.Now.Date.AddDays(DateTime.Now.Hour > 16 ? 2 : 1);
@@ -43,42 +43,42 @@
 					}
 				}
 			</td>
-        </tr>
-        <tr>
-            <td>Время отправления:</td>
-            <td>
-                <input id="start_time" class="timepick" value="@request.TimeStart.ToString("HH:mm")" />
-            </td>
-        </tr>
-        <tr>
-            <td>Время возвращения (необязательно):</td>
-            <td><input id="end_time" class="timepick" value="@request.TimeEnd.ToString("HH:mm")" /></td>
-        </tr>
-        <tr>
-            <td>Адрес (место назначения поездки):</td>
-            <td>
-                <input id="adress" type="text" value="@request.Location" />
-            </td>
-        </tr>
-        <tr>
-            <td>Цель поездки:</td>
-            <td>
-                <textarea id="target">@request.Target</textarea>
-            </td>
-        </tr>
-    </table>
+		</tr>
+		<tr>
+			<td>Время отправления:</td>
+			<td>
+				<input id="start_time" class="timepick" value="@request.TimeStart.ToString("HH:mm")" />
+			</td>
+		</tr>
+		<tr>
+			<td>Время возвращения (необязательно):</td>
+			<td><input id="end_time" class="timepick" value="@request.TimeEnd.ToString("HH:mm")" /></td>
+		</tr>
+		<tr>
+			<td>Адрес (место назначения поездки):</td>
+			<td>
+				<input id="adress" type="text" value="@request.Location" />
+			</td>
+		</tr>
+		<tr>
+			<td>Цель поездки:</td>
+			<td>
+				<textarea id="target">@request.Target</textarea>
+			</td>
+		</tr>
+	</table>
 
-    <div id="errors"></div>
+	<div id="errors"></div>
 
-    if (id != 0)
-    {
-        <button onclick="Auto.endUpdate(@id)">Сохранить</button>
-        <button onclick="Auto.del(@id)">Удалить</button>
-    }
-    else
-    {
-        <button onclick="Auto.endCreate()">Сохранить</button>
-    }
+	if (id != 0)
+	{
+		<button onclick="Auto.endUpdate(@id)">Сохранить</button>
+		<button onclick="Auto.del(@id)">Удалить</button>
+	}
+	else
+	{
+		<button onclick="Auto.endCreate()">Сохранить</button>
+	}
 
-    <button onclick="Auto.close(@id)">Отмена</button>
+	<button onclick="Auto.close(@id)">Отмена</button>
 }

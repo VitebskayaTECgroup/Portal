@@ -1,6 +1,6 @@
 ﻿@{
 	ViewBag.Title = "Телефонный справочник";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 
 	string key = Request.QueryString.Get("q") ?? "";
 	string sub = Request.QueryString.Get("sub") ?? (key == "" ? "Управление" : "");
@@ -56,7 +56,7 @@
 		})
 		.ToList();
 
-	<div class="layout_left">
+	<div class="left">
 
 		<div class="menu open">
 			<div class="menu_header">
@@ -79,7 +79,7 @@
 		</div>
 	</div>
 
-	<div class="layout_center_right">
+	<div class="center-right">
 
 		<ul class="search">
 			<li class="search_caption">Поиск: </li>
@@ -106,7 +106,7 @@
 						.Where(x => x.Family == phone.Name)
 						.FirstOrDefault();
 
-					<div class="phone" style="min-height: 155px">
+					<div class="block phone" style="min-height: 155px">
 						<table>
 							<tr>
 								<th class="phone_image">
@@ -138,11 +138,11 @@
 										}
 										<tr>
 											<td>Телефон</td>
-											<td><div class="phone_number">@phone.InnerPhone</div></td>
+											<td><div class="blue">@phone.InnerPhone</div></td>
 										</tr>
 										<tr>
 											<td>Городской телефон</td>
-											<td><div class="phone_number">@phone.OuterPhone</div></td>
+											<td><div class="blue">@phone.OuterPhone</div></td>
 										</tr>
 										<tr>
 											<td>E-mail</td>

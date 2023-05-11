@@ -1,83 +1,83 @@
 ﻿@{
-    ViewBag.Title = "Список автомобилей";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Список автомобилей";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @section styles {
-    <link rel="stylesheet" href="~/Content/css/auto.css" />
+	<link rel="stylesheet" href="~/Content/css/auto.css" />
 }
 
 @using (var db = new SiteContext())
 {
-    var user = db.Authorize(User);
+	var user = db.Authorize(User);
 
-    if (!user.IsAutoHead)
-    {
-        <div class="error">
-            Нет доступа к этому разделу
-        </div>
-        return;
-    }
+	if (!user.IsAutoHead)
+	{
+		<div class="error">
+			Нет доступа к этому разделу
+		</div>
+		return;
+	}
 
-    var cars = db.AutoCars.ToList();
+	var cars = db.AutoCars.ToList();
 
-    <div class="layout_left">
-        @{ string open = Request.Cookies.Get("auto-operations")?.Value ?? "1"; }
-        <div class="menu @(open == "1" ? "open" : "")">
-            <div class="menu_header" onclick="toggleMenu(this, 'auto-operations')">
-                <table>
-                    <tr>
-                        <td>Операции</td>
-                        <td class="menu_arrow"><div class="icon ic-arrow-@(open == "1" ? "up" : "down")"></div></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="menu_body">
-                <a href="~/auto/">Перейти к списку заявок</a>
-                <a href="~/auto/drivers/">Перейти к списку автомобилей</a>
-            </div>
-        </div>
-    </div>
+	<div class="left">
+		@{ string open = Request.Cookies.Get("auto-operations")?.Value ?? "1"; }
+		<div class="menu @(open == "1" ? "open" : "")">
+			<div class="menu_header" onclick="toggleMenu(this, 'auto-operations')">
+				<table>
+					<tr>
+						<td>Операции</td>
+						<td class="menu_arrow"><div class="icon ic-arrow-@(open == "1" ? "up" : "down")"></div></td>
+					</tr>
+				</table>
+			</div>
+			<div class="menu_body">
+				<a href="~/auto/">Перейти к списку заявок</a>
+				<a href="~/auto/drivers/">Перейти к списку автомобилей</a>
+			</div>
+		</div>
+	</div>
 
-    <div class="layout_center_right" id="view">
-        <table class="auto_table">
-            <thead>
-                <tr>
-                    <th>Автомобиль</th>
-                    <th>Гос/номер</th>
-                    <th>Тип автомобиля</th>
-                    <th width="160px">Операции</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var car in cars)
-                {
-                    <tr>
-                        <td><input value="@car.Model" /></td>
-                        <td><input value="@car.Number" /></td>
-                        <td><input value="@car.Type" /></td>
-                        <td>
-                            <button onclick="Cars.save(@car.Id, this)">Сохранить</button>
-                            <button onclick="Cars.del(@car.Id)">Удалить</button>
-                        </td>
-                    </tr>
-                }
-                <tr>
-                    <td><input /></td>
-                    <td><input /></td>
-                    <td><input /></td>
-                    <td>
-                        <button onclick="Cars.create(this)">Создать новую запись</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+	<div class="center-right" id="view">
+		<table class="auto_table">
+			<thead>
+				<tr>
+					<th>Автомобиль</th>
+					<th>Гос/номер</th>
+					<th>Тип автомобиля</th>
+					<th width="160px">Операции</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var car in cars)
+				{
+					<tr>
+						<td><input value="@car.Model" /></td>
+						<td><input value="@car.Number" /></td>
+						<td><input value="@car.Type" /></td>
+						<td>
+							<button onclick="Cars.save(@car.Id, this)">Сохранить</button>
+							<button onclick="Cars.del(@car.Id)">Удалить</button>
+						</td>
+					</tr>
+				}
+				<tr>
+					<td><input /></td>
+					<td><input /></td>
+					<td><input /></td>
+					<td>
+						<button onclick="Cars.create(this)">Создать новую запись</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 }
 
 @section scripts {
-    <script src="~/Content/js/auto.js"></script>
-    <script>
-        var source = '@Url.Action(null, "auto").ToLower()';
-    </script>
+	<script src="~/Content/js/auto.js"></script>
+	<script>
+		var source = '@Url.Action(null, "auto").ToLower()';
+	</script>
 }

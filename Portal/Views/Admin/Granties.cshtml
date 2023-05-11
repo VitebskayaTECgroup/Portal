@@ -1,15 +1,15 @@
 ﻿@{
-    ViewBag.Title = "Разрешения";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Разрешения";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @section styles {
-    <link rel="stylesheet" href="~/Content/css/admin.css" />
+	<link rel="stylesheet" href="~/Content/css/admin.css" />
 }
 
 @Html.Partial("Links", model: "granties")
 
-<div class="layout_center_right">
+<div class="center-right">
 
 	@using (var db = new SiteContext())
 	{
@@ -159,56 +159,56 @@
 
 @helper Table(List<User> users, string key, string caption)
 {
-    <tr>
-        <td colspan="2"><b>@caption</b></td>
-    </tr>
+	<tr>
+		<td colspan="2"><b>@caption</b></td>
+	</tr>
 
-    var select = new List<User>();
+	var select = new List<User>();
 
-    foreach (var user in users)
-    {
-        if (user.UClass.Contains(key))
-        {
-            <tr><td>(@user.UName) @user.DisplayName<td><div class="icon icon_hover ic-clear" onclick='removeGrantie("@key", "@user.UID")'></div></tr>
-        }
-        else
-        {
-            select.Add(user);
-        }
-    }
+	foreach (var user in users)
+	{
+		if (user.UClass.Contains(key))
+		{
+			<tr><td>(@user.UName) @user.DisplayName<td><div class="icon icon_hover ic-clear" onclick='removeGrantie("@key", "@user.UID")'></div></tr>
+		}
+		else
+		{
+			select.Add(user);
+		}
+	}
 
-    <tr>
-        <td>
-            <select name="@key">
-                <option value="0">?</option>
-                @foreach (var user in select)
-                {
-                    <option value="@user.UID">(@user.UName) @user.DisplayName</option>
-                }
-            </select>
-        </td>
-        <td style="padding-top: 8px;">
-            <div class="icon icon_hover ic-add" onclick="addGrantie(this)"></div>
-        </td>
-    </tr>
+	<tr>
+		<td>
+			<select name="@key">
+				<option value="0">?</option>
+				@foreach (var user in select)
+				{
+					<option value="@user.UID">(@user.UName) @user.DisplayName</option>
+				}
+			</select>
+		</td>
+		<td style="padding-top: 8px;">
+			<div class="icon icon_hover ic-add" onclick="addGrantie(this)"></div>
+		</td>
+	</tr>
 }
 
 
 @section scripts {
-    <script>
-        function addGrantie(obj) {
-            let $select = $(obj).closest('tr').find('select');
-            $.post('@Url.Action("addGrantie", "admin")', {
-                id: $select.val(),
-                key: $select.attr('name')
-            }).done(() => location.reload());
-        }
+	<script>
+		function addGrantie(obj) {
+			let $select = $(obj).closest('tr').find('select');
+			$.post('@Url.Action("addGrantie", "admin")', {
+				id: $select.val(),
+				key: $select.attr('name')
+			}).done(() => location.reload());
+		}
 
-        function removeGrantie(key, id) {
-            $.post('@Url.Action("removeGrantie", "admin")', {
-                id: id,
-                key: key
-            }).done(() => location.reload());
-        }
-    </script>
+		function removeGrantie(key, id) {
+			$.post('@Url.Action("removeGrantie", "admin")', {
+				id: id,
+				key: key
+			}).done(() => location.reload());
+		}
+	</script>
 }

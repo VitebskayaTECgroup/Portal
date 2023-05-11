@@ -15,7 +15,9 @@ namespace Portal.Controllers
 
 		public ActionResult Page(string section, string page)
 		{
-			ViewBag.OnlyIntranet = Request.UserHostAddress.Contains("10.178.9.") || Request.UserHostAddress == "::1";
+			bool isGuest = !Request.UserHostAddress.Contains("10.178.9.")/* || Request.UserHostAddress == "::1"*/;
+			ViewBag.IsGuest = isGuest;
+			ViewBag.IsDocs = true;
 			return View((section + "/" + page).Replace('_', ' ').Replace(",", ""));
 		}
 

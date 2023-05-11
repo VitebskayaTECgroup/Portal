@@ -1,80 +1,73 @@
 ﻿@{
-    ViewBag.Title = "Дни рождений";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Дни рождений";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @section styles {
-    <link rel="stylesheet" href="~/content/lib/widgets/datepicker.css" />
-    <link rel="stylesheet" href="~/content/css/big-photos.css" />
+	<link rel="stylesheet" href="~/content/lib/widgets/datepicker.css" />
+	<link rel="stylesheet" href="~/content/css/birthdays.css" />
+	<link rel="stylesheet" href="~/content/css/big-photos.css" />
 }
 
-<div class="layout_left">
-    @{
-        var mode = Request.QueryString.Get("mode") ?? "month";
-        var date = DateTime.TryParse(Request.QueryString.Get("date"), out DateTime d) ? d : DateTime.Now;
-        var q = Request.QueryString.Get("q") ?? "";
+<div class="left">
+	@{
+		var mode = Request.QueryString.Get("mode") ?? "month";
+		var date = DateTime.TryParse(Request.QueryString.Get("date"), out DateTime d) ? d : DateTime.Now;
+		var q = Request.QueryString.Get("q") ?? "";
 
-        if (mode == "search" && string.IsNullOrEmpty(q))
-        {
-            Response.Redirect(Url.Action("birthdays", "site"));
-        }
+		if (mode == "search" && string.IsNullOrEmpty(q))
+		{
+			Response.Redirect(Url.Action("birthdays", "site"));
+		}
 
-        var cookie = Request.Cookies.Get("birthdaysfilter")?.Value ?? "1";
-        string[] months = { "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" };
-    }
+		var cookie = Request.Cookies.Get("birthdaysfilter")?.Value ?? "1";
+		string[] months = { "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" };
+	}
 
-    <div class="menu @(cookie == "1" ? "open" : "")">
-        <div class="menu_header">
-            <table onclick="toggleMenu(this, 'birthdaysfilter')">
-                <tr>
-                    <td>Полезные ссылки</td>
-                    <td class="menu_arrow"><div class="icon ic-arrow-@(cookie == "1" ? "up" : "down")"></div></td>
-                </tr>
-            </table>
-        </div>
-        <div class="menu_body">
-            <select id="mode" onchange="reload()">
-                @if (mode == "search")
-                {
-                    <option value="search">Результаты поиска</option>
-                }
-                <option value="month">Отображать по месяцам</option>
-                <option value="day" @(mode == "day" ? "selected" : "")>Отображать по дням</option>
-            </select>
-            <select id="month" class="@(mode == "month" ? "" : "hide")" onchange="reload()">
-                @for (int k = 1; k < months.Length + 1; k++)
-                {
-                    <option value="@k.ToString("00")" @(date.Month == k ? "selected" : "")>@months[k - 1]</option>
-                }
-            </select>
-            <input id="day" class="@(mode == "day" ? "" : "hide")" value="@date.ToString("dd.MM.yyyy")" onchange="reload()" />
-            @if (mode == "day")
-            {
-                <a href="~/site/birthdays/?mode=day&date=@date.AddDays(-1).ToString("dd.MM.yyyy")">Шаг назад</a>
-                <a href="~/site/birthdays/?mode=day&date=@date.AddDays(1).ToString("dd.MM.yyyy")">Шаг вперед</a>
-            }
-            @if (mode == "month")
-            {
-                <a href="~/site/birthdays/?mode=month&date=@date.AddMonths(-1).ToString("01.MM.yyyy")">Шаг назад</a>
-                <a href="~/site/birthdays/?mode=month&date=@date.AddMonths(1).ToString("01.MM.yyyy")">Шаг вперед</a>
-            }
-            <a href="~/site/birthdays/">Вернуться</a>
-        </div>
-    </div>
+	<div class="menu @(cookie == "1" ? "open" : "")">
+		<div class="menu_body">
+			<select id="mode" onchange="reload()">
+				@if (mode == "search")
+				{
+					<option value="search">Результаты поиска</option>
+				}
+				<option value="month">Отображать по месяцам</option>
+				<option value="day" @(mode == "day" ? "selected" : "")>Отображать по дням</option>
+			</select>
+			<select id="month" class="@(mode == "month" ? "" : "hide")" onchange="reload()">
+				@for (int k = 1; k < months.Length + 1; k++)
+				{
+					<option value="@k.ToString("00")" @(date.Month == k ? "selected" : "")>@months[k - 1]</option>
+				}
+			</select>
+			<input id="day" class="@(mode == "day" ? "" : "hide")" value="@date.ToString("dd.MM.yyyy")" onchange="reload()" />
+			@if (mode == "day")
+			{
+				<a href="~/site/birthdays/?mode=day&date=@date.AddDays(-1).ToString("dd.MM.yyyy")">Шаг назад</a>
+				<a href="~/site/birthdays/?mode=day&date=@date.AddDays(1).ToString("dd.MM.yyyy")">Шаг вперед</a>
+			}
+			@if (mode == "month")
+			{
+				<a href="~/site/birthdays/?mode=month&date=@date.AddMonths(-1).ToString("01.MM.yyyy")">Шаг назад</a>
+				<a href="~/site/birthdays/?mode=month&date=@date.AddMonths(1).ToString("01.MM.yyyy")">Шаг вперед</a>
+			}
+			<a href="~/site/birthdays/">Вернуться</a>
+		</div>
+	</div>
 
-    <div class="menu open">
-        <div class="menu_header">
-            <table>
-                <tr>
-                    <td>Поиск</td>
-                </tr>
-            </table>
-        </div>
-        <div class="menu_body">
-            <input id="search" placeholder="введите поисковый запрос..." onkeyup="search(this)" value="@q" />
-            <a href="~/site/birthdays/">Очистить</a>
-        </div>
-    </div>
+	<div class="menu open">
+		<div class="menu_header">
+			<table>
+				<tr>
+					<td>Поиск</td>
+				</tr>
+			</table>
+		</div>
+		<div class="menu_body">
+			<input id="search" placeholder="введите поисковый запрос..." onkeyup="search(this)" value="@q" />
+			<a href="~/site/birthdays/">Очистить</a>
+		</div>
+	</div>
 
 	<div class="widget">
 		Данные автоматически берутся из программы "1С" и СКУД "Реверс".
@@ -84,130 +77,130 @@
 	</div>
 </div>
 
-<div class="layout_center_right" id="view">
+<div class="center-right" id="view">
 
-    @using (var db = new SiteContext())
-    {
-        var user = db.Authorize(User);
+	@using (var db = new SiteContext())
+	{
+		var user = db.Authorize(User);
 
-        List<Person> model;
+		List<Person> model;
 
-        if (mode == "search")
-        {
-            <div class="title">
-                Результаты поиска по запросу: @q
-            </div>
+		if (mode == "search")
+		{
+			<div class="title">
+				Результаты поиска по запросу: @q
+			</div>
 
-            model = db.Persons
-                .Where(x => x.Family.Contains(q.ToUpper()))
-                .OrderBy(x => x.Family)
-                .ToList();
-        }
-        else if (mode == "day")
-        {
-            <div class="title">
-                @date.ToString("dd MMMM")
-            </div>
+			model = db.Persons
+				.Where(x => x.Family.Contains(q.ToUpper()))
+				.OrderBy(x => x.Family)
+				.ToList();
+		}
+		else if (mode == "day")
+		{
+			<div class="title">
+				@date.ToString("dd MMMM")
+			</div>
 
-            model = db.Persons
-                .Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
-                .OrderBy(x => x.Family)
-                .ToList();
-        }
-        else
-        {
-            <div class="title">
-                @date.ToString("MMMM")
-            </div>
+			model = db.Persons
+				.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
+				.OrderBy(x => x.Family)
+				.ToList();
+		}
+		else
+		{
+			<div class="title">
+				@date.ToString("MMMM")
+			</div>
 
-            model = db.Persons
-                .Where(x => x.BirthDate.Month == date.Month)
-                .OrderBy(x => x.BirthDate.Day)
-                .ThenBy(x => x.Family)
-                .ToList();
-        }
+			model = db.Persons
+				.Where(x => x.BirthDate.Month == date.Month)
+				.OrderBy(x => x.BirthDate.Day)
+				.ThenBy(x => x.Family)
+				.ToList();
+		}
 
-        <div>
-            @if (model.Count() == 0)
-            {
-                <div class='nothing'>Ничего не найдено</div>
-            }
-            @foreach (var person in model)
-            {
-                string className = "";
-                string addText = "";
+		<div>
+			@if (model.Count() == 0)
+			{
+				<div class='nothing'>Ничего не найдено</div>
+			}
+			@foreach (var person in model)
+			{
+				string className = "";
+				string addText = "";
 
-                if (person.BirthDate.ToString("d MMMM") == DateTime.Now.ToString("d MMMM"))
-                {
-                    className += " birthday-today";
-                    addText += " <b>Сегодня!</b>";
-                }
+				if (person.BirthDate.ToString("d MMMM") == DateTime.Now.ToString("d MMMM"))
+				{
+					className += " birthday-today";
+					addText += " <b>Сегодня!</b>";
+				}
 
-                if (((DateTime.Now.Year - person.BirthDate.Year) % 5 == 0) && ((DateTime.Now.Year - person.BirthDate.Year) > 49))
-                {
-                    className += " birthday-anniversary";
-                    addText += " <b>Юбилей!</b>";
-                }
+				if (((DateTime.Now.Year - person.BirthDate.Year) % 5 == 0) && ((DateTime.Now.Year - person.BirthDate.Year) > 49))
+				{
+					className += " birthday-anniversary";
+					addText += " <b>Юбилей!</b>";
+				}
 
-                if (mode == "month" && person.BirthDate.ToString("MMMM") == DateTime.Now.ToString("MMMM"))
-                {
-                    if (DateTime.Now.Day - person.BirthDate.Day == 1)
-                    {
-                        className += " birthday-yesterday";
-                        addText += " <span>Вчера</span>";
-                    }
-                    else if (person.BirthDate.Day < DateTime.Now.Day)
-                    {
-                        className += " birthday-old";
-                    }
-                    else if (person.BirthDate.Day - DateTime.Now.Day == 1)
-                    {
-                        className += " birthday-tomorrow";
-                        addText += " <span>Завтра</span>";
-                    }
-                }
-                else if (person.BirthDate.Month < DateTime.Now.Month)
-                {
-                    className += " birthday-old";
-                }
+				if (mode == "month" && person.BirthDate.ToString("MMMM") == DateTime.Now.ToString("MMMM"))
+				{
+					if (DateTime.Now.Day - person.BirthDate.Day == 1)
+					{
+						className += " birthday-yesterday";
+						addText += " <span>Вчера</span>";
+					}
+					else if (person.BirthDate.Day < DateTime.Now.Day)
+					{
+						className += " birthday-old";
+					}
+					else if (person.BirthDate.Day - DateTime.Now.Day == 1)
+					{
+						className += " birthday-tomorrow";
+						addText += " <span>Завтра</span>";
+					}
+				}
+				else if (person.BirthDate.Month < DateTime.Now.Month)
+				{
+					className += " birthday-old";
+				}
 
-                <table class="entry @className">
-                    <tr>
-                        <th rowspan="4">
-                            <img src="http://www.vst.vitebsk.energo.net/photos/@(person.Family.Replace("  ", " ")).jpg" title="@(user.IsAdmin ? person.CalculateAge().ToString() : "")" onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/@(person.Family.Replace("  ", " ")).jpg')" />
-                            <span class="@(person.OnWork ? "birthday-on" : "birthday-off")"></span>
-                        </th>
-                        <td>@person.LastName</td>
-                    </tr>
-                    <tr>
-                        <td>@person.FirstName</td>
-                    </tr>
-                    <tr>
-                        <td>@person.MiddleName</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            @if (mode != "day")
-                            {
-                                <i>@person.BirthDate.ToString("d MMMM")</i>
-                            }
-                            @Html.Raw(addText)
-                        </td>
-                    </tr>
-                </table>
-            }
-        </div>
-    }
+				<table class="entry @className">
+					<tr>
+						<th rowspan="4">
+							<img src="http://www.vst.vitebsk.energo.net/photos/@(person.Family.Replace("  ", " ")).jpg" title="@(user.IsAdmin ? person.CalculateAge().ToString() : "")" onclick="getBigPhoto('http://www.vst.vitebsk.energo.net/big_photos/@(person.Family.Replace("  ", " ")).jpg')" />
+							<span class="@(person.OnWork ? "birthday-on" : "birthday-off")"></span>
+						</th>
+						<td>@person.LastName</td>
+					</tr>
+					<tr>
+						<td>@person.FirstName</td>
+					</tr>
+					<tr>
+						<td>@person.MiddleName</td>
+					</tr>
+					<tr>
+						<td>
+							@if (mode != "day")
+							{
+								<i>@person.BirthDate.ToString("d MMMM")</i>
+							}
+							@Html.Raw(addText)
+						</td>
+					</tr>
+				</table>
+			}
+		</div>
+	}
 </div>
 
 <div id="big_photo" class="hide" onclick="document.getElementById('big_photo').style.display = 'none';">
-    <div class="icon icon_hover ic-clear"></div>
-    <img id="big_photo__photo" />
+	<div class="icon icon_hover ic-clear"></div>
+	<img id="big_photo__photo" />
 </div>
 
 @section scripts {
-    <script src="~/Content/lib/widgets/datepicker.js"></script>
-    <script>
+	<script src="~/Content/lib/widgets/datepicker.js"></script>
+	<script>
         function getBigPhoto(url) {
             if (url.indexOf('logo.png') > -1) return;
             try {
@@ -236,5 +229,5 @@
             el: '#day',
             onSelect: reload
         })
-    </script>
+	</script>
 }

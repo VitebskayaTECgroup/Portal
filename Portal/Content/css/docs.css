@@ -1,57 +1,41 @@
 
-.content {
-	width: 80%;
-	max-width: 80em;
-	background: #fff;
-	border: 1px solid #aaa;
-	box-shadow: 0 0 2px 2px #ccc;
-	margin: 0 auto;
-	margin-top: 7em;
-	padding: 1em;
-	padding-top: .5em;
-}
-
-.content.centered {
-	text-align: center;
-}
-
-	.content h3 {
+	.page h3 {
 		margin: 0 1em 1em;
 		font-size: 1.3em;
 		font-weight: 600;
 		text-align: center;
 	}
 
-	.content * + h3 {
+	.page * + h3 {
 		margin-top: 1em;
 	}
 
-	.content a {
+	.page a {
 		padding: .2em;
 	}
 
-	.content .iframer {
+	.page .iframer {
 		width: 100%;
 		height: 60em;
 	}
 
-		.content .iframer iframe {
+		.page .iframer iframe {
 			width: 100%;
 			height: 100%;
 		}
 
-	.content i {
+	.page i {
 		color: #027de6;
 		font-weight: 600;
 		font-style: normal;
 	}
 
-	.content .link {
+	.page .link {
 		padding: .3em 0;
 		display: table;
 	}
 
-		.content .link b {
+		.page .link b {
 			width: 6.3em;
 			display: table-cell;
 			font-weight: lighter;
@@ -59,18 +43,18 @@
 			text-align: center;
 		}
 
-		.content .link a {
+		.page .link a {
 			display: table-cell;
 			text-decoration: none;
 		}
 
-		.content .link > span {
+		.page .link > span {
 			display: table-cell;
 			width: 3.5em;
 			text-align: center;
 		}
 
-			.content .link > span > span {
+			.page .link > span > span {
 				width: 3em;
 				display: inline-block;
 				border: 1px solid #ddd;
@@ -80,7 +64,7 @@
 				text-align: center;
 			}
 
-.dark .content .link > span > span {
+.dark .page .link > span > span {
 	width: 3em;
 	display: inline-block;
 	border: 1px solid #555;
@@ -90,22 +74,22 @@
 	text-align: center;
 }
 
-	.content .link a:hover {
+	.page .link a:hover {
 		text-decoration: underline;
 	}
 
-	.content td {
+	.page td {
 		padding: 1em;
 		vertical-align: top;
 	}
 
-	.content .imager {
+	.page .imager {
 		display: inline-block;
 		margin: .5em;
 		max-width: 20em;
 	}
 
-		.content .imager img {
+		.page .imager img {
 			max-width: 95%;
 		}
 
@@ -119,7 +103,7 @@
 	font-size: 1.4em;
 }
 
-.dark .content {
+.dark .page {
 	background: #222;
 	color: #fff;
 	border: 1px solid #333;
@@ -174,7 +158,7 @@
 	max-width: 100%;
 }
 
-.content p {
+.page p {
 	margin: .3em 0;
 }
 

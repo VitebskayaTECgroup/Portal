@@ -1,152 +1,127 @@
 ﻿@model News
 
-@{ 
-    string className = "news news-first news-" + Model.Priority;
-    string arrow = "arrow_drop_down";
+@{
+	Dictionary<string, string> NewsTags = ViewBag.NewsTags;
 
-    if (Model.IsHide)
-    {
-        className += " news-hided";
-    }
-
-    if (!Model.IsWatched)
-    {
-        className += " news-unwatched";
-
-        if (Model.Priority != "low")
-        {
-            className += " news-open";
-            arrow = "arrow_drop_up";
-        }
-    }
-
-    var links = (Model.Links ?? "").Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-    bool isShort = string.IsNullOrEmpty(Model.Message) && string.IsNullOrEmpty(Model.Title) && links.Length == 1;
-
-    bool isBackAndUnwatch = !Model.IsWatched && Model.Priority == "back";
-    bool isTemp = Model.DateAdd.Date < Model.DateExpire.Date;
-
-    int daysRemains = (Model.DateExpire.Date - DateTime.Now.Date).Days;
+	var links = (Model.Links ?? "").Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+	bool isShort = string.IsNullOrEmpty(Model.Message) && string.IsNullOrEmpty(Model.Title) && links.Length == 1;
+	bool isPriority = Model.Priority != "low";
+	bool isWatched = Model.IsWatched;
+	bool isNew = !isWatched && (isPriority) && (DateTime.Now - Model.DateAdd.Date).TotalDays <= 7;
+	bool isTemp = Model.DateAdd.Date < Model.DateExpire.Date;
+	int daysRemains = (Model.DateExpire.Date - DateTime.Now.Date).Days;
 }
 
-<div id="@Model.Id" class="@className">
-    <table onmouseup="@(!Model.IsWatched && Model.Priority != "back" ? "watchNews(this, " + Model.Id + ")" : "")">
-        <tr>
-            @if (isShort)
-            {
-                <td class="news-title">
-                    @if (Model.Guild?.Id != 0)
-                    {
-                        if (Model.Guild.IsPrivate)
-                        {
-                            <span class="news-channel private" title="Новость видна только подписчикам канала">@Model.Guild.Name</span>
-                        }
-                        else
-                        {
-                            <span class="news-channel" title="Общедоступная новость">@Model.Guild.Name</span>
-                        }
-                    }
-                    <a href="http://www.vst.vitebsk.energo.net/files/Новости/@Model.Id/@links[0]">@links[0].Substring(0, links[0].IndexOf("."))</a>
-                </td>
-            }
-            else
-            {
-                <td class="news-title" onclick="@(isBackAndUnwatch ? "return false" : "expandNews(this)")">
-                    @if (Model.Guild?.Id != 0)
-                    {
-                        if (Model.Guild.IsPrivate)
-                        {
-                            <span class="news-channel private" title="Новость видна только подписчикам канала">@Model.Guild.Name</span>
-                        }
-                        else
-                        {
-                            <span class="news-channel" title="Общедоступная новость">@Model.Guild.Name</span>
-                        }
-                    }
-
-                    @if (Model.Title != "")
-                    {
-                        @Model.Title
-                    }
-                    else
-                    {
-                        <i>Без названия</i>
-                    }
-                    <small>@Model.DateAdd.ToString("dd.MM.yyyy")</small>
-
-                    @if (isTemp)
-                    {
-                        <small>
-                            <i class="icon ic-time icon-small"></i>
-                            @if (daysRemains == 0)
-                            {
-                                @: Истекает: сегодня
-                            }
-                            else if (Model.DateExpire.Date < DateTime.Now.Date)
-                            {
-                                @: Истекла: @(0 - daysRemains) дн. назад
-                            }
-                            else
-                            {
-                                @: @daysRemains дн.
-                            }
-                        </small>
-                    }
-                </td>
-            }
-
-            @if (Model.IsRedactor)
-            {
-                <td width="30px">
-                    <span class="material-icons" title="Перейти к редактированию новости" onclick="document.location='@Url.Action("edit", "news", new { Id = Model.Id })'">settings</span>
-                </td>
-            }
-
-            @if (Model.IsWatched || Model.Priority != "back")
-            {
-                if (Model.IsPinned)
-                {
-                    <td width="30px">
-                        <span class="material-icons" title="Открепить новость" onclick="unpinNews(@Model.Id)">push_pin</span>
-                    </td>
-                }
-                else
-                {
-                    <td width="30px">
-                        <span class="material-icons" title="Закрепить новость" onclick="pinNews(@Model.Id)">add_circle_outline</span>
-                    </td>
-                }
-            }
-
-            @if (!Model.IsHide && (Model.Priority != "back" || Model.IsWatched))
-            {
-                <td width="30px">
-                    <span class="material-icons" title="Скрыть новость. В дальнейшем она не будет отображаться в списке." onclick="hideNews(@(Model.Id))">clear</span>
-                </td>
-            }
-
-            @if (!Model.IsWatched && Model.Priority == "back") { }
-            else
-            {
-                <td width="30px" onclick="@(isBackAndUnwatch ? "return false" : "expandNews(this)")">
-                    <span class="material-icons">@arrow</span>
-                </td>
-            }
-        </tr>
-    </table>
-
-	<div class="news-body">
-		@if (!Model.IsWatched)
-		{
-			if (Model.Priority == "back")
+<div
+	class="block @(isWatched ? "" : "news-unwatched") @(isNew ? "news-new" : "")"
+	news-id="@Model.Id"
+>
+	<div class="news-info">
+		<div style="font-size: .8em;">
+			<span class="news-date">@Model.DateAdd.ToString("d MMMM yyyy")</span>
+			@if (isPriority)
 			{
-				@Html.Partial("NewsBody", Model)
+				<span class="tag highlight" title="Новость обозначена как важная">
+					<i icon>priority_high</i>
+					Важно
+				</span>
 			}
-
-			if (Model.Priority == "high" && (DateTime.Now - Model.DateAdd.Date).TotalDays <= 3)
+			@if (Model.Guild?.Id != 0)
 			{
-				@Html.Partial("NewsBody", Model)
+				if (Model.Guild.IsPrivate)
+				{
+					<span class="tag" title="Новость видна только подписчикам канала">
+						<i icon>lock</i>
+						@Model.Guild.Name
+					</span>
+				}
+				else
+				{
+					<span class="tag" title="Новость относится к общедоступному каналу">
+						<i icon>sell</i>
+						@Model.Guild.Name
+					</span>
+				}
+			}
+			@if (isTemp)
+			{
+				<span class="tag" title="Новость является временной и будет скрыта по истечению указанного времени">
+					<i icon>timer</i>
+					@if (daysRemains == 0)
+					{
+						@: Истекает: сегодня
+					}
+					else if (Model.DateExpire.Date < DateTime.Now.Date)
+					{
+						@: Истекла: @(0 - daysRemains) дн. назад
+					}
+					else
+					{
+						@: @daysRemains дн.
+					}
+				</span>
+			}
+			@if (!string.IsNullOrEmpty(Model.Tags))
+			{
+				var tags = Model.Tags.Split('|');
+				foreach (var tag in tags)
+				{
+					if (NewsTags.TryGetValue(tag, out string tagName))
+					{
+						<small class="tag">@tagName</small>
+					}
+				}
+			}
+		</div>
+		<div class="news-buttons">
+			@if (Model.IsRedactor)
+			{
+				<i icon title="Перейти к редактированию новости" onclick="document.location='@Url.Action("edit", "news", new { Id = Model.Id })'">edit</i>
+			}
+			@if (Model.IsPinned)
+			{
+				<i icon title="Открепить новость" onclick="unpinNews(@Model.Id)">push_pin</i>
+			}
+			else
+			{
+				<i icon title="Закрепить новость в начале списка новостей" onclick="pinNews(@Model.Id)">add_circle_outline</i>
+			}
+			@if (Model.IsHide)
+			{
+				<i icon title="Новость была скрыта. Нажмите, чтобы это отменить." onclick="showNews(@(Model.Id))">visibility</i>
+			}
+			else
+			{
+				<i icon title="Скрыть новость. В дальнейшем она не будет отображаться в списке." onclick="hideNews(@(Model.Id))">clear</i>
+			}
+		</div>
+	</div>
+	<div class="news-caption">
+		@if (isShort)
+		{
+			<a href="http://www.vst.vitebsk.energo.net/files/Новости/@Model.Id/@links[0]">@links[0].Substring(0, links[0].IndexOf("."))</a>
+		}
+		else
+		{
+			if (Model.Title != "")
+			{
+				@Model.Title
+			}
+			else
+			{
+				<i>Без названия</i>
 			}
 		}
-		</div>
+	</div>
+
+	<div class="news-body">
+		@if (isNew)
+		{
+			@Html.Partial("NewsContent", Model)
+		}
+		else
+		{
+			<small class="news-preview" title="Нажмите, чтобы увидеть текст новости">посмотреть</small>
+		}
+	</div>
 </div>

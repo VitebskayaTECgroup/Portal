@@ -1,0 +1,159 @@
+﻿.form {
+	margin-right: 20px;
+}
+
+	.form input[type=text] {
+		width: 100%;
+		padding: 10px;
+		box-sizing: border-box;
+		margin-bottom: 10px;
+	}
+
+.form-files {
+	margin: 25px 0 10px;
+}
+
+	.form-files th {
+		background: #fff;
+		border: 1px solid #eee;
+		padding: 5px 0 5px 15px;
+		padding: 0;
+	}
+
+	.form-files span {
+		padding: 0 10px;
+		display: inline-block;
+	}
+
+	.form-files a {
+		color: #1e8ef7;
+		font-size: 8pt;
+		display: block;
+		margin: 0 10px;
+	}
+
+	.form-files button {
+		width: 100%;
+	}
+
+.form-button-caption {
+	float: left;
+	margin-top: .25em;
+}
+
+.form-files .material-icons {
+	padding: 0;
+	float: left;
+}
+
+.form table {
+	width: 100%;
+}
+
+.form th {
+	text-align: left;
+	font-weight: normal;
+}
+
+.form input[type=text] {
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.form td {
+	text-align: right;
+}
+
+.form select {
+	padding: 9px;
+	box-sizing: border-box;
+}
+
+.form button {
+	padding: 9px;
+}
+
+	.form button i {
+		margin-right: 10px;
+	}
+
+.form label, .form button {
+	padding: 8px 10px 10px;
+	color: #000;
+	cursor: pointer;
+	border: 1px solid #aaa;
+	display: inline-block;
+	background: #fff;
+	vertical-align: middle;
+}
+
+	.form label:hover, .form button:hover {
+		color: #1e8ef7;
+	}
+
+.form label, .form select {
+	text-align: left;
+}
+
+	.form label input[type=checkbox] {
+		margin-right: 10px;
+	}
+
+input[type=file].hided {
+	outline: none;
+	width: 0;
+	height: 0;
+	opacity: 1;
+	vertical-align: middle;
+}
+
+.form-upload {
+}
+
+.form-settings th > span,
+.form-settings div > span {
+	background: #eee;
+	padding: 8px 10px 10px;
+	box-sizing: border-box;
+	border: 1px solid #aaa;
+	border-right: 0;
+}
+
+.cke_contents {
+	height: 400px !important;
+}
+
+.news-editor-caption {
+	font-weight: 500;
+	padding: 3px;
+	font-size: 15px;
+	display: block;
+}
+
+.news-editor-confirm {
+	color: #009439;
+	font-weight: 500;
+	border-bottom: 1px solid #ccc;
+}
+
+	.news-editor-confirm .material-icons {
+		color: #009439;
+	}
+
+.news-editor-reject {
+	color: #ea3535;
+	font-weight: 500;
+	border-bottom: 1px solid #ccc;
+}
+
+	.news-editor-reject .material-icons {
+		color: #ea3535;
+	}
+
+.news .material-icons {
+	color: #888;
+}
+
+	.news .material-icons:hover {
+		color: #1e8ef7;
+	}

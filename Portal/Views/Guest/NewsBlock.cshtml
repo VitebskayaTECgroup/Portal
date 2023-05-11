@@ -7,6 +7,8 @@
 @foreach (var n in Model)
 {
 	var links = (n.Links ?? "").Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+	bool onlyLink = links.Length > 0 && string.IsNullOrEmpty(n.Message) && string.IsNullOrEmpty(n.Title);
+
 	<div class="block">
 		<div class="news-info">
 			<small>@n.DateAdd.ToString("d MMMM yyyy")</small>
@@ -31,7 +33,7 @@
 			}
 		</div>
 		<div class="news-caption">
-			@if (string.IsNullOrEmpty(n.Title))
+			@if (onlyLink)
 			{
 				var link = links.FirstOrDefault();
 				<a href="http://www.vst.vitebsk.energo.net/files/Новости/@n.Id/@link">@link</a>
@@ -41,7 +43,7 @@
 				<span>@n.Title</span>
 			}
 		</div>
-		@if (string.IsNullOrEmpty(n.Message))
+		@if (!onlyLink)
 		{
 			<div class="news-body" news-id="@n.Id">
 				<small class="news-preview" title="Нажмите, чтобы увидеть текст новости">посмотреть</small>

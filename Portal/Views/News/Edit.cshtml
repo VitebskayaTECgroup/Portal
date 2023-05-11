@@ -1,10 +1,11 @@
 ﻿@model int
 @{
 	ViewBag.Title = "Редактирование #" + Model + " | Новости";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @section styles {
+	<link rel="stylesheet" href="~/Content/css/editor.css" />
 	<link rel="stylesheet" href="~/Content/lib/widgets/datepicker.css" />
 }
 
@@ -31,7 +32,7 @@
 
 	news.Tags = news.Tags ?? "";
 
-	<div class="layout_left">
+	<div class="left">
 		<div class="menu open">
 			<div class="menu_body">
 				<a class="news-editor-confirm" onclick="save('@Url.Action("edit", "news", new { Id = Model })')">
@@ -73,7 +74,7 @@
 		</div>
 	</div>
 
-	<div class="layout_center_right">
+	<div class="center-right">
 
 		<div class="form">
 
@@ -233,6 +234,7 @@
 }
 
 @section scripts {
+	<script src="~/Content/lib/jquery/jquery-1.12.4.min.js"></script>
 	<script src="~/Content/lib/ckeditor/ckeditor.js"></script>
 	<script src="~/Content/lib/widgets/datepicker.js"></script>
 	<script>

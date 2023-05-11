@@ -1,138 +1,138 @@
 ﻿@{
-    ViewBag.Title = "Пользователи";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Пользователи";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @section styles {
-    <link rel="stylesheet" href="~/Content/css/admin.css" />
-    <style>
-        .adminnews {
-            background: #fff;
-            display: block;
-            width: 500px;
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
-        }
+	<link rel="stylesheet" href="~/Content/css/admin.css" />
+	<style>
+		.adminnews {
+			background: #fff;
+			display: block;
+			width: 500px;
+			border: 1px solid #ccc;
+			margin-bottom: 20px;
+		}
 
-        .adminnews__title {
-            padding: 10px;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
+		.adminnews__title {
+			padding: 10px;
+			font-weight: 600;
+			font-size: 1.1em;
+		}
 
-        .adminnews__row {
-            width: 100%;
-        }
+		.adminnews__row {
+			width: 100%;
+		}
 
-            .adminnews__row:hover td {
-                background: #eee;
-            }
+			.adminnews__row:hover td {
+				background: #eee;
+			}
 
-            .adminnews__row td {
-                padding: 5px 10px;
-            }
+			.adminnews__row td {
+				padding: 5px 10px;
+			}
 
-            .adminnews__row select {
-                width: 100%;
-            }
+			.adminnews__row select {
+				width: 100%;
+			}
 
-            .adminnews__row td:last-child {
-                width: 60px;
-                text-align: right;
-            }
-    </style>
+			.adminnews__row td:last-child {
+				width: 60px;
+				text-align: right;
+			}
+	</style>
 }
 
 @Html.Partial("Links", model: "news")
 
 @using (var db = new SiteContext())
 {
-    var user = db.Authorize(User);
-    if (!user.IsAdmin)
-    {
-        <h3>Нет доступа</h3>
-        return;
-    }
+	var user = db.Authorize(User);
+	if (!user.IsAdmin)
+	{
+		<h3>Нет доступа</h3>
+		return;
+	}
 
-    var users = db.Users
-        .Select(x => new User
-        {
-            UID = x.UID,
-            UClass = x.UClass,
-            UName = x.UName,
-            DisplayName = x.DisplayName,
-        })
-        .OrderBy(x => x.UName)
-        .ToList();
+	var users = db.Users
+		.Select(x => new User
+		{
+			UID = x.UID,
+			UClass = x.UClass,
+			UName = x.UName,
+			DisplayName = x.DisplayName,
+		})
+		.OrderBy(x => x.UName)
+		.ToList();
 
 
-    var redactors = users
-        .Where(x => x.UClass
-        .Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)
-        .Contains("site_red"))
-        .ToList();
+	var redactors = users
+		.Where(x => x.UClass
+		.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)
+		.Contains("site_red"))
+		.ToList();
 
-    var notRedactors = users
-        .Where(x => redactors.Count(y => y.UName == x.UName) == 0)
-        .ToList();
+	var notRedactors = users
+		.Where(x => redactors.Count(y => y.UName == x.UName) == 0)
+		.ToList();
 
-    <div class="layout_center_right">
-        <div class="adminnews">
-            <div class="adminnews__title">Размещение новостей для всех подразделений</div>
-            <div>
-                @foreach (var u in redactors)
-                {
-                    <table class="adminnews__row">
-                        <tr>
-                            <td>(@u.UName) @u.DisplayName</td>
-                            <td>
-                                <button onclick="removeRedactor('@u.UName')">-</button>
-                            </td>
-                        </tr>
-                    </table>
-                }
-                <table class="adminnews__row">
-                    <tr>
-                        <td>
-                            <select id="add_redactor">
-                                <option value="-1">не выбран</option>
-                                @foreach (var u in notRedactors)
-                                {
-                                    <option value="@u.UName">(@u.UName) @u.DisplayName</option>
-                                }
-                            </select>
-                        </td>
-                        <td>
-                            <button onclick="addRedactor('add_redactor')">+</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
+	<div class="layout_center_right">
+		<div class="adminnews">
+			<div class="adminnews__title">Размещение новостей для всех подразделений</div>
+			<div>
+				@foreach (var u in redactors)
+				{
+					<table class="adminnews__row">
+						<tr>
+							<td>(@u.UName) @u.DisplayName</td>
+							<td>
+								<button onclick="removeRedactor('@u.UName')">-</button>
+							</td>
+						</tr>
+					</table>
+				}
+				<table class="adminnews__row">
+					<tr>
+						<td>
+							<select id="add_redactor">
+								<option value="-1">не выбран</option>
+								@foreach (var u in notRedactors)
+								{
+									<option value="@u.UName">(@u.UName) @u.DisplayName</option>
+								}
+							</select>
+						</td>
+						<td>
+							<button onclick="addRedactor('add_redactor')">+</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
 }
 
 
 @section scripts {
-    <script>
-        function removeRedactor(uname, guild) {
+	<script>
+		function removeRedactor(uname, guild) {
 
-            var form = new FormData();
-            form.append('mode', 'remove')
-            form.append('uname', uname)
+			var form = new FormData();
+			form.append('mode', 'remove')
+			form.append('uname', uname)
 
-            fetch('@Url.Action("news", "admin")', { method: 'POST', body: form })
-                .then(() => location.reload())
-        }
+			fetch('@Url.Action("news", "admin")', { method: 'POST', body: form })
+				.then(() => location.reload())
+		}
 
-        function addRedactor(selector, guild) {
+		function addRedactor(selector, guild) {
 
-            var form = new FormData();
-            form.append('mode', 'add')
-            form.append('uname', document.getElementById(selector).value)
+			var form = new FormData();
+			form.append('mode', 'add')
+			form.append('uname', document.getElementById(selector).value)
 
-            fetch('@Url.Action("news", "admin")', { method: 'POST', body: form })
-                .then(() => location.reload())
-        }
-    </script>
+			fetch('@Url.Action("news", "admin")', { method: 'POST', body: form })
+				.then(() => location.reload())
+		}
+	</script>
 }

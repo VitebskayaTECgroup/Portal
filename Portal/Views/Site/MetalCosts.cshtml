@@ -1,0 +1,28 @@
+﻿@model List<MetalsCost>
+
+@{
+	DateTime date = ViewBag.Date;
+}
+
+<table id="metals">
+	@foreach (var metal in Model)
+	{
+		<tr>
+			<td width="100px">@metal.Name</td>
+			<td class="blue" title="Указана стоимость со скидкой.
+Стоимость: @metal.Cost.
+Скидка: @metal.Discount%">
+				@((metal.Cost / 100 * (100 - metal.Discount)).ToString("0.00")) 
+			</td>
+		</tr>
+	}
+</table>
+<small>
+	на дату:
+	<input type="date"
+		   class="search"
+		   onchange="MetalCosts(this.value)"
+		   style="width: 8em; margin-left: 4em;"
+		   max="@DateTime.Now.ToString("yyyy-MM-dd")"
+		   value="@date.ToString("yyyy-MM-dd")" />
+</small>

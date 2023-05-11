@@ -2,7 +2,9 @@
 using DatabaseLayer.Site;
 using LinqToDB;
 using NPOI.XSSF.UserModel;
+using Portal.Models;
 using System;
+using System.Data.Odbc;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -15,7 +17,6 @@ namespace Portal.Controllers
 		public ActionResult Index() => View();
 
 		public ActionResult Birthdays() => View();
-
 
 		public void UpdateNick(string Nick)
 		{
@@ -311,6 +312,93 @@ namespace Portal.Controllers
 					Good = "Карточка учета вычислительной техники на рабочем месте \"" + Mol + "\" создана",
 					Link = Url.Action("documents", "content") + "/" + file + "?r=" + new Random().Next()
 				}, JsonRequestBehavior.AllowGet);
+			}
+		}
+
+		public ActionResult StationParameters()
+		{
+			try
+			{
+				double L01_EG00P000 = 0, L02_EG00P000 = 0, 
+					S2_STKER_Y3 = 0, S3_STKER_Y3 = 0, 
+					G01_AM31Q701_H1 = 0, 
+					L01_EB10P000_H1 = 0, L02_EB10P000_H1 = 0,
+					L01_EB10P000_S1 = 0, L01_EB20P000_S1 = 0, L02_EB10P000_S1 = 0, L02_EB20P000_S1 = 0;
+
+				using (var conn = new OdbcConnection())
+				{
+					conn.ConnectionString = "Driver={SQL Server}; Server=INSQL2; Database=runtime; Uid=wwuser; Pwd=wwuser;";
+					conn.Open();
+
+					using (var command = new OdbcCommand("SET QUOTED_IDENTIFIER OFF SELECT TagName, vValue FROM v_Live " +
+						"WHERE TagName IN (" +
+						"\"L01_EG00P000\", \"L02_EG00P000\", " +
+						"\"S2_STKER_Y3\", \"S3_STKER_Y3\", " +
+						"\"G01_AM31Q701_H1\", " +
+						"\"L01_EB10P000_H1\", \"L02_EB10P000_H1\", " +
+						"\"L01_EB10P000_S1\", \"L01_EB20P000_S1\", \"L02_EB10P000_S1\", \"L02_EB20P000_S1\"" +
+						")", conn))
+					{
+						using (var reader = command.ExecuteReader())
+						{
+							while (reader.Read())
+							{
+								var tag = reader.GetString(0);
+								var value = reader.GetDouble(1);
+
+								if (tag == "L01_EG00P000") L01_EG00P000 = value;
+								if (tag == "L02_EG00P000") L02_EG00P000 = value;
+								if (tag == "S2_STKER_Y3") S2_STKER_Y3 = value;
+								if (tag == "S3_STKER_Y3") S3_STKER_Y3 = value;
+								if (tag == "G01_AM31Q701_H1") G01_AM31Q701_H1 = value;
+
+								if (tag == "L01_EB10P000_H1") L01_EB10P000_H1 = value;
+								if (tag == "L02_EB10P000_H1") L02_EB10P000_H1 = value;
+								if (tag == "L01_EB10P000_S1") L01_EB10P000_S1 = value;
+								if (tag == "L01_EB20P000_S1") L01_EB20P000_S1 = value;
+								if (tag == "L02_EB10P000_S1") L02_EB10P000_S1 = value;
+								if (tag == "L02_EB20P000_S1") L02_EB20P000_S1 = value;
+
+							}
+						}
+					}
+				}
+
+				return View("StationParameters", new StationParametersModel
+				{
+					Power = ((L01_EG00P000 + L02_EG00P000) / 1000000),
+					FreqTA2 = (S2_STKER_Y3 < 46 ? 0 : S2_STKER_Y3),
+					FreqTA3 = (S3_STKER_Y3 < 46 ? 0 : S3_STKER_Y3),
+					Gas = (G01_AM31Q701_H1 / 1000),
+					ProducedHour = ((L01_EB10P000_H1 + L02_EB10P000_H1) / 1000),
+					ProducedDay = ((L01_EB10P000_S1 + L01_EB20P000_S1 + L02_EB10P000_S1 + L02_EB20P000_S1) / 1000),
+				});
+			}
+			catch
+			{
+				return Content("?");
+			}
+		}
+		
+		public ActionResult Weather()
+		{
+			try
+			{
+				using (var conn = new OdbcConnection())
+				{
+					conn.ConnectionString = "Driver={SQL Server}; Server=INSQL2; Database=runtime; Uid=wwuser; Pwd=wwuser;";
+					conn.Open();
+
+					using (var command = new OdbcCommand("SET QUOTED_IDENTIFIER OFF SELECT vValue FROM v_Live WHERE TagName IN (\"U1_Tnv_3_4\")", conn))
+					{
+						return Content(command.ExecuteScalar().ToString());
+
+					}
+				}
+			}
+			catch
+			{
+				return Content("?");
 			}
 		}
 	}

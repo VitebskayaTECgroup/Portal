@@ -8,9 +8,70 @@ using System.Web.Mvc;
 namespace Portal.Controllers
 {
 	[Authorize]
-    public class NewsController : Controller
-    {
+	public class NewsController : Controller
+	{
 		public ActionResult Index() => View();
+
+		public ActionResult List(int take, int skip = 0, bool hided = false, bool expired = false)
+		{
+			using (var db = new SiteContext())
+			{
+				var user = db.Authorize(User);
+
+				ViewBag.NewsTags = db.NewsTags
+					.ToDictionary(x => x.Token, x => x.Name);
+
+				var pinnedGuilds = db.UsersToGuilds
+					.Where(x => x.UserName == user.UName)
+					.Select(x => x.GuildId)
+					.ToList();
+
+				var query = from n in db.News
+							from u in db.Users.Where(x => x.UID == n.UserId).DefaultIfEmpty()
+							from g in db.NewsGuilds.LeftJoin(x => x.Id == n.GuildId)
+							from p in db.NewsPins.LeftJoin(x => x.NewsId == n.Id && x.UserId == user.UID).DefaultIfEmpty(new NewsPin { NewsId = n.Id, UserId = -1 })
+							where
+								!n.IsTemplate
+								// фильтр, убирающий просроченные новости
+								&& (expired || (n.DateExpire <= n.DateAdd || n.DateExpire >= DateTime.Now.Date))
+								// фильтр, убирающий скрытые новости
+								&& (hided || db.NewsHides.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() == 0)
+								// фильтр на новостные каналы
+								&& (n.GuildId == 0 || !g.IsPrivate || pinnedGuilds.Contains(n.GuildId))
+							select new News
+							{
+								Id = n.Id,
+								Priority = n.Priority,
+								DateAdd = n.DateAdd,
+								DateExpire = n.DateExpire,
+								Title = n.Title,
+								Message = n.Message,
+								Links = n.Links,
+								UserName = n.UserName,
+								Tags = n.Tags ?? "",
+								Creator = new User
+								{
+									UID = u.UID,
+									UName = u.UName,
+									DisplayName = u.DisplayName,
+								},
+								Guild = g ?? new NewsGuild { Id = 0, Name = "Общий", IsPrivate = false },
+								IsWatched = db.NewsViews.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() > 0,
+								IsHide = false,
+								IsRedactor = n.UserId == user.UID || user.IsAdmin,
+								IsPinned = p.UserId > 0
+							};
+
+				var news = query
+					.Where(x => skip == 0 || x.Id < skip)
+					.OrderByDescending(x => x.IsPinned)
+					.ThenByDescending(x => x.DateAdd)
+					.Take(take)
+					.ToList();
+
+				return View("NewsBlock", news);
+			}
+		}
 
 		public ActionResult Body(int Id)
 		{
@@ -50,7 +111,7 @@ namespace Portal.Controllers
 
 				ViewBag.Tags = db.NewsTags.ToList();
 
-				return View("NewsBody", news);
+				return View("NewsContent", news);
 			}
 		}
 
@@ -283,7 +344,7 @@ namespace Portal.Controllers
 		}
 
 		public void Unpin(int Id)
-        {
+		{
 			using (var db = new SiteContext())
 			{
 				var user = db.Authorize(User);
@@ -301,7 +362,7 @@ namespace Portal.Controllers
 				var user = db.Authorize(User);
 
 				if (db.NewsViews.Count(x => x.UserId == user.UID && x.NewsId == Id) == 0)
-                {
+				{
 					db.Insert(new NewsView
 					{
 						Date = DateTime.Now,

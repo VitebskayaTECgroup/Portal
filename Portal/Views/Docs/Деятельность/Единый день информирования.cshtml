@@ -1,13 +1,13 @@
 ﻿@{
 	ViewBag.Title = "Единый день информирования";
-	Layout = "~/Views/Shared/_DocsLayout.cshtml";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 <h3>Единый день информирования</h3>
 
 <div style="border: 1px solid initial; padding: 2em;">
 
-	@{ 
+	@{
 		var dirs = Directory.GetDirectories(@"\\web\Files\Одно окно\Деятельность\ЕДИ\");
 
 		var order = new List<LiveDateFolder>();

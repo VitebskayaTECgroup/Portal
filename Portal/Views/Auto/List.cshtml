@@ -2,54 +2,54 @@
 
 @using (var db = new SiteContext())
 {
-    // Настройки отображения
-    var onlySelf = Request.Form.Get("self") == "true";
-    var mode = Request.Form.Get("mode") ?? "all";
-    var date = DateTime.TryParse(Request.Form.Get("date"), out DateTime _d) ? _d : DateTime.Today;
-    var id = int.TryParse(Request.Form.Get("id"), out int _i) ? _i : 0;
+	// Настройки отображения
+	var onlySelf = Request.Form.Get("self") == "true";
+	var mode = Request.Form.Get("mode") ?? "all";
+	var date = DateTime.TryParse(Request.Form.Get("date"), out DateTime _d) ? _d : DateTime.Today;
+	var id = int.TryParse(Request.Form.Get("id"), out int _i) ? _i : 0;
 
-    var user = db.Authorize(User);
+	var user = db.Authorize(User);
 
-    var query = from Request in db.AutoRequests
-                from Car in db.AutoCars.LeftJoin(x => x.Id == Request.CarId)
-                from Driver in db.AutoDrivers.LeftJoin(x => x.Id == Request.DriverId)
-                from Creator in db.Users.LeftJoin(x => x.UID == Request.CreationUserId)
-                from Decitive in db.Users.LeftJoin(x => x.UID == Request.DecisionUserId)
-                where
-                    (id > 0 
-                        ? Request.Id == id
-                        : (
-                            (!onlySelf || Request.CreationUserId == user.UID)
-                            &&
-                            (
-                                (mode == "all")
-                                ||
-                                (mode == "accepted" && Request.DecisionCode == 1)
-                                ||
-                                (mode == "declined" && Request.DecisionCode == -1)
-                                ||
-                                (mode == "no_answer" && Request.DecisionCode != 1 && Request.DecisionCode != -1)
-                            )
-                            &&
-                            (Request.Date == date)
-                        )
-                    )
-                select new
-                {
-                    Request,
-                    Creator,
-                    Decitive,
-                    Car,
-                    Driver,
-                };
+	var query = from Request in db.AutoRequests
+				from Car in db.AutoCars.LeftJoin(x => x.Id == Request.CarId)
+				from Driver in db.AutoDrivers.LeftJoin(x => x.Id == Request.DriverId)
+				from Creator in db.Users.LeftJoin(x => x.UID == Request.CreationUserId)
+				from Decitive in db.Users.LeftJoin(x => x.UID == Request.DecisionUserId)
+				where
+					(id > 0 
+						? Request.Id == id
+						: (
+							(!onlySelf || Request.CreationUserId == user.UID)
+							&&
+							(
+								(mode == "all")
+								||
+								(mode == "accepted" && Request.DecisionCode == 1)
+								||
+								(mode == "declined" && Request.DecisionCode == -1)
+								||
+								(mode == "no_answer" && Request.DecisionCode != 1 && Request.DecisionCode != -1)
+							)
+							&&
+							(Request.Date == date)
+						)
+					)
+				select new
+				{
+					Request,
+					Creator,
+					Decitive,
+					Car,
+					Driver,
+				};
 
-    var model = query.ToList();
+	var model = query.ToList();
 
-    if (model.Count == 0)
-    {
-        <div class="auto_nothing">
-            По запросу нет записей для отображения
-        </div>
+	if (model.Count == 0)
+	{
+		<div class="auto_nothing">
+			По запросу нет записей для отображения
+		</div>
 		return;
 	}
 
@@ -57,69 +57,69 @@
 	{
 		if (record.Creator != null)
 		{
-            <div id="auto-@record.Request.Id" class="auto_block @(record.Request.DecisionCode == 1 ? "auto_accepted" : record.Request.DecisionCode == -1 ? "auto_declined" : "")">
+			<div id="auto-@record.Request.Id" class="auto_block @(record.Request.DecisionCode == 1 ? "auto_accepted" : record.Request.DecisionCode == -1 ? "auto_declined" : "")">
 
-                <b>@record.Creator.DisplayName от @record.Request.CreationDate.ToString("dd.MM.yyyy")</b>
-                <br />Прошу выделить автомобиль на @record.Request.Date.ToString("d MMMM yyyy") с @record.Request.TimeStart.ToString("HH:mm") до @record.Request.TimeEnd.ToString("HH:mm")
-                <br />Цель поездки: @record.Request.Target
-                <br />Адрес: @record.Request.Location
-                @if (!user.IsAutoHead)
-                {
-                    <br /><button onclick="Auto.copy(@record.Request.Id)">Использовать как шаблон</button>
-			    }
+				<b>@record.Creator.DisplayName от @record.Request.CreationDate.ToString("dd.MM.yyyy")</b>
+				<br />Прошу выделить автомобиль на @record.Request.Date.ToString("d MMMM yyyy") с @record.Request.TimeStart.ToString("HH:mm") до @record.Request.TimeEnd.ToString("HH:mm")
+				<br />Цель поездки: @record.Request.Target
+				<br />Адрес: @record.Request.Location
+				@if (!user.IsAutoHead)
+				{
+					<br /><button onclick="Auto.copy(@record.Request.Id)">Использовать как шаблон</button>
+				}
 
-                @if (record.Request.DecisionCode == 1)
-                {
-                    <hr />
-                    <div>
-                        <b>@record.Decitive.DisplayName от @(record.Request.DecisionDate?.ToString("d MMMM yyyy"))</b>
-                        <br />Автомобиль @(record.Car?.Model ?? "<не определен>") будет предоставлен
-                        на @(record.Request.DateAccepted?.ToString("d MMMM yyyy"))
-                        <br />Водитель: @(record.Driver?.Name ?? "<не определен>") (моб. @(record.Driver?.PhoneNumber ?? "<не определен>"))
-                    </div>
+				@if (record.Request.DecisionCode == 1)
+				{
+					<hr />
+					<div>
+						<b>@record.Decitive.DisplayName от @(record.Request.DecisionDate?.ToString("d MMMM yyyy"))</b>
+						<br />Автомобиль @(record.Car?.Model ?? "<не определен>") будет предоставлен
+						на @(record.Request.DateAccepted?.ToString("d MMMM yyyy"))
+						<br />Водитель: @(record.Driver?.Name ?? "<не определен>") (моб. @(record.Driver?.PhoneNumber ?? "<не определен>"))
+					</div>
 
-				    if (user.IsAutoHead && record.Request.DecisionUserId == user.UID)
-				    {
-                        <div class="auto_answer auto_form hide"></div>
-                        <div>
-                            <button onclick="Auto.answer(@record.Request.Id, this)">Изменить ответ</button>
-                        </div>
-				    }
-			    }
-			    else if (record.Request.DecisionCode == -1)
-			    {
-                    <hr />
-                    <div>
-                        <b>@record.Decitive.DisplayName от @(record.Request.DecisionDate?.ToString("d MMMM yyyy"))</b>
-                        <br />Отказано в предоставлении авто.
-                        <br />Комментарий: @record.Request.Comment
-                    </div>
+					if (user.IsAutoHead && record.Request.DecisionUserId == user.UID)
+					{
+						<div class="auto_answer auto_form hide"></div>
+						<div>
+							<button onclick="Auto.answer(@record.Request.Id, this)">Изменить ответ</button>
+						</div>
+					}
+				}
+				else if (record.Request.DecisionCode == -1)
+				{
+					<hr />
+					<div>
+						<b>@record.Decitive.DisplayName от @(record.Request.DecisionDate?.ToString("d MMMM yyyy"))</b>
+						<br />Отказано в предоставлении авто.
+						<br />Комментарий: @record.Request.Comment
+					</div>
 
-				    if (user.IsAutoHead && record.Request.DecisionUserId == user.UID)
-				    {
-                        <div class="auto_answer auto_form hide"></div>
-                        <div>
-                            <button onclick="Auto.answer(@record.Request.Id, this)">Изменить ответ</button>
-                        </div>
-				    }
-			    }
-			    else if (user.IsAutoHead)
-			    {
-                    <hr />
-                    <div class="auto_answer auto_form hide"></div>
-                    <div>
-                        <button onclick="Auto.answer(@record.Request.Id, this)">Ответить</button>
-                    </div>
-			    }
-			    else if (user.UID == record.Creator.UID)
-			    {
-                    <hr />
-                    <div>
-                        <button onclick="Auto.update(@record.Request.Id)">Редактировать</button>
-                        <button onclick="Auto.del(@record.Request.Id)">Удалить</button>
-                    </div>
-			    }
-            </div>
-        }
-    }
+					if (user.IsAutoHead && record.Request.DecisionUserId == user.UID)
+					{
+						<div class="auto_answer auto_form hide"></div>
+						<div>
+							<button onclick="Auto.answer(@record.Request.Id, this)">Изменить ответ</button>
+						</div>
+					}
+				}
+				else if (user.IsAutoHead)
+				{
+					<hr />
+					<div class="auto_answer auto_form hide"></div>
+					<div>
+						<button onclick="Auto.answer(@record.Request.Id, this)">Ответить</button>
+					</div>
+				}
+				else if (user.UID == record.Creator.UID)
+				{
+					<hr />
+					<div>
+						<button onclick="Auto.update(@record.Request.Id)">Редактировать</button>
+						<button onclick="Auto.del(@record.Request.Id)">Удалить</button>
+					</div>
+				}
+			</div>
+		}
+	}
 }

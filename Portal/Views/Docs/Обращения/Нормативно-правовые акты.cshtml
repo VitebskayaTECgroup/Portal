@@ -1,11 +1,11 @@
 ﻿@{
-    ViewBag.Title = "Нормативно-правовые акты";
-    Layout = "~/Views/Shared/_DocsLayout.cshtml";
+	ViewBag.Title = "Нормативно-правовые акты";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-    Name = "Нормативно-правовые акты",
-    RelativePath = @"Обращения\Нормативно-правовые акты\",
-    SortByName = true
+	Name = "Нормативно-правовые акты",
+	RelativePath = @"Обращения\Нормативно-правовые акты\",
+	SortByName = true
 })

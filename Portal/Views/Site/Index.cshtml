@@ -1,13 +1,12 @@
 ﻿@{
 	ViewBag.Title = "Главная";
-	ViewBag.OnlyIntranet = true;
-	Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 
 	Response.Cookies.Add(new HttpCookie("win") { Path = "/", Expires = DateTime.Now.AddDays(1), Value = User.Identity.Name, SameSite = SameSiteMode.Lax });
 
 	var random = new Random();
 	bool open;
-	bool hasUnseenDirectiveDocuments = false;
+	int hasUnseenDirectiveDocuments = 0;
 }
 
 @section styles {
@@ -26,7 +25,7 @@
 
 	hasUnseenDirectiveDocuments = db.HasUnviewedDocsInDirective(user);
 
-	<div class="layout_left">
+	<div class="left-column">
 		@if (user.IsAdmin)
 		{
 			open = Request.Cookies.Get("admins")?.Value != "0";
@@ -34,18 +33,20 @@
 				<div class="menu_header">
 					<table onclick="toggleMenu(this, 'admins')">
 						<tr>
-							<td>Админ-ресурсы</td>
-							<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+							<td><span class="link bold">Админ-ресурсы</span></td>
+							<td class="menu_arrow">
+								<i class="material-icons">@(open ? "expand_less" : "expand_more")</i>
+							</td>
 						</tr>
 					</table>
 				</div>
 				<div class="menu_body" id="admins">
 					@*<a href="https://10.178.97.9">
-						<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
-					</a>
-					<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
-						<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
-					</a>*@
+							<span class="material-icons" style="color: #f44336">fact_check</span> iSCSI
+						</a>
+						<a href="https://log1.vst.vitebsk.energo.net:4343/officescan/">
+							<span class="material-icons" style="color: #673ab7">cloud_circle</span> OfficeScan
+						</a>*@
 
 					<a href="https://frw.vst.vitebsk.energo.net:4081/admin">
 						<span class="material-icons" style="color: #e73a27;">security</span> Kerio Control
@@ -78,11 +79,11 @@
 						<span class="material-icons" style="color: #b270ed;">wifi_tethering</span> ScanLan
 					</a>
 					@*<a href="http://ic1.vst.vitebsk.energo.net:81/">
-						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
-					</a>
-					<a href="http://ups.vst.vitebsk.energo.net:81/">
-						<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
-					</a>*@
+							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC IC1
+						</a>
+						<a href="http://ups.vst.vitebsk.energo.net:81/">
+							<span class="material-icons" style="color: #ff9800">gamepad</span> iNOPC UPS
+						</a>*@
 				</div>
 			</div>
 		}
@@ -92,12 +93,17 @@
 			<div class="menu_header">
 				<table onclick="toggleMenu(this, 'rup-links')">
 					<tr>
-						<td>Ресурсы РУП "Витебскэнерго"</td>
-						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+						<td><span class="link bold">Ресурсы РУП "Витебскэнерго"</span></td>
+						<td class="menu_arrow">
+							<i class="material-icons">@(open ? "expand_less" : "expand_more")</i>
+						</td>
 					</tr>
 				</table>
 			</div>
 			<div class="menu_body" id="rup-links">
+				<a href="http://www.vitebsk.energo.net/">
+					<span class="material-icons" style="color: #a3c62b;">language</span> Сайт
+				</a>
 				<a href="http://cloud.vitebsk.energo.net/">
 					<span class="material-icons" style="color: #03a9f4;">cloud_upload</span> Облачное хранилище
 				</a>
@@ -112,8 +118,10 @@
 			<div class="menu_header">
 				<table onclick="toggleMenu(this, 'operations')">
 					<tr>
-						<td>Оперативное</td>
-						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+						<td><span class="link bold">Оперативное</span></td>
+						<td class="menu_arrow">
+							<i class="material-icons">@(open ? "expand_less" : "expand_more")</i>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -213,14 +221,14 @@
 					</script>
 				}
 				@*@if (user.Groups.Contains("group_violations"))
-				{
-					<a href="~/violations/">
-						<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
-					</a>
-				}*@
+					{
+						<a href="~/violations/">
+							<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
+						</a>
+					}*@
 				@*<a href="http://web.vst.vitebsk.energo.net:88">
-					<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
-				</a>*@
+						<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
+					</a>*@
 			</div>
 		</div>
 
@@ -229,8 +237,10 @@
 			<div class="menu_header">
 				<table onclick="toggleMenu(this, 'usefullinks')">
 					<tr>
-						<td>Полезные ссылки</td>
-						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+						<td><span class="link bold">Полезные ссылки</span></td>
+						<td class="menu_arrow">
+							<i class="material-icons">@(open ? "expand_less" : "expand_more")</i>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -239,7 +249,6 @@
 				<a href="http://www.odu.energo.net/">ГПО "БелЭнерго"</a>
 				<a href="http://energodoc.by/">"Энергодок"</a>
 				<a href="http://www.brest.energo.net/">"БрестЭнерго"</a>
-				<a href="http://www.vitebsk.energo.net/">"ВитебскЭнерго"</a>
 				<a href="http://www.gomel.energo.net/">"ГомельЭнерго"</a>
 				<a href="http://www.grodno.energo.net/">"ГродноЭнерго"</a>
 				<a href="http://www.minsk.energo.net/">"МинскЭнерго"</a>
@@ -250,118 +259,44 @@
 		</div>
 	</div>
 
-	<div class="layout_center">
+	<div class="center">
 		<div id="notes">
 			@Html.Action("Notes", "Site")
 		</div>
-		<div id="view">
-			@{
-				var pinnedGuilds = db.UsersToGuilds
-					.Where(x => x.UserName == user.UName)
-					.Select(x => x.GuildId)
-					.ToList();
-
-				var query = from n in db.News
-							from u in db.Users.Where(x => x.UID == n.UserId).DefaultIfEmpty()
-							from g in db.NewsGuilds.LeftJoin(x => x.Id == n.GuildId)
-							from p in db.NewsPins.LeftJoin(x => x.NewsId == n.Id && x.UserId == user.UID).DefaultIfEmpty(new NewsPin { NewsId = n.Id, UserId = -1 })
-							where
-								!n.IsTemplate
-								// фильтр, убирающий просроченные новости
-								&& (n.DateExpire <= n.DateAdd || n.DateExpire >= DateTime.Now.Date)
-								// фильтр, убирающий скрытые новости
-								&& (db.NewsHides.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() == 0)
-								// фильтр на новостные каналы
-								&& (n.GuildId == 0 || !g.IsPrivate || pinnedGuilds.Contains(n.GuildId))
-							select new News
-							{
-								Id = n.Id,
-								Priority = n.Priority,
-								DateAdd = n.DateAdd,
-								DateExpire = n.DateExpire,
-								Title = n.Title,
-								Message = n.Message,
-								Links = n.Links,
-								UserName = n.UserName,
-								Tags = n.Tags ?? "",
-								Creator = new User
-								{
-									UID = u.UID,
-									UName = u.UName,
-									DisplayName = u.DisplayName,
-								},
-								Guild = g ?? new NewsGuild { Id = 0, Name = "Общий", IsPrivate = false },
-								IsWatched = db.NewsViews.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() > 0,
-								IsHide = false,
-								IsRedactor = n.UserId == user.UID || user.IsAdmin,
-								IsPinned = p.UserId > 0
-							};
-
-				var news = query
-					.OrderByDescending(x => x.IsPinned)
-					.ThenByDescending(x => x.DateAdd)
-					.Take(30)
-					.ToList();
-
-				ViewBag.Tags = db.NewsTags.ToList();
-
-				foreach (var n in news)
-				{
-					@Html.Partial("News", n)
-				}
-			}
+		<div id="contacts"></div>
+		<div id="news">
+			@Html.Action("List", "News", new { take = 20 })
 		</div>
 	</div>
 
-	<div class="layout_right" id="mnemo">
+	<div class="right-column" id="mnemo">
+
 		<div class="widget">
-			<div id="user" class="closed">
-				<span onclick="openUserPanel()" title="Нажмите для изменения">@(user.Nick ?? user.DisplayName ?? user.UName)</span>
-				<input id="nick" value="@(user.Nick ?? user.DisplayName ?? user.UName)" />
-				<div class="icon ic-save icon_hover" onclick="saveUserPanel()"></div>
-				<div class="icon ic-clear icon_hover" onclick="closeUserPanel()"></div>
-			</div>
-			<script>
-				function openUserPanel() {
-					document.getElementById('user').className = 'opened';
-				}
-				function closeUserPanel() {
-					document.getElementById('user').className = 'closed';
-				}
-				function saveUserPanel() {
-					$.post('@Url.Action("updatenick", "site")', { Nick: document.getElementById('nick').value }, function () { location.reload(); });
-				}
-				function changeTheme(value) {
-					var value = getCookie('theme');
-					if (value === 'dark') value = 'white'; else value = 'dark';
-					setCookie('theme', value, { expires: 999999999, path: '/' });
-					document.body.className = 'theme_' + value;
-				}
-				function watchAllNews() {
-					$.post('@Url.Action("WatchAll", "News")', function () { location.reload(); });
-				}
-			</script>
+			<a href="~/phonebook" class="link bold">
+				Телефонный справочник
+				<i class="material-icons preloader" id="preloader">sync</i>
+			</a>
+			<input type="search" class="search" placeholder="введите запрос и нажмите Enter" autofocus />
+			<a class="widget_link" style="margin-top: .5em;" href="http://phone.vitebsk.energo.net/">Справочник РУП "Витебскэнерго"</a>
 		</div>
 
 		<div class="widget" onclick="document.getElementById('actions').style.display = 'block'">
-			<div class="actions_button" title="Нажмите, чтобы увидеть список действий">
+			<div class="actions_button" title="Нажмите, чтобы увидеть список действий" style="cursor: pointer;">
 				<span class="material-icons">api</span>
 				&emsp;
 				<b>Действия</b>
 			</div>
 			<div id="actions" onmouseleave="this.style.display = 'none'" onclick="this.style.display = 'none'">
-				<a class="widget_bottom_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
+				<a class="widget_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
 				@if (user.UName == "vtg" || user.UName == "void")
 				{
-					<a class="widget_bottom_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
+					<a class="widget_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
 				}
 				else if (user.UName == "esmal" || user.UName == "crow")
 				{
-					<a class="widget_bottom_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
+					<a class="widget_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
 				}
 				<span class="widget_break"> </span>
-				<a class="widget_bottom_link" onclick="watchAllNews()">Отметить все новости как прочитанные</a>
-				<a class="widget_bottom_link" onclick="changeTheme()">Изменить цветовую схему сайта</a>
 				@using (var devin = new DatabaseLayer.Devin.DevinContext())
 				{
 					var printers = devin.Devices
@@ -377,82 +312,22 @@
 						<span class="widget_break"> </span>
 						if (numberOfPrinters > 0)
 						{
-							<a class="widget_bottom_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
+							<a class="widget_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
 						}
-						<a class="widget_bottom_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
+						<a class="widget_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
 					}
 				}
 			</div>
 		</div>
 
 		<div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://asu.vst.vitebsk.energo.net/#/http://insql.vst.vitebsk.energo.net/mnemonica/sonar/'">
-			<b>Основные параметры ТЭЦ</b>
-			<table>
-				<tr>
-					<td>Мгновенная мощность:</td>
-					<td class="blue">
-						<div tag="L01_EG00P000,L02_EG00P000" title="Средняя суммарная мощность" evl="vl=(parseFloat(L01_EG00P000) + parseFloat(L02_EG00P000))/1000000"></div>
-					</td>
-					<td>МВт</td>
-				</tr>
-				<tr>
-					<td>Частота ТГ-2:</td>
-					<td class="blue">
-						<div tag="S2_STKER_Y3"
-							 title="Частота ТГ-2"
-							 evl="vl = S2_STKER_Y3 < 46 ? 0 : S2_STKER_Y3.toFixed(2)"></div>
-					</td>
-					<td>Гц</td>
-				</tr>
-				<tr>
-					<td>Частота ТГ-3:</td>
-					<td class="blue">
-						<div tag="S3_STKER_Y3"
-							 title="Частота ТГ-3"
-							 evl="vl = S3_STKER_Y3 < 46 ? 0 : S3_STKER_Y3.toFixed(2)"></div>
-					</td>
-					<td>Гц</td>
-				</tr>
-				<tr>
-					<td>Расход газа:</td>
-					<td class="blue">
-						<div tag="G01_AM31Q701_H1"
-							 evl="vl=G01_AM31Q701_H1/1000"
-							 title="Расход газа"></div>
-					</td>
-					<td>м<sup>3</sup>&middot;10<sup>3</sup></td>
-				</tr>
-				<tr>
-					<td>Выработка эл/эн (час.):</td>
-					<td class="blue">
-						<div tag="L01_EB10P000_H1,L02_EB10P000_H1"
-							 title="Выработка электроэнергии"
-							 evl="vl=(L01_EB10P000_H1+L02_EB10P000_H1)/1000"></div>
-					</td>
-					<td>МВт</td>
-				</tr>
-				<tr>
-					<td>Выработка эл/эн (сут.):</td>
-					<td class="blue">
-						<div tag="L01_EB10P000_S1,L01_EB20P000_S1,L02_EB10P000_S1,L02_EB20P000_S1"
-							 title="Активная выработка за сутки"
-							 evl="vl=(((parseFloat(+L01_EB10P000_S1) + parseFloat(+L01_EB20P000_S1) + parseFloat(+L02_EB10P000_S1) + parseFloat(+L02_EB20P000_S1)))/1000).toFixed(1)"></div>
-					</td>
-					<td>МВт</td>
-				</tr>
-			</table>
+			<div class="link bold">Основные параметры ТЭЦ</div>
+			<div id="station-parameters">
+				@Html.Action("StationParameters")
+			</div>
 		</div>
 
-		<div class="widget phones">
-			<b style="cursor: pointer;" title="Нажмите для перехода в телефонный справочник ВТЭЦ" onclick="location='@Url.Action("phones", "site")/'">Поиск персонала и телефонов</b>
-			<form method="get" action="~/phonebook/">
-				<input name="q" placeholder="Введите запрос и нажмите <enter>" autofocus />
-			</form>
-			<a class="widget_bottom_link" href="~/phonebook/">Справочник ВТЭЦ</a>
-			<a class="widget_bottom_link" href="http://phone.vitebsk.energo.net/">РУП "ВитебскЭнерго"</a>
-		</div>
-
-		<div class="widget" title="Нажмите для перехода к просмотру расписания дней рождений сотрудников" onclick="location='@Url.Action("birthdays", "site")'">
+		<div class="widget" style="text-align: center;" title="Нажмите для перехода к просмотру расписания дней рождений сотрудников" onclick="location='@Url.Action("birthdays", "site")'">
 			@{
 				var date = DateTime.Now.AddDays(-1);
 				var yesterdayBirthdays = db.Persons
@@ -541,6 +416,7 @@
 		</div>
 
 		<div class="widget" title="Нажмите для перехода к просмотру прогноза погоды" onclick="location = 'http://insql.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today'">
+			<a class="link bold" href="http://insql.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды</a>
 			@{
 				try
 				{
@@ -555,35 +431,45 @@
 				}
 			}
 			<div>
-				Сейчас <div class="blue" style="display: inline; font-size: 1.2em;" tag="U1_Tnv_3_4" title="Текущая температура на улице (основная мазутнонасосная)"></div> °C
+				Сейчас <div class="blue" id="weather" style="display: inline; font-size: 1.2em;" title="Текущая температура на улице (основная мазутнонасосная)"></div> °C
 				&emsp;
-				<a class="widget_bottom_link" href="http://insql.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды</a>
 			</div>
 		</div>
 	</div>
 }
 
 @section scripts {
-	<script src="http://insql.vst.vitebsk.energo.net/mnemonica/_/js/mnemonica-0.2.js?r=@random.Next()"></script>
+	<script src="~/Content/js/news.js"></script>
 	<script>
-		try {
-			new Mnemo({
-				id: 'mnemo',
-				static: true,
-				insqlSource: 'http://insql.vst.vitebsk.energo.net/mnemonica/_/asp/taglive.asp',
-				insqlTimeout: 10000
-			});
-		} catch (e) { }
+		getWeather()
+		getNotifications()
+		setInterval(getWeather, 5000)
+		setInterval(getStationParameters, 5000)
+		setInterval(getNotifications, 60000)
 
-		setInterval(function () {
-			$.get('@Url.Action("Notes", "Site")?r=' + Math.random(), function (data) {
-				$('#notes').html(data)
-			});
-		}, 60000);
+		function getWeather() {
+			fetch('@Url.Action("Weather", "Site")?r=' + Math.random())
+				.then(res => res.text())
+				.then(text => {
+					document.getElementById('weather').innerHTML = Number(text).toFixed(2)
+				})
+		}
 
-		setInterval(function () {
-			$('.notifications').toggleClass('highlight');
-		}, 1000);
+		function getNotifications() {
+			fetch('@Url.Action("Notes", "Site")?r=' + Math.random())
+				.then(res => res.text())
+				.then(text => {
+					document.getElementById('notes').innerHTML = text
+				})
+		}
+
+		function getStationParameters() {
+			fetch('@Url.Action("StationParameters", "Site")?r=' + Math.random())
+				.then(res => res.text())
+				.then(text => {
+					document.getElementById('station-parameters').innerHTML = text
+				})
+		}
 
 		function notesToggle() {
 			var $menu = $('.notifications');
@@ -605,57 +491,93 @@
 		}
 
 		function notesSee(obj, id) {
-			$.get('@Url.Action("NoteSee", "Site")/' + id, function () {
-				$(obj).closest('tr').remove();
-			});
+			fetch('@Url.Action("NoteSee", "Site")/' + id)
+				.then(() => obj.closest('tr').remove())
 		}
 
 		function notesSeeAll() {
-			$.get('@Url.Action("NoteSeeAll", "Site")', function () {
-				$('#notes').remove();
-			});
+			fetch('@Url.Action("NoteSeeAll", "Site")')
+				.then(() => document.getElementById('notes').remove())
 		}
 
 		function printReport() {
-			$.post('http://www.vst.vitebsk.energo.net/site/printreport', function (json) {
-				if (json.Link) {
-					let a = document.createElement('a');
-					document.body.appendChild(a);
-					a.href = json.Link;
-					a.click();
-				}
-				if (json.Error) {
-					alert(json.Error)
-				}
-			})
+			fetch('http://www.vst.vitebsk.energo.net/site/printreport', { method: 'POST' })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Link) {
+						let a = document.createElement('a')
+						document.body.appendChild(a)
+						a.href = json.Link
+						a.click()
+					}
+					if (json.Error) {
+						alert(json.Error)
+					}
+				})
 		}
 
 		function printReportMol(mol) {
-			$.post('http://www.vst.vitebsk.energo.net/site/printReportMol', { mol: mol }, function (json) {
-				if (json.Link) {
-					let a = document.createElement('a')
-					document.body.appendChild(a)
-					a.href = json.Link
-					a.click()
-				}
-				if (json.Error) {
-					alert(json.Error)
-				}
-			})
+			var form = new FormData()
+			form.append('mol', mol)
+			fetch('http://www.vst.vitebsk.energo.net/site/printReportMol', { method: 'POST', body: form })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Link) {
+						let a = document.createElement('a')
+						document.body.appendChild(a)
+						a.href = json.Link
+						a.click()
+					}
+					if (json.Error) {
+						alert(json.Error)
+					}
+				})
 		}
 
 		function MetalCosts(date) {
-			$.get('@Url.Action("MetalCosts", "Site")' + '?date=' + date + "&r=" + Math.random())
-				.done(function (res) {
-					document.getElementById('metals-container').innerHTML = res
+			fetch('@Url.Action("MetalCosts", "Site")' + '?date=' + date + "&r=" + Math.random())
+				.then(res => res.text())
+				.then(text => {
+					document.getElementById('metals-container').innerHTML = text
 				})
 		}
+
+		document.querySelector('.search').addEventListener('search', function (ev) {
+			var value = ev.target.value
+			if (value.length > 1) {
+				preload()
+				fetch('@Url.Action("contacts", "guest")?search=' + encodeURIComponent(value))
+					.then(function (res) { return res.text() })
+					.then(function (text) {
+						if (text.length > 0) {
+							show(text)
+						}
+						else {
+							hide()
+						}
+					})
+			}
+			else {
+				hide()
+			}
+
+			function preload() {
+				document.getElementById('preloader').style.display = 'block'
+			}
+
+			function show(text) {
+				document.getElementById('preloader').style.display = 'none'
+				document.getElementById('news').style.display = 'none'
+				document.getElementById('contacts').innerHTML = text
+				document.getElementById('contacts').style.display = 'block'
+			}
+
+			function hide() {
+				document.getElementById('preloader').style.display = 'none'
+				document.getElementById('contacts').style.display = 'none'
+				document.getElementById('contacts').innerHTML = ''
+				document.getElementById('news').style.display = 'block'
+			}
+		})
 	</script>
-	@if (hasUnseenDirectiveDocuments)
-	{
-		<script>
-			var directiveNew = document.getElementById('directive-new')
-			if (directiveNew) directiveNew.style.display = 'inline'
-		</script>
-	}
 }

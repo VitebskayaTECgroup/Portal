@@ -1,6 +1,6 @@
 ﻿@{
 	ViewBag.Title = "Просмотр | Новости";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 @using (var db = new SiteContext())
@@ -17,7 +17,10 @@
 		.Select(x => x.GuildId)
 		.ToList();
 
-	ViewBag.Tags = db.NewsTags.ToList();
+	var newsTags = db.NewsTags
+		.ToDictionary(x => x.Token, x => x.Name);
+
+	ViewBag.NewsTags = newsTags;
 
 	// filter
 
@@ -107,7 +110,7 @@
 			.ToList();
 	}
 
-	<div class="layout_left">
+	<div class="left">
 
 		@if (user.UClass.Contains("site_red"))
 		{
@@ -178,22 +181,22 @@
 					<input type="checkbox" onclick="setTagsToNothing(this)" />
 					Сброс выбранных тегов
 				</label>
-				@foreach (NewsTags tag in ViewBag.Tags)
+				@foreach (var tag in newsTags)
 				{
 					<label>
-						<input type="checkbox" class="tags" name="@tag.Token" onchange="filter()" @(tags.Contains(tag.Token) ? "checked" : "") />
-						@tag.Name
+						<input type="checkbox" class="tags" name="@tag.Key" onchange="filter()" @(tags.Contains(tag.Key) ? "checked" : "") />
+						@tag.Value
 					</label>
 				}
 			</div>
 		</div>
 
 		<div class="widget">
-			<a class="widget_bottom_link" href="/files/Руководство по размещению новостей.mp4">Руководство по размещению новостей</a>
+			<a class="widget_link" href="/files/Руководство по размещению новостей.mp4">Руководство по размещению новостей</a>
 		</div>
 	</div>
 
-	<div class="layout_center_right">
+	<div class="center-right">
 		@foreach (var n in news)
 		{
 			@Html.Partial("News", n)
@@ -207,6 +210,7 @@
 
 
 @section scripts {
+	<script src="~/Content/js/news.js"></script>
 	<script>
 		function keyword(e) {
 			var e = e || window.event

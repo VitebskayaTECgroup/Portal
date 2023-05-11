@@ -24,31 +24,33 @@ document.querySelectorAll('.nav-button').forEach(function (el) {
 	})
 })
 
+/**
+ * 
+ * @param {HTMLDivElement} obj
+ * @param {string} name
+ */
 function toggleMenu(obj, name) {
 
 	var menu = obj.closest('.menu')
-	//var body = menu.querySelector('.menu_body')
-	var arrow = menu.querySelector('.menu_arrow div')
+	var arrow = menu.querySelector('.menu_arrow .material-icons')
 
 	var state = ''
 	if (menu.classList.contains('open')) {
-		//$body.slideUp(100) animate
 		menu.classList.remove('open')
+		arrow.innerHTML = 'expand_more'
 		state = 0
 	} else {
-		//$body.slideDown(100) animate
 		menu.classList.add('open')
+		arrow.innerHTML = 'expand_less'
 		state = 1
 	}
 	setCookie(name, state, { expires: 9999999999 })
-	arrow.classList.toggle('ic-arrow-up')
-	arrow.classList.toggle('ic-arrow-down')
 }
 
 function setTheme() {
 	document.body.classList.toggle('white')
 	document.body.classList.toggle('dark')
-	setCookie('theme', document.body.classList.contains('dark') ? 'dark' : 'white')
+	setCookie('theme', document.body.classList.contains('dark') ? 'dark' : 'white', { expires: 999999999999, path: '/' })
 }
 
 function getCookie(name) {
