@@ -29,7 +29,7 @@
 .birthday-anniversary {
 	color: #029a4e;
 	border-color: #029a4e;
-	font-weight: bold;
+	font-weight: 500;
 }
 
 .birthday-today {
@@ -58,4 +58,19 @@
 
 .birthday-off {
 	background: none;
+}
+
+.dark .entry {
+	background: #333;
+	color: #fff;
+	border: 1px solid #222;
+}
+
+.dark .birthday-old {
+	color: #999;
+}
+
+.dark .birthday-anniversary {
+	color: #029a4e;
+	border-color: #029a4e;
 }

@@ -51,10 +51,10 @@ document.addEventListener('click', function (ev) {
 		})
 })
 
-function hideNews(id) {
+function hideNews(icon, id) {
 	fetch(host + 'news/hide/' + id)
 		.then(() => {
-			location.reload()
+			icon.closest('[news-id]').remove()
 		})
 }
 

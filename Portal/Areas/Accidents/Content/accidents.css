@@ -41,7 +41,7 @@ body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-	body.black {
+	body.dark {
 		background: url('../../../Content/images/background.white.png');
 		/*color: #fff;*/
 	}
@@ -55,7 +55,7 @@ p {
 	text-align: center;
 }
 
-.black .material-icons {
+.dark .material-icons {
 	/*color: #fff;*/
 }
 

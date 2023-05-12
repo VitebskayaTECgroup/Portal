@@ -137,7 +137,7 @@
 								</span><select id="form-type" name="@nameof(news.Priority)">
 									<option value="low">Информационная</option>
 									<option value="high" @(news.Priority == "high" ? "selected" : "")>С важной информацией</option>
-									<option value="back" @(news.Priority == "back" ? "selected" : "")>Для обязательного ознакомления</option>
+									@*<option value="back" @(news.Priority == "back" ? "selected" : "")>Для обязательного ознакомления</option>*@
 								</select>
 
 								<span title="Определяет канал, по которому будет распространяться новость">

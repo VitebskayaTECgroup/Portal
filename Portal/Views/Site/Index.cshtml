@@ -323,7 +323,7 @@
 		<div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://asu.vst.vitebsk.energo.net/#/http://insql.vst.vitebsk.energo.net/mnemonica/sonar/'">
 			<div class="link bold">Основные параметры ТЭЦ</div>
 			<div id="station-parameters">
-				@Html.Action("StationParameters")
+				
 			</div>
 		</div>
 
@@ -443,6 +443,7 @@
 	<script>
 		getWeather()
 		getNotifications()
+		getStationParameters()
 		setInterval(getWeather, 5000)
 		setInterval(getStationParameters, 5000)
 		setInterval(getNotifications, 60000)

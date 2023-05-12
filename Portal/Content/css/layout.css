@@ -523,6 +523,18 @@ body {
 	padding-top: 1em;
 }
 
+.title {
+	background: #fefefe;
+	padding: .5em 1em;
+	margin-bottom: 1em;
+	border: 1px solid #ddd;
+}
+
+.dark .title {
+	background: #333;
+	border-color: #111;
+}
+
 .phone {
 	padding: .5em 1em;
 	display: flex;
