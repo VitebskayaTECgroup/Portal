@@ -7,7 +7,7 @@
 	bool isShort = string.IsNullOrEmpty(Model.Message) && string.IsNullOrEmpty(Model.Title) && links.Length == 1;
 	bool isPriority = Model.Priority != "low";
 	bool isWatched = Model.IsWatched;
-	bool isNew = !isWatched && (isPriority) && (DateTime.Now - Model.DateAdd.Date).TotalDays <= 7;
+	bool isNew = !isWatched && (DateTime.Now - Model.DateAdd.Date).TotalDays <= 7;
 	bool isTemp = Model.DateAdd.Date < Model.DateExpire.Date;
 	int daysRemains = (Model.DateExpire.Date - DateTime.Now.Date).Days;
 }

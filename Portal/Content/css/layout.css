@@ -315,8 +315,9 @@ body {
 	color: red;
 }
 
-.hide {
-	display: none !important;
+.hide,
+.menu .hide {
+	display: none;
 }
 
 .text {
@@ -478,6 +479,12 @@ body {
 }
 
 .news-preview {
+	font-style: italic;
+	color: #206fb6;
+	cursor: pointer;
+}
+
+.news-minimize {
 	font-style: italic;
 	color: #206fb6;
 	cursor: pointer;

@@ -78,3 +78,7 @@ function unpinNews(id) {
 			location.reload()
 		})
 }
+
+function minimizeNews(el) {
+	el.closest('[news-id]').querySelector('.news-body').innerHTML = `<small class="news-preview" title="Нажмите, чтобы увидеть текст новости">посмотреть</small>`
+}

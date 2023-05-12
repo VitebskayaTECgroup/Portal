@@ -439,7 +439,7 @@
 }
 
 @section scripts {
-	<script src="~/Content/js/news.js"></script>
+	<script src="~/Content/js/news.js?@DateTime.Now.ToFileTimeUtc()"></script>
 	<script>
 		getWeather()
 		getNotifications()
