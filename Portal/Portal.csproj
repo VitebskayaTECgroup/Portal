@@ -913,6 +913,7 @@
     <Content Include="Views\Shared\_MainLayout.cshtml" />
     <Content Include="Views\Site\StationParameters.cshtml" />
     <Content Include="Views\News\NewsBlock.cshtml" />
+    <Content Include="Views\Admin\Vacations.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

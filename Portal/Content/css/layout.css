@@ -456,6 +456,14 @@ body {
 	font-weight: 600;
 }
 
+.news-if-new {
+	display: none;
+}
+
+.news-new .news-if-new {
+	display: initial;
+}
+
 .dark .news-info {
 	color: #999;
 }

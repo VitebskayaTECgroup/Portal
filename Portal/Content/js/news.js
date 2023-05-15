@@ -42,14 +42,16 @@ window.addEventListener('scroll', function () {
 document.addEventListener('click', function (ev) {
 	var el = ev.target.closest('.news-unwatched')
 	if (!el) return
-	fetch(host + 'news/watch?id=' + el.getAttribute('news-id'), { method: 'POST' })
-		.then(res => res.json())
-		.then(json => {
-			if (json.Done) {
-				el.classList.remove("news-unwatched")
-			}
-		})
+	watchNews(el)
 })
+
+function watchNews(el) {
+	fetch(host + 'news/watch?id=' + el.getAttribute('news-id'), { method: 'POST' })
+		.then(() => {
+			el.classList.remove("news-unwatched")
+			el.classList.remove("news-new")
+		})
+}
 
 function hideNews(icon, id) {
 	fetch(host + 'news/hide/' + id)
@@ -80,5 +82,7 @@ function unpinNews(id) {
 }
 
 function minimizeNews(el) {
-	el.closest('[news-id]').querySelector('.news-body').innerHTML = `<small class="news-preview" title="Нажмите, чтобы увидеть текст новости">посмотреть</small>`
+	var newsEl = el.closest('[news-id]')
+	watchNews(newsEl)
+	newsEl.querySelector('.news-body').innerHTML = `<small class="news-preview" title="Нажмите, чтобы увидеть текст новости">посмотреть</small>`
 }

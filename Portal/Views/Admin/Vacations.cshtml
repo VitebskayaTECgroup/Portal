@@ -1,0 +1,149 @@
+﻿@{
+	ViewBag.Title = "Отпуска";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+@section styles {
+	<link rel="stylesheet" href="~/Content/css/admin.css" />
+}
+
+@Html.Partial("Links", model: "vacations")
+
+<div class="center-right">
+	@using (var db = new SiteContext())
+	{
+		var user = db.Authorize(User);
+
+		if (!user.IsAdmin)
+		{
+			<h3>Нет доступа</h3>
+			return;
+		}
+
+		<div class="title">Действующие отпуска</div>
+		<table>
+			<thead>
+				<tr>
+					<th data-type="string">Ф.И.О.</th>
+					<th data-type="date" width="200px">Начало</th>
+					<th data-type="date" width="200px">Конец</th>
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					var query1 = from v in db.Vacations
+								from p in db.Persons.LeftJoin(x => x.TabId == v.TabId)
+								where v.DateStart <= DateTime.Today && v.DateEnd >= DateTime.Today
+								select new
+								{
+									p.Family,
+									v.DateStart,
+									v.DateEnd,
+								};
+
+					var activeVacations = query1
+						.ToList()
+						.GroupBy(x => x.Family)
+						.Select(g => new
+						{
+							Family = g.Key,
+							Vacation = g.First(),
+						})
+						.Select(x => new
+						{
+							x.Family,
+							DateStart = x.Vacation.DateStart,
+							DateEnd = x.Vacation.DateEnd,
+						})
+						.OrderBy(x => x.Family)
+						.ToList();
+
+					foreach (var vacation in activeVacations)
+					{
+						<tr>
+							<td>@vacation.Family</td>
+							<td>@vacation.DateStart.ToString("d MMMM yyyy")</td>
+							<td>@vacation.DateEnd.ToString("d MMMM yyyy")</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+
+		<br />
+		<div class="title">Дней отпуска за год (включая отпуск за свой счёт)</div>
+		<table>
+			<thead>
+				<tr>
+					<th data-type="string">Ф.И.О.</th>
+					<th data-type="number">Кол-во дней за 2021</th>
+					<th data-type="number">Кол-во дней за 2022</th>
+					<th data-type="number">Кол-во дней за 2023</th>
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					var query2 = from p in db.Persons
+									from v in db.Vacations.LeftJoin(x => x.TabId == p.TabId)
+									orderby p.Family
+									where v != null
+									select new
+									{
+										p.Family,
+										v.DateStart,
+										v.DateEnd,
+									};
+
+					var vacationsSum = query2
+						.ToList()
+						.GroupBy(x => x.Family)
+						.Select(g => new
+						{
+							Family = g.Key,
+							Vacations = g.Select(x => new { x.DateStart, x.DateEnd }).ToList()
+						})
+						.ToList();
+
+					foreach (var person in vacationsSum)
+					{
+						int sum2021 = 0, sum2022 = 0, sum2023 = 0;
+
+						var prevDateStart = DateTime.MinValue;
+						var prevDateEnd = DateTime.MinValue;
+
+						foreach (var vacation in person.Vacations)
+						{
+							if (vacation.DateStart > prevDateStart && vacation.DateEnd > prevDateEnd)
+							{
+								prevDateStart = vacation.DateStart;
+								prevDateEnd = vacation.DateEnd;
+
+								var days = Convert.ToInt32((vacation.DateEnd - vacation.DateStart).TotalDays);
+
+								if (vacation.DateEnd.Year == 2021)
+								{
+									sum2021 += days;
+								}
+								else if (vacation.DateEnd.Year == 2022)
+								{
+									sum2022 += days;
+								}
+								else if (vacation.DateEnd.Year == 2023)
+								{
+									sum2023 += days;
+								}
+							}
+						}
+
+						<tr>
+							<td>@person.Family</td>
+							<td>@sum2021</td>
+							<td>@sum2022</td>
+							<td>@sum2023</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+	}
+</div>

@@ -19,6 +19,13 @@
 	<div class="news-info">
 		<div style="font-size: .8em;">
 			<span class="news-date">@Model.DateAdd.ToString("d MMMM yyyy")</span>
+			@if (isNew)
+			{
+				<span class="tag highlight news-if-new" title="Новая новость. Чтобы она была отмечена как прочитанная, достаточно клика по ней">
+					<i icon>fiber_new</i>
+					Новая
+				</span>
+			}
 			@if (isPriority)
 			{
 				<span class="tag highlight" title="Новость обозначена как важная">
