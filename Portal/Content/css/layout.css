@@ -456,24 +456,22 @@ body {
 }
 
 .news-new {
-	border: 2px solid #1a83f5;
-	border-left: 5px solid #1a83f5;
-	animation: 2s ease-in-out border-blink alternate infinite;
+	border: 2px solid #ff6a00;
+	border-left: 5px solid #ff6a00;
+	animation: 1s ease-in-out border-blink alternate infinite;
 }
 
 @keyframes border-blink {
-	from { border-color: #206fb6; }
-	to {border-color: #3f8c3c;}
+	from {border-color: #ff6a00;}
+	to {border-color: #666;}
 }
 
 @keyframes text-blink {
 	from {
-		border-color: #206fb6;
 		color: #206fb6;
 	}
 
 	to {
-		border-color: #3f8c3c;
 		color: #3f8c3c;
 	}
 }
@@ -489,6 +487,7 @@ body {
 	color: #ff6a00;
 	color: #3f8c3c;
 	font-weight: 600;
+	animation: 2s ease-in-out text-blink alternate infinite;
 }
 
 .news-if-new {
@@ -497,7 +496,7 @@ body {
 
 .news-new .news-if-new {
 	display: initial;
-	animation: 2s ease-in-out text-blink alternate infinite;
+	animation: 2s ease-in-out text-blink alternate infinite, 2s ease-in-out border-blink alternate infinite;
 }
 
 .dark .news-info {
