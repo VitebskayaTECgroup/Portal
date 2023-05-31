@@ -93,62 +93,7 @@
 
 .view {
 	padding-top: 15px;
-	font-size: .9em;
 }
-
-.phone {
-	border: 1px solid #aaa;
-	border-radius: 4px;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	background: #fff;
-}
-
-	.phone td {
-		vertical-align: top;
-		padding: 1px 0;
-	}
-
-	.phone th {
-		padding-right: 20px;
-	}
-
-	.phone_image {
-		padding-top: 10px;
-		padding-left: 10px;
-		width: 130px;
-		vertical-align: middle !important;
-		min-height: 140px;
-	}
-
-		.phone img {
-			width: 100px;
-		}
-
-	.phone_name {
-		font-weight: 500;
-		color: #0a78d8;
-		font-size: 1.1em;
-		margin: 10px 0 10px;
-	}
-
-	.phone_text {
-		font-weight: 500;
-	}
-
-.phone_number {
-	color: #004a92;
-	font-weight: 700;
-	font-size: 15px;
-}
-
-	.phone a {
-		font-size: .9em;
-	}
-
-	.red {
-		color: red;
-	}
 
 /* Helpers */
 
@@ -227,31 +172,4 @@
 
 .dark .red {
 	color: #fb6666;
-}
-
-.phone {
-	padding: .5em 1em;
-	display: flex;
-}
-
-.phone-image {
-	width: 7em;
-}
-
-	.phone-image img {
-		height: 100%;
-	}
-
-.phone-text {
-	padding-left: 1em;
-	font-size: .9em;
-	color: #999;
-}
-
-.dark .phone-text {
-	color: #ccc;
-}
-
-.phone-text div {
-	padding-bottom: .25em;
 }

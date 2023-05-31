@@ -203,9 +203,9 @@
 						<span class="material-icons" style="color: #913bdf;">local_shipping</span> Трекер автотранспорта
 					</a>
 				}
-				<a href="~/site/birthdays/">
+				@*<a href="~/site/birthdays/">
 					<span class="material-icons" style="color: #cd27c8;">cake</span> Дни рождений
-				</a>
+				</a>*@
 				@if (user.Groups.Contains("group_inet") || user.Groups.Contains("group_inet_restricted") || user.Groups.Contains("group_gen"))
 				{
 					<a href="http://frw.vst.vitebsk.energo.net:4080/login/?NTLM=1">
@@ -327,69 +327,72 @@
 			</div>
 		</div>
 
-		<div class="widget" style="text-align: center;" title="Нажмите для перехода к просмотру расписания дней рождений сотрудников" onclick="location='@Url.Action("birthdays", "site")'">
-			@{
-				var date = DateTime.Now.AddDays(-1);
-				var yesterdayBirthdays = db.Persons
-					.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
-					.Select(x => x.Family)
-					.ToList();
+		@if (user.IsAdmin)
+		{
+			<div class="widget" style="text-align: center;" title="Нажмите для перехода к просмотру расписания дней рождений сотрудников" onclick="location='@Url.Action("birthdays", "site")'">
+				@{
+					var date = DateTime.Now.AddDays(-1);
+					var yesterdayBirthdays = db.Persons
+						.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
+						.Select(x => x.Family)
+						.ToList();
 
-				date = date.AddDays(1);
-				var todayBirthdays = db.Persons
-					.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
-					.Select(x => x.Family)
-					.ToList();
+					date = date.AddDays(1);
+					var todayBirthdays = db.Persons
+						.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
+						.Select(x => x.Family)
+						.ToList();
 
-				date = date.AddDays(1);
-				var tomorrowBirthdays = db.Persons
-					.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
-					.Select(x => x.Family)
-					.ToList();
+					date = date.AddDays(1);
+					var tomorrowBirthdays = db.Persons
+						.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
+						.Select(x => x.Family)
+						.ToList();
 
-				if (yesterdayBirthdays.Count > 0 || todayBirthdays.Count > 0 || tomorrowBirthdays.Count > 0)
-				{
-					if (yesterdayBirthdays.Count > 0)
+					if (yesterdayBirthdays.Count > 0 || todayBirthdays.Count > 0 || tomorrowBirthdays.Count > 0)
 					{
-						<div class="weather_another">
-							<i>Вчера был день рождения:</i><br />
-							@foreach (var s in yesterdayBirthdays)
-							{
-								<div class="blue">@s</div>
-							}
-						</div>
+						if (yesterdayBirthdays.Count > 0)
+						{
+							<div class="weather_another">
+								<i>Вчера был день рождения:</i><br />
+								@foreach (var s in yesterdayBirthdays)
+								{
+									<div class="blue">@s</div>
+								}
+							</div>
+						}
+
+						if (todayBirthdays.Count > 0)
+						{
+							<div class="weather_today">
+								<b>
+									Поздравляем с днем рождения!
+								</b>
+								@foreach (var s in todayBirthdays)
+								{
+									<div class="blue">@s</div>
+								}
+							</div>
+						}
+
+						if (tomorrowBirthdays.Count > 0)
+						{
+							<div class="weather_another">
+								<i>День рождения завтра:</i><br />
+								@foreach (var s in tomorrowBirthdays)
+								{
+									<div class="blue">@s</div>
+								}
+							</div>
+						}
 					}
-
-					if (todayBirthdays.Count > 0)
+					else
 					{
-						<div class="weather_today">
-							<b>
-								Поздравляем с днем рождения!
-							</b>
-							@foreach (var s in todayBirthdays)
-							{
-								<div class="blue">@s</div>
-							}
-						</div>
-					}
-
-					if (tomorrowBirthdays.Count > 0)
-					{
-						<div class="weather_another">
-							<i>День рождения завтра:</i><br />
-							@foreach (var s in tomorrowBirthdays)
-							{
-								<div class="blue">@s</div>
-							}
-						</div>
+						<span>В ближайшее время нет дней рождений</span>
 					}
 				}
-				else
-				{
-					<span>В ближайшее время нет дней рождений</span>
-				}
-			}
-		</div>
+			</div>
+		}
 
 		<div class="widget">
 			<table>

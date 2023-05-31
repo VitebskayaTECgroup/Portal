@@ -595,7 +595,7 @@ body {
 }
 
 	.phone-image img {
-		height: 100%;
+		max-height: 100%;
 	}
 
 .phone-text {

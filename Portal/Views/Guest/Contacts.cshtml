@@ -63,24 +63,26 @@
 				@if (!string.IsNullOrEmpty(phone.Name))
 				{
 					<div class="blue">@phone.Name</div>
+					<div class="normal">@phone.Guild</div>
 					<div class="normal">@phone.Position</div>
 				}
 				else
 				{
 					<div class="blue">@phone.Position</div>
+					<div class="normal">@phone.Guild</div>
 					<div></div>
 				}
 				@if (!string.IsNullOrEmpty(phone.InnerPhone))
 				{
-					<div>внутренний телефон: <span class="blue">@phone.InnerPhone</span></div>
+					<div><span style="display: inline-block; width: 11em;">внутренний телефон: </span><span class="blue">@phone.InnerPhone</span></div>
 				}
 				@if (!string.IsNullOrEmpty(phone.OuterPhone))
 				{
-					<div>городской телефон: <span class="blue">@phone.OuterPhone</span></div>
+					<div><span style="display: inline-block; width: 11em;">городской телефон: </span><span class="blue">@phone.OuterPhone</span></div>
 				}
 				@if (!string.IsNullOrEmpty(phone.Email))
 				{
-					<div>email: <a href="mailto:@phone.Email">@phone.Email</a></div>
+					<div><span style="display: inline-block; width: 11em;">email: </span><a href="mailto:@phone.Email">@phone.Email</a></div>
 				}
 				@if (vacation != null)
 				{
