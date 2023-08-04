@@ -33,6 +33,7 @@
 	.page .link {
 		padding: .3em 0;
 		display: table;
+		text-align: left;
 	}
 
 		.page .link b {

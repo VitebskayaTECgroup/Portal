@@ -51,10 +51,7 @@
 }
 
 .t-weather {
-	font-size: 12px;
-	color: #333;
 	width: 100%;
-	margin: -36px 0 0;
 }
 
 	.t-weather p {
@@ -68,8 +65,12 @@
 	}
 
 	.t-weather nobr {
-		color: #1e8ef7;
-		font-size: 12pt;
+		color: #206fb6;
+		font-weight: 500;
+	}
+
+	.dark .t-weather nobr {
+		color: #3cace2;
 	}
 
 /* Notifications */

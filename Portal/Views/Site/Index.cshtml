@@ -423,7 +423,8 @@
 			@{
 				try
 				{
-					var html = File.ReadAllText(@"\\web\wwwroot\Content\html\weather\index.html");
+					var html = File.ReadAllText(@"\\web\wwwroot\Content\html\weather\MeteoBy\main.html");
+					html = html.Replace("src=\"img/", "src=\"http://www.vst.vitebsk.energo.net/Content/html/weather/MeteoBy/img/");
 					<div>
 						@Html.Raw(html)
 					</div>
