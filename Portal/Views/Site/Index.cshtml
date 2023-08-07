@@ -132,7 +132,7 @@
 				<a href="http://10.178.9.31/ask/">
 					<span class="material-icons" style="color: #f45936;">laptop</span> АСК "Выбросы"
 				</a>
-				<a href="http://asu.vst.vitebsk.energo.net/">
+				<a href="http://project.vst.vitebsk.energo.net/asu/">
 					<span class="material-icons" style="color: #f19018;">settings</span> АСУ
 				</a>
 				@if (user.Groups.Contains("group_checkpoint") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_gen") || user.Groups.Contains("group_tb") || user.Groups.Contains("group_ok"))
@@ -320,7 +320,7 @@
 			</div>
 		</div>
 
-		<div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://asu.vst.vitebsk.energo.net/#/http://insql.vst.vitebsk.energo.net/mnemonica/sonar/'">
+		<div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://project.vst.vitebsk.energo.net/asu/#/http://project.vst.vitebsk.energo.net/mnemonica/sonar/'">
 			<div class="link bold">Основные параметры ТЭЦ</div>
 			<div id="station-parameters">
 				
@@ -418,8 +418,8 @@
 			@Html.Action("MetalCosts")
 		</div>
 
-		<div class="widget" title="Нажмите для перехода к просмотру прогноза погоды" onclick="location = 'http://insql.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today'">
-			<a class="link bold" href="http://insql.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды</a>
+		<div class="widget" title="Нажмите для перехода к просмотру прогноза погоды" onclick="location = 'http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today'">
+			<a class="link bold" href="http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды</a>
 			@{
 				try
 				{
