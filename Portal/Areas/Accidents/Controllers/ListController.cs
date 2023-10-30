@@ -6,22 +6,22 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.Accidents.Controllers
 {
-    [Authorize]
-    public class ListController : Controller
-    {
-        public ActionResult Index() => View();
+	[Authorize]
+	public class ListController : Controller
+	{
+		public ActionResult Index() => View();
 
-        public ActionResult Edit(int Id) => View(model: Id);
+		public ActionResult Edit(int Id) => View(model: Id);
 
 		public ActionResult Add() => View();
 
 		[HttpPost]
 		public ActionResult Add(string Name)
-        {
+		{
 			try
-            {
+			{
 				using (var db = new SiteContext())
-                {
+				{
 					var user = db.Authorize(User);
 					if (!user.IsAdmin) return Json(new { Error = "Недостаточно прав для создания списка!" });
 
@@ -31,13 +31,13 @@ namespace Portal.Areas.Accidents.Controllers
 					});
 
 					return Json(new { Done = true, Id = id });
-                }
-            }
+				}
+			}
 			catch (Exception e)
-            {
+			{
 				return Json(new { Error = e.Message });
-            }
-        }
+			}
+		}
 
 		[HttpPost]
 		public ActionResult Edit(int Id, string Name)
@@ -65,7 +65,7 @@ namespace Portal.Areas.Accidents.Controllers
 
 		[HttpPost]
 		public ActionResult Delete(int Id)
-        {
+		{
 			try
 			{
 				using (var db = new SiteContext())

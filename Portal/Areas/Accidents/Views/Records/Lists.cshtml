@@ -8,8 +8,8 @@
 	var user = db.Authorize(User);
 
 	var canCreateRecords = db.AccidentsUsersLists
-	   .Where(x => x.UserId == user.UID && x.Role == AccidentListRoles.Writer)
-	   .Count() > 0;
+		.Where(x => x.UserId == user.UID && x.Role == AccidentListRoles.Writer)
+		.Count() > 0;
 
 	<div class="header">
 		<span>Перечень списков рассылки, на которые вы подписаны, со счётчиками количества непрочитанных/общего количества сообщений</span>
@@ -42,7 +42,7 @@
 						from x3 in db.AccidentsViews.LeftJoin(x => x.AccidentId == x2.Id && x.UserId == user.UID)
 						where !x2.IsTemplate && !x2.IsDeleted
 						select new AccidentRecord
-                        {
+						{
 							Id = x2.Id,
 							Date = x2.Date,
 							DateControl = x2.DateCreated,
@@ -50,7 +50,7 @@
 							Description = x2.Description,
 							UserId = x2.UserId,
 							IsWatched = x3 != null,
-                        };
+						};
 
 			var records = query.ToList();
 

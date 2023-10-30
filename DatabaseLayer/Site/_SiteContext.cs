@@ -218,38 +218,31 @@ namespace DatabaseLayer.Site
 			}
 		}
 
-		public int HasUnviewedDocsInDirective(User user)
+		public bool HasUnviewedDocsInDirective(User user)
 		{
-			int count = 0;
-
-			var pages = DirectivePages
-				.OrderBy(x => x.OrderValue)
-				.Where(x => string.IsNullOrEmpty(x.AllowedGroup) || user.GroupsArray.Contains(x.AllowedGroup))
-				.Select(x => x.Id)
-				.ToList();
-
-			var viewedDocuments = DirectiveDocumentsViews
+			var unviewedDocs = DirectiveDocumentsViews
 				.Where(x => x.UserId == user.UID)
 				.Select(x => x.DocumentId)
 				.ToList();
 
-			var unviewedSections = DirectiveDocuments
-				.Where(x => !viewedDocuments.Contains(x.Id))
+			var sections = DirectiveDocuments
+				.Where(x => !unviewedDocs.Contains(x.Id))
 				.Select(x => x.SectionId)
-				.ToList()
-				.Distinct();
+				.ToList();
 
-			foreach (var pageId in pages)
-			{
-				var sectionsId = DirectiveSections
-					.Where(x => x.PageId == pageId)
-					.Select(x => x.Id)
-					.ToList();
+			var pages = DirectiveSections
+				.Where(x => sections.Contains(x.Id))
+				.Select(x => x.PageId)
+				.ToList();
 
-				count += sectionsId.Count(x => unviewedSections.Contains(x));
-			}
+			if (!pages.Any()) return false;
 
-			return count;
+			var pagesWithUnviewed = DirectivePages
+				.Where(x => string.IsNullOrEmpty(x.AllowedGroup) || user.GroupsArray.Contains(x.AllowedGroup))
+				.Where(x => pages.Contains(x.Id))
+				.Any();
+
+			return pagesWithUnviewed;
 		}
 	}
 }

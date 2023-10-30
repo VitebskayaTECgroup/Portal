@@ -26,7 +26,7 @@
 		.ToList()
 		.GroupBy(x => x.Record)
 		.Select(g => new
-        {
+		{
 			Record = g.Key,
 			Monday = g.Key.DateControl.AddDays(g.Key.DateControl.DayOfWeek == DayOfWeek.Monday 
 				? 0 
@@ -35,18 +35,18 @@
 					: -6),
 			View = g.Select(x => x.View).FirstOrDefault(),
 			Lists = g.Select(x => new
-            {
+			{
 				x.List.Name,
 				x.ListUser.Role
-            }).ToList()
-        })
+			}).ToList()
+		})
 		.ToList()
 		.GroupBy(x => x.Monday)
 		.Select(g => new
-        {
+		{
 			Week = g.Key,
 			Records = g.ToList(),
-        })
+		})
 		.ToList();
 
 	var canCreateRecords = db.AccidentsUsersLists

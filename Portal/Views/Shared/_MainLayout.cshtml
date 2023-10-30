@@ -5,7 +5,15 @@
 
 	bool isDocs = ViewBag.IsDocs ?? false;
 	bool isGuest = ViewBag.IsGuest ?? false;
-	bool hasUnseenDirectiveDocuments = ViewBag.HasUnseenDirectiveDocuments ?? false;
+
+	bool hasUnviewedDocsInDirective = false;
+	if (!isGuest)
+	{
+		using (var db = new SiteContext())
+		{
+			hasUnviewedDocsInDirective = db.HasUnviewedDocsInDirective(db.Authorize(User));
+		}
+	}
 }
 <!DOCTYPE html>
 <html lang="ru">
@@ -78,7 +86,7 @@
 			<div class="nav-button" unactive>
 				<a href="~/directive">
 					Директива №1
-					<span id="directive-new" class="counter" style="display: @(hasUnseenDirectiveDocuments ? "inline-block" : "none"); ">new</span>
+					<span id="directive-new" class="counter" style="display: @(hasUnviewedDocsInDirective ? "inline-block" : "none"); ">new</span>
 				</a>
 			</div>
 		}

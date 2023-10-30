@@ -8,9 +8,9 @@ using System.Web.Mvc;
 
 namespace Portal.Areas.Accidents.Controllers
 {
-    [Authorize]
+	[Authorize]
 	public class RecordsController : Controller
-    {
+	{
 		public ActionResult Index() => View();
 
 		public ActionResult Lists() => View();
@@ -130,6 +130,15 @@ namespace Portal.Areas.Accidents.Controllers
 						// получаем имя файла
 						string fileName = Path.GetFileName(file.FileName);
 
+						// узнаем расширение
+						string fileType = fileName.Substring(fileName.LastIndexOf('.') + 1);
+						
+						// конвертация документов word в pdf
+						if (fileType == "doc" || fileType == "docx")
+						{
+
+						}
+
 						if (!Directory.Exists(@"\\web\Files\Час ТБ\" + Id))
 						{
 							Directory.CreateDirectory(@"\\web\Files\Час ТБ\" + Id);
@@ -226,7 +235,7 @@ namespace Portal.Areas.Accidents.Controllers
 
 		[HttpPost]
 		public ActionResult SetRecordToList(int Id, int ListId)
-        {
+		{
 			try
 			{
 				using (var db = new SiteContext())

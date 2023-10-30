@@ -15,8 +15,14 @@ namespace Portal.Controllers
 
 		public ActionResult Page(string section, string page)
 		{
-			bool isGuest = !Request.UserHostAddress.Contains("10.178.9.")/* || Request.UserHostAddress == "::1"*/;
-			ViewBag.IsGuest = isGuest;
+			string host = Request.UserHostAddress;
+			bool isUser = host.Contains("10.178.8.")
+				|| host.StartsWith("10.178.9.")
+				|| host.StartsWith("10.178.97.")
+				|| host.StartsWith("10.178.99.")
+				|| host.StartsWith("10.178.100.")
+				|| host == "::1";
+			ViewBag.IsGuest = !isUser;
 			ViewBag.IsDocs = true;
 			return View((section + "/" + page).Replace('_', ' ').Replace(",", ""));
 		}

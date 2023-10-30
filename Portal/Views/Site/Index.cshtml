@@ -6,7 +6,6 @@
 
 	var random = new Random();
 	bool open;
-	int hasUnseenDirectiveDocuments = 0;
 }
 
 @section styles {
@@ -22,8 +21,6 @@
 	{
 		values[constant.Keyword] = constant.Value;
 	}
-
-	hasUnseenDirectiveDocuments = db.HasUnviewedDocsInDirective(user);
 
 	<div class="left-column">
 		@if (user.IsAdmin)

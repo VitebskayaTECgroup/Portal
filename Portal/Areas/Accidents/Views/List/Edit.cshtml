@@ -66,7 +66,7 @@
 			</thead>
 			<tbody>
 				@foreach (var u in users)
-                {
+				{
 					var role = pinnedUsers
 						.Where(x => x.UserId == u.UID)
 						.Select(x => (int)x.Role)
@@ -92,7 +92,7 @@
 							</select>
 						</td>
 					</tr>
-                }
+				}
 			</tbody>
 		</table>
 	</div>

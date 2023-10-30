@@ -326,6 +326,18 @@ namespace Portal.Controllers
 			}
 		}
 
+		public void Show(int Id)
+		{
+			using (var db = new SiteContext())
+			{
+				var user = db.Authorize(User);
+
+				db.NewsHides
+					.Delete(x => x.NewsId == Id && x.UserId == user.UID);
+				
+			}
+		}
+
 		public void Pin(int Id)
 		{
 			using (var db = new SiteContext())

@@ -26,8 +26,8 @@
 	}
 
 	var canCreateRecords = db.AccidentsUsersLists
-	  .Where(x => x.UserId == user.UID && x.Role == AccidentListRoles.Writer)
-	  .Count() > 0;
+		.Where(x => x.UserId == user.UID && x.Role == AccidentListRoles.Writer)
+		.Count() > 0;
 
 	<div class="header">
 		<span>
@@ -65,16 +65,16 @@
 		.ToList()
 		.GroupBy(x => x.List)
 		.Select(g => new
-        {
+		{
 			Name = g.Key,
 			Users = g
 				.Select(x => new
-                {
+				{
 					x.DisplayName,
 					x.View,
-                })
+				})
 				.ToList()
-        })
+		})
 		.ToList();
 
 	int numberOfFiles = 0;
@@ -135,11 +135,11 @@
 			</div>
 		}
 		else
-        {
+		{
 			<div class="form buttons">
 				<button id="confirm" onclick="setViewed(@record.Id)">Прочитано</button>
 			</div>
-        }
+		}
 	</div>
 
 	if (user.IsAccidents)
@@ -160,7 +160,7 @@
 						<tr>
 							<td>@u.DisplayName</td>
 							@if (u.View != null)
-                            {
+							{
 								if (u.View.Date > record.DateControl.AddDays(1))
 								{
 									<td class="expired">@u.View.Date.ToString("d MMMM yyyy HH:mm")</td>
@@ -169,11 +169,11 @@
 								{
 									<td>@u.View.Date.ToString("d MMMM yyyy HH:mm")</td>
 								}
-                            }
+							}
 							else
-                            {
+							{
 								<td>не просмотрено</td>
-                            }
+							}
 						</tr>
 					}
 				}

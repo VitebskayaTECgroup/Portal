@@ -48,6 +48,12 @@
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Aspose.Words, Version=23.8.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspose.Words.23.8.0\lib\net461\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Words.Pdf2Word, Version=23.8.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspose.Words.23.8.0\lib\net461\Aspose.Words.Pdf2Word.dll</HintPath>
+    </Reference>
     <Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
@@ -879,12 +885,9 @@
     <Content Include="Views\Shared\_LiveFolder.cshtml" />
     <Content Include="Views\Shared\News.cshtml" />
     <Content Include="Views\Guest\NewsBody.cshtml" />
-    <Content Include="Views\Shared\_DocsLayout.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Site\Birthdays.cshtml" />
     <Content Include="Views\Site\Notes.cshtml" />
     <Content Include="Views\Violations\Index.cshtml" />
-    <Content Include="Views\Shared\_Nav.cshtml" />
     <None Include="Properties\PublishProfiles\WEB.pubxml" />
     <Content Include="Views\Docs\Административные процедуры\Вышестоящая организация.cshtml" />
     <Content Include="Views\Docs\Деятельность\Здоровый образ жизни.cshtml" />

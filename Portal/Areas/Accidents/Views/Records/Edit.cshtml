@@ -40,8 +40,8 @@
 	var canChangeContent = record.UserId == user.UID;
 
 	var relatedLists = (from recordList in db.AccidentsRecordsLists.Where(x => x.RecordId == record.Id)
-					    from listUser in db.AccidentsUsersLists.LeftJoin(x => x.ListId == recordList.ListId && x.UserId == user.UID)
-					    select listUser.ListId).ToList();
+						from listUser in db.AccidentsUsersLists.LeftJoin(x => x.ListId == recordList.ListId && x.UserId == user.UID)
+						select listUser.ListId).ToList();
 
 	var userLists = db.AccidentsUsersLists
 		.Where(x => x.UserId == user.UID && x.Role >= AccidentListRoles.Writer)
@@ -144,7 +144,7 @@
 			</div>
 		}
 		else
-        {
+		{
 			<div id="files" class="files">
 				<b>Прикреплённые документы</b>
 				@if (Directory.Exists(@"\\web\Files\Час ТБ\" + record.Id))
@@ -171,7 +171,7 @@
 					<i>нет</i>
 				}
 			</div>
-        }
+		}
 	</div>
 
 	<div class="container">
