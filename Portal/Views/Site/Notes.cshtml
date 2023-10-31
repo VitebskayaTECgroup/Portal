@@ -2,38 +2,28 @@
 
 @if (Model.Count() > 0)
 {
-	bool open = (Request.Cookies.Get("notes")?.Value ?? "open") == "open";
-
-	<div class="notifications @(open ? "open" : "")">
-		<div class="notifications_header">
-			<table>
-				<tr>
-					<th onclick="notesToggle(this)">
-						У вас есть новые уведомления!
-					</th>
-					<td onclick="notesSeeAll()" width="40px">
-						<div class="icon icon_hover ic-check-checked" title="Отметить все уведомления как прочитанные"></div>
-					</td>
-					<td onclick="notesToggle(this)" width="40px">
-						<div class="icon notifications_arrow ic-arrow-@(open ? "up" : "down")"></div>
-					</td>
-				</tr>
-			</table>
+	foreach (var note in Model)
+	{
+		<div class="block notes" onclick="notesSee(this, @note.N_ID)" width="40px">
+			<div>
+				<small>
+					<strong>@note.N_DateCreated.ToString("d MMMM yyyy HH:mm:ss")</strong>
+					&emsp; @note.N_App
+				</small>
+			</div>
+			<p>
+				@note.N_Note
+			</p>
+			@if (!string.IsNullOrEmpty(note.N_Link))
+			{
+				<div>
+					<a href="@note.N_Link">перейти</a>
+				</div>
+			}
 		</div>
-		<div class="notifications_body">
-			<table>
-				@foreach (var note in Model)
-				{
-					<tr>
-						<td title="Нажмите, чтобы перейти к источнику уведомления"><a href="@note.N_Link">@note.N_DateCreated.ToString("dd.MM.yyyy HH:mm:ss")</a></td>
-						<td title="Нажмите, чтобы перейти к источнику уведомления"><a href="@note.N_Link">@note.N_App</a></td>
-						<td title="Нажмите, чтобы перейти к источнику уведомления"><a href="@note.N_Link">@note.N_Note</a></td>
-						<td onclick="notesSee(this, @note.N_ID)" width="40px">
-							<div class="icon icon_hover ic-clear" title="Отметить уведомление как прочитанное"></div>
-						</td>
-					</tr>
-				}
-			</table>
-		</div>
-	</div>
+	}
+}
+else
+{
+	<div class="block">Непрочитанных уведомлений нет</div>
 }

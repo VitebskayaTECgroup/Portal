@@ -1,4 +1,5 @@
-﻿using DatabaseLayer.Site;
+﻿using Aspose.Words.Lists;
+using DatabaseLayer.Site;
 using LinqToDB;
 using System;
 using System.IO;
@@ -12,7 +13,7 @@ namespace Portal.Controllers
 	{
 		public ActionResult Index() => View();
 
-		public ActionResult List(int take, int skip = 0, bool hided = false, bool expired = false)
+		public ActionResult List(int take = 0, int skip = 0, bool hided = false, bool expired = false, bool pinned = true, int before = 0)
 		{
 			using (var db = new SiteContext())
 			{
@@ -62,14 +63,16 @@ namespace Portal.Controllers
 								IsPinned = p.UserId > 0
 							};
 
-				var news = query
-					.Where(x => skip == 0 || x.Id < skip)
+				query = query
 					.OrderByDescending(x => x.IsPinned)
-					.ThenByDescending(x => x.DateAdd)
-					.Take(take)
-					.ToList();
+					.ThenByDescending(x => x.DateAdd);
 
-				return View("NewsBlock", news);
+				if (skip > 0) query = query.Where(x => x.Id < skip);
+				if (take > 0) query = query.Take(take);
+				if (before > 0) query = query.Where(x => x.Id > before);
+				if (!pinned) query = query.Where(x => !x.IsPinned).OrderByDescending(x => x.DateAdd);
+
+				return View("NewsBlock", query.ToList());
 			}
 		}
 

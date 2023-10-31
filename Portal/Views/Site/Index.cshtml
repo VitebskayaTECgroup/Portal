@@ -257,12 +257,102 @@
 	</div>
 
 	<div class="center">
-		<div id="notes">
-			@Html.Action("Notes", "Site")
-		</div>
 		<div id="contacts"></div>
-		<div id="news">
-			@Html.Action("List", "News", new { take = 20 })
+		<div id="content">
+			<div class="block news-tab-header">
+				<div
+					 class="news-tab-button news-tab-selected"
+					 data-tab="news"
+					 onclick="getNewNews()"
+					 ondblclick="watchAllNews()"
+					 title="Нажмите, чтобы открыть вкладку со списком новостей.
+Двойной клик отметит все новости как прочитанные."
+				>
+					Новости
+					<span class="news-new-highlight counter" style="display: none;">new</span>
+				</div>
+				<div class="news-tab-button" data-tab="accidents" title="Нажмите, чтобы открыть вкладку с опубликованными материалами из модуля &quot;Час ТБ&quot;">Час ТБ</div>
+				<div
+					 class="news-tab-button"
+					 data-tab="notifications"
+					 onclick="getNotifications()"
+					 ondblclick="notesSeeAll()"
+					 title="Нажмите, чтобы открыть вкладку с уведомлениями от других модулей сайта.
+Двойной клик закроет все непрочитанные уведомления."
+				>
+					Уведомления
+					<span class="notes-highlight counter" style="display: none;">new</span>
+				</div>
+				<div class="news-tab-button" data-tab="technic" title="Нажмите, чтобы открыть вкладку с формами электронных обращений к участку АСУТП филиала">Заявки к АСУТП</div>
+				<div class="news-tab-button" data-tab="actions" title="Нажмите, чтобы открыть вкладку с ссылками на действия, доступные через сайт">Действия</div>
+			</div>
+			<div class="news-tab-body">
+				<div class="news-tab-content news-tab-selected" data-tab="news">
+					@if (user.IsNewsCreator)
+					{
+						<a class="news-add" href="@Url.Action("Create", "News")" title="Нажмите, чтобы перейти к форме создания новостей">Добавить новость</a>
+					}
+					<div id="news">
+						@Html.Action("List", "News", new { take = 20 })
+					</div>
+				</div>
+				<div class="news-tab-content" data-tab="accidents">
+					Информационные сообщения
+				</div>
+				<div class="news-tab-content" data-tab="notifications" id="notes" onkeydown="getNotifications()">
+					@Html.Action("Notes", "Site")
+				</div>
+				<div class="news-tab-content" data-tab="technic">
+					Заявки на картриджи
+				</div>
+				<div class="news-tab-content" data-tab="actions">
+					<div class="block">
+						<a class="widget_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
+						@if (user.UName == "vtg" || user.UName == "void")
+						{
+							<a class="widget_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
+						}
+						else if (user.UName == "esmal" || user.UName == "crow")
+						{
+							<a class="widget_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
+						}
+						<span class="widget_break"> </span>
+						@using (var devin = new DatabaseLayer.Devin.DevinContext())
+						{
+							var printers = devin.Devices
+								.Where(x => x.Users.Contains(user.UName))
+								.ToList();
+
+							int numberOfPrinters = printers
+								.Where(x => x.Users.Split(';').Contains(user.UName))
+								.Count();
+
+							if (numberOfPrinters > 0 || user.IsAdmin)
+							{
+								<span class="widget_break"> </span>
+								if (numberOfPrinters > 0)
+								{
+									<a class="widget_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
+								}
+								<a class="widget_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
+							}
+						}
+					</div>
+				</div>
+			</div>
+			<script>
+				document.querySelectorAll('.news-tab-button').forEach(function (el) {
+					el.addEventListener('click', function (ev) {
+						var tab = el.getAttribute('data-tab')
+						document.querySelectorAll('.news-tab-selected').forEach(function (x) {
+							x.classList.remove('news-tab-selected')
+						})
+						document.querySelectorAll('[data-tab=\"' + tab + '\"]').forEach(function (x) {
+							x.classList.add('news-tab-selected')
+						})
+					})
+				})
+			</script>
 		</div>
 	</div>
 
@@ -270,55 +360,15 @@
 
 		<div class="widget">
 			<a href="~/phonebook" class="link bold">
-				Телефонный справочник
+				Телефонный справочник <i class="material-icons" style="font-size: .75em;">open_in_new</i>
 				<i class="material-icons preloader" id="preloader">sync</i>
 			</a>
 			<input type="search" class="search" placeholder="введите запрос и нажмите Enter" autofocus />
-			<a class="widget_link" style="margin-top: .5em;" href="http://phone.vitebsk.energo.net/">Справочник РУП "Витебскэнерго"</a>
-		</div>
-
-		<div class="widget" onclick="document.getElementById('actions').style.display = 'block'">
-			<div class="actions_button" title="Нажмите, чтобы увидеть список действий" style="cursor: pointer;">
-				<span class="material-icons">api</span>
-				&emsp;
-				<b>Действия</b>
-			</div>
-			<div id="actions" onmouseleave="this.style.display = 'none'" onclick="this.style.display = 'none'">
-				<a class="widget_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
-				@if (user.UName == "vtg" || user.UName == "void")
-				{
-					<a class="widget_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
-				}
-				else if (user.UName == "esmal" || user.UName == "crow")
-				{
-					<a class="widget_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
-				}
-				<span class="widget_break"> </span>
-				@using (var devin = new DatabaseLayer.Devin.DevinContext())
-				{
-					var printers = devin.Devices
-						.Where(x => x.Users.Contains(user.UName))
-						.ToList();
-
-					int numberOfPrinters = printers
-						.Where(x => x.Users.Split(';').Contains(user.UName))
-						.Count();
-
-					if (numberOfPrinters > 0 || user.IsAdmin)
-					{
-						<span class="widget_break"> </span>
-						if (numberOfPrinters > 0)
-						{
-							<a class="widget_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
-						}
-						<a class="widget_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
-					}
-				}
-			</div>
+			<a class="widget_link" style="margin-top: .5em;" href="http://phone.vitebsk.energo.net/">Справочник РУП "Витебскэнерго" <i class="material-icons" style="font-size: .75em;">open_in_new</i></a>
 		</div>
 
 		<div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://project.vst.vitebsk.energo.net/asu/#/http://project.vst.vitebsk.energo.net/mnemonica/sonar/'">
-			<div class="link bold">Основные параметры ТЭЦ</div>
+			<div class="link bold">Основные параметры ТЭЦ <i class="material-icons" style="font-size: .75em;">open_in_new</i></div>
 			<div id="station-parameters">
 				
 			</div>
@@ -416,7 +466,7 @@
 		</div>
 
 		<div class="widget" title="Нажмите для перехода к просмотру прогноза погоды" onclick="location = 'http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today'">
-			<a class="link bold" href="http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды</a>
+			<a class="link bold" href="http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды <i class="material-icons" style="font-size: .75em;">open_in_new</i></a>
 			@{
 				try
 				{
@@ -442,28 +492,10 @@
 @section scripts {
 	<script src="~/Content/js/news.js?@DateTime.Now.ToFileTimeUtc()"></script>
 	<script>
-		getWeather()
-		getNotifications()
+		// виджет параметров станции
+
 		getStationParameters()
-		setInterval(getWeather, 5000)
 		setInterval(getStationParameters, 5000)
-		setInterval(getNotifications, 60000)
-
-		function getWeather() {
-			fetch('@Url.Action("Weather", "Site")?r=' + Math.random())
-				.then(res => res.text())
-				.then(text => {
-					document.getElementById('weather').innerHTML = Number(text).toFixed(2)
-				})
-		}
-
-		function getNotifications() {
-			fetch('@Url.Action("Notes", "Site")?r=' + Math.random())
-				.then(res => res.text())
-				.then(text => {
-					document.getElementById('notes').innerHTML = text
-				})
-		}
 
 		function getStationParameters() {
 			fetch('@Url.Action("StationParameters", "Site")?r=' + Math.random())
@@ -473,34 +505,57 @@
 				})
 		}
 
-		function notesToggle() {
-			var $menu = $('.notifications');
-			var $body = $menu.find('.notifications_body');
-			var $arrow = $menu.find('.notifications_arrow');
-			var state = '';
-			if ($menu.hasClass('open')) {
-				$body.slideUp(100, function () {
-					$menu.removeClass('open');
-				});
-				state = '';
-			} else {
-				$body.slideDown(100);
-				$menu.addClass('open');
-				state = 'open';
-			}
-			setCookie('notes', state, { expires: 9999999999 });
-			$arrow.toggleClass('ic-arrow-up ic-arrow-down');
+		// виджет погоды
+
+		getWeather()
+		setInterval(getWeather, 5000)
+
+		function getWeather() {
+			fetch('@Url.Action("Weather", "Site")?r=' + Math.random())
+				.then(res => res.text())
+				.then(text => {
+					document.getElementById('weather').innerHTML = Number(text).toFixed(2)
+				})
+		}
+
+		// уведомления от других модулей сайта
+
+		getNotifications()
+		setInterval(getNotifications, 60000)
+
+		function getNotifications() {
+			fetch('@Url.Action("Notes", "Site")?r=' + Math.random())
+				.then(res => res.text())
+				.then(text => {
+					document.getElementById('notes').innerHTML = text
+					checkNewNotes()
+				})
+		}
+
+		function checkNewNotes() {
+			var link = document.querySelector('.notes-highlight')
+			if (!link) return
+			var notes = document.querySelectorAll('.notes')
+			link.style.display = (!!notes && notes.length > 0) ? 'inline-block' : 'none'
 		}
 
 		function notesSee(obj, id) {
 			fetch('@Url.Action("NoteSee", "Site")/' + id)
-				.then(() => obj.closest('tr').remove())
+				.then(() => {
+					obj.remove()
+					checkNewNotes()
+				})
 		}
 
 		function notesSeeAll() {
 			fetch('@Url.Action("NoteSeeAll", "Site")')
-				.then(() => document.getElementById('notes').remove())
+				.then(() => {
+					getNotifications()
+					checkNewNotes()
+				})
 		}
+
+		// действия
 
 		function printReport() {
 			fetch('http://www.vst.vitebsk.energo.net/site/printreport', { method: 'POST' })
@@ -544,6 +599,8 @@
 				})
 		}
 
+		// поиск по телефонному справочнику
+
 		document.querySelector('.search').addEventListener('search', function (ev) {
 			var value = ev.target.value
 			if (value.length > 1) {
@@ -581,5 +638,10 @@
 				document.getElementById('news').style.display = 'block'
 			}
 		})
+
+		// новости
+
+		checkNewNews()
+		setInterval(getNewNews, 10000)
 	</script>
 }

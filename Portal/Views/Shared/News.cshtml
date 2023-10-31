@@ -13,7 +13,7 @@
 }
 
 <div
-	class="block @(isWatched ? "" : "news-unwatched") @(isNew ? "news-new" : "")"
+	class="block @(isWatched ? "" : "news-unwatched") @(isNew ? "news-new" : "") @(Model.IsPinned ? "news-pinned" : "")"
 	news-id="@Model.Id"
 >
 	<div class="news-info">
@@ -120,7 +120,6 @@
 			}
 		}
 	</div>
-
 	<div class="news-body">
 		@if (isNew)
 		{

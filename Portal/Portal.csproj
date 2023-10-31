@@ -343,13 +343,9 @@
     <Content Include="Content\images\sprite.black.png" />
     <Content Include="Content\images\sprite.hover.png" />
     <Content Include="Content\images\sprite.white.png" />
-    <Content Include="Content\js\ajax.js" />
     <Content Include="Content\js\auto.js" />
-    <Content Include="Content\js\birthdays.js" />
     <Content Include="Content\js\layout.js" />
-    <Content Include="Content\js\core.js" />
     <Content Include="Content\js\news.js" />
-    <Content Include="Content\js\safe.js" />
     <Content Include="Content\lib\ckeditor\adapters\jquery.js" />
     <Content Include="Content\lib\ckeditor\build-config.js" />
     <Content Include="Content\lib\ckeditor\ckeditor.js" />

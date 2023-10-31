@@ -16,8 +16,11 @@ document.addEventListener('click', function (ev) {
 var isLoading = false
 
 window.addEventListener('scroll', function () {
-	if (!document.getElementById('news')) return
 	if (isLoading) return
+
+	var news = document.getElementById('news')
+	if (!news) return
+	if (news.style.display == 'none') return
 
 	var scrollHeight = Math.max(
 		document.body.scrollHeight, document.documentElement.scrollHeight,
@@ -85,4 +88,43 @@ function minimizeNews(el) {
 	var newsEl = el.closest('[news-id]')
 	watchNews(newsEl)
 	newsEl.querySelector('.news-body').innerHTML = `<small class="news-preview" title="Нажмите, чтобы увидеть текст новости">посмотреть</small>`
+}
+
+function checkNewNews() {
+	var newNews = document.querySelectorAll('.news-new')
+	var link = document.querySelector('.news-new-highlight')
+	if (!link) return
+	link.style.display = (newNews && newNews.length) ? 'inline-block' : 'none'
+}
+
+function getNewNews() {
+	if (isLoading) return
+	isLoading = true
+
+	var id = []
+	document.querySelectorAll('[news-id]').forEach(function (el) {
+		id.push(Number(el.getAttribute('news-id')))
+	})
+
+	fetch(host + 'news/list/?' + (id.length == 0 ? 'take=20' : ('pinned=false&before=' + Math.max.apply(Math, id))))
+		.then(function (res) { return res.text() })
+		.then(function (text) {
+			var pinned = document.querySelectorAll('.news-pinned')
+			if (pinned && pinned.length > 0) {
+				var last = pinned[pinned.length - 1]
+				last.insertAdjacentHTML('afterend', text)
+			}
+			else {
+				document.getElementById('news').insertAdjacentHTML('afterbegin', text)
+			}
+			isLoading = false
+			checkNewNews()
+		})
+}
+
+function watchAllNews() {
+	document.querySelectorAll('.news-unwatched').forEach(function (el) {
+		watchNews(el)
+		setTimeout(checkNewNews, 2500)
+	})
 }

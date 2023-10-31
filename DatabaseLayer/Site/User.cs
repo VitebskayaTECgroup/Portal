@@ -32,6 +32,8 @@ namespace DatabaseLayer.Site
 
 		public bool IsAdmin => UClass.Contains("site_admin");
 
+		public bool IsNewsCreator => UClass.Contains("site_red");
+
 		public bool IsAutoHead => UClass.Contains("auto_prov");
 
 		public bool IsViolationsUser => UClass.Contains("record_");

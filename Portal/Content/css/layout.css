@@ -400,16 +400,16 @@ body {
 
 .counter {
 	display: inline-block;
-	border-radius: 1em;
+	/* border-radius: 1em; */
 	text-align: center;
-	vertical-align: middle;
 	font-size: 9px;
 	font-style: normal;
 	background: #e93a3a;
 	color: #fff !important;
 	vertical-align: middle;
 	padding: .25em;
-	min-width: 1.75em;
+	min-width: 2.5em;
+	min-height: 2em;
 }
 
 /*#endregion */
