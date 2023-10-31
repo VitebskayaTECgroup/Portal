@@ -53,6 +53,7 @@ function watchNews(el) {
 		.then(() => {
 			el.classList.remove("news-unwatched")
 			el.classList.remove("news-new")
+			checkNewNews()
 		})
 }
 
@@ -60,6 +61,7 @@ function hideNews(icon, id) {
 	fetch(host + 'news/hide/' + id)
 		.then(() => {
 			icon.closest('[news-id]').remove()
+			checkNewNews()
 		})
 }
 
