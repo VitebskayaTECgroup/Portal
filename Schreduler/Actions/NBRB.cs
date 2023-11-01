@@ -1,4 +1,4 @@
-﻿using AngleSharp.Parser.Html;
+﻿using AngleSharp.Html.Parser;
 using Dapper;
 using System;
 using System.Data.SqlClient;
@@ -14,7 +14,7 @@ namespace Schreduler.Actions
 
 			string raw = new WebClient().DownloadString("http://www.nbrb.by/statistics/rates/ratesDaily/");
 			var parser = new HtmlParser();
-			var document = parser.Parse(raw);
+			var document = parser.ParseDocument(raw);
 
 			using (var conn = new SqlConnection(Program.Site))
 			{
