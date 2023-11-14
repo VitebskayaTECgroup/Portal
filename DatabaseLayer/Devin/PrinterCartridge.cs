@@ -2,13 +2,13 @@
 
 namespace DatabaseLayer.Devin
 {
-    [Table(Name = "PrintersCartridges")]
-    public class PrinterCartridge
-    {
-        [Column]
-        public int PrinterId { get; set; }
+	[Table(Name = "PrintersCartridges")]
+	public class PrinterCartridge
+	{
+		[Column]
+		public int PrinterId { get; set; }
 
-        [Column]
-        public int CartridgeId { get; set; }
-    }
+		[Column]
+		public int CartridgeId { get; set; }
+	}
 }

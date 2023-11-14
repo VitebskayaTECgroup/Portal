@@ -4,11 +4,11 @@ using System.Web.Mvc;
 
 namespace DatabaseLayer.Site
 {
-    [Table(Name = "News")]
-    public class News
-    {
+	[Table(Name = "News")]
+	public class News
+	{
 		[Column, Identity]
-        public int Id { get; set; }
+		public int Id { get; set; }
 
 		[Column]
 		public int UserId { get; set; }
@@ -40,28 +40,28 @@ namespace DatabaseLayer.Site
 		public string Priority { get; set; }
 
 		[Column]
-        public bool IsTemplate { get; set; } = false;
+		public bool IsTemplate { get; set; } = false;
 
 		[Column]
 		public string Tags { get; set; } = "";
 
 
-        public User Creator { get; set; }
+		public User Creator { get; set; }
 
 		public NewsGuild Guild { get; set; }
 
 		public string GuildName { get; set; }
 
-        public bool IsWatched { get; set; }
+		public bool IsWatched { get; set; }
 
-        public bool IsHide { get; set; }
+		public bool IsHide { get; set; }
 
 		public bool IsPinned { get; set; }
 
-        public bool IsRedactor { get; set; }
+		public bool IsRedactor { get; set; }
 
-        public bool IsTimed => DateAdd.Date < DateExpire.Date;
+		public bool IsTimed => DateAdd.Date < DateExpire.Date;
 
-        public int DaysRemains => (DateExpire.Date - DateTime.Now.Date).Days;
-    }
+		public int DaysRemains => (DateExpire.Date - DateTime.Now.Date).Days;
+	}
 }

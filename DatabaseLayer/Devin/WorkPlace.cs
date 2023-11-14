@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace DatabaseLayer.Devin
 {
-    [Table(Name = "WorkPlaces")]
-    public class WorkPlace
-    {
-        [Column, Identity]
-        public int Id { get; set; }
+	[Table(Name = "WorkPlaces")]
+	public class WorkPlace
+	{
+		[Column, Identity]
+		public int Id { get; set; }
 
-        [Column, NotNull]
-        public string Location { get; set; }
+		[Column, NotNull]
+		public string Location { get; set; }
 
-        [Column]
-        public string Guild { get; set; }
+		[Column]
+		public string Guild { get; set; }
 
-        public virtual IEnumerable<Device> Devices { get; set; } = new List<Device>();
-    }
+		public virtual IEnumerable<Device> Devices { get; set; } = new List<Device>();
+	}
 }

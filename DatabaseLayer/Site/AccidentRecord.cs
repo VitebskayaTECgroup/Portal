@@ -38,7 +38,7 @@ namespace DatabaseLayer.Site
 		public AccidentView Watch { get; set; } = null;
 
 		public DateTime GetWeek()
-        {
+		{
 			var day = (int)DateControl.DayOfWeek;
 			var monday = DateControl.AddDays(day == 1 ? 0 : day > 1 ? (-1 * (day - 1)) : -6);
 			return monday;

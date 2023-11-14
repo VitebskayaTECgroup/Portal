@@ -4,20 +4,20 @@ using System;
 namespace DatabaseLayer.Site
 {
 	[Table(Name = "Vacations")]
-    public class Vacation
-    {
+	public class Vacation
+	{
 		[Column, NotNull]
-        public int TabId { get; set; }
+		public int TabId { get; set; }
 
-        [Column]
+		[Column]
 		public DateTime DateStart { get; set; }
 
-        [Column]
-        public DateTime DateEnd { get; set; }
+		[Column]
+		public DateTime DateEnd { get; set; }
 
-        public bool IsValid => TabId > 0 
-            && DateStart > DateTime.MinValue
-            && DateEnd > DateTime.MinValue
-            && DateEnd > DateStart;
-    }
+		public bool IsValid => TabId > 0 
+			&& DateStart > DateTime.MinValue
+			&& DateEnd > DateTime.MinValue
+			&& DateEnd > DateStart;
+	}
 }

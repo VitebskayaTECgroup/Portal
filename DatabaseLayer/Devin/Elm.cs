@@ -3,22 +3,22 @@ using System;
 
 namespace DatabaseLayer.Devin
 {
-    [Table(Name = "ElmEvents")]
-    public class Elm
-    {
-        [Column, DataType("datetime")]
-        public DateTime EDATE { get; set; }
+	[Table(Name = "ElmEvents")]
+	public class Elm
+	{
+		[Column, DataType("datetime")]
+		public DateTime EDATE { get; set; }
 
-        [Column]
-        public string EVGR { get; set; }
+		[Column]
+		public string EVGR { get; set; }
 
-        [Column]
-        public string EVENTS { get; set; }
+		[Column]
+		public string EVENTS { get; set; }
 
-        [Column]
-        public string CNAME { get; set; }
+		[Column]
+		public string CNAME { get; set; }
 
-        [Column]
-        public string CUSER { get; set; }
-    }
+		[Column]
+		public string CUSER { get; set; }
+	}
 }
