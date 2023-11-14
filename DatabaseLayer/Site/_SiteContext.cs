@@ -120,6 +120,9 @@ namespace DatabaseLayer.Site
 		public ITable<AccidentUserList> AccidentsUsersLists
 			=> this.GetTable<AccidentUserList>();
 
+		public ITable<AccidentDocView> AccidentDocs
+			=> this.GetTable<AccidentDocView>();
+
 		// Телефонный справочник
 
 		public ITable<PhonebookGuild> PhonebookGuilds

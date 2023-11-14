@@ -110,6 +110,7 @@
     <Compile Include="Phonebook\Phone.cs" />
     <Compile Include="Phonebook\_PhonebookContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Site\AccidentDocs.cs" />
     <Compile Include="Site\DirectiveDocumentView.cs" />
     <Compile Include="Site\DirectiveLog.cs" />
     <Compile Include="Site\DirectiveSection.cs" />
