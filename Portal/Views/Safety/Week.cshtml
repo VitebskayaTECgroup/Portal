@@ -1,0 +1,119 @@
+﻿@model DateTime?
+
+@using (var db = new SiteContext())
+{
+	var givenDate = Model ?? DateTime.Today;
+
+	var user = db.Authorize(User);
+
+	var weekDay = givenDate.DayOfWeek == DayOfWeek.Sunday
+		? givenDate.AddDays(-6)
+		: givenDate.AddDays(1 - (int)givenDate.DayOfWeek);
+
+	var lastDay = weekDay.AddDays(6);
+
+	var records = db.AccidentsRecords
+		.Where(x => x.DateControl.Date == weekDay.Date)
+		.Where(x => !x.IsTemplate)
+		.Where(x => !x.IsDeleted)
+		.ToList();
+
+	var viewed = db.AccidentsViews
+		.Where(x => records.Select(y => y.Id).Contains(x.AccidentId))
+		.Where(x => x.UserId == user.UID)
+		.ToList();
+
+	var docs = db.AccidentDocs
+		.Where(x => records.Select(y => y.Id).Contains(x.AccidentId))
+		.Where(x => x.UserId == user.UID)
+		.ToList();
+
+	var listId = 4;
+	var redactors = db.Users
+		.Where(x => db.AccidentsUsersLists.Where(y => y.ListId == listId && y.Role == AccidentListRoles.Writer).Select(y => y.UserId).Contains(x.UID)
+			|| records.Select(y => y.UserId).Contains(x.UID))
+		.ToList();
+
+	bool isRedactor = redactors.Select(x => x.UID).Contains(user.UID);
+	if (user.UName == "void")
+	{
+		isRedactor = false;
+	}
+
+	if (isRedactor)
+	{
+		<div style="display: flex; align-items: center; justify-content: space-around;">
+			<a class="news-add" href="~/accidents/records/add">Добавить информационное сообщение</a>
+			<a class="news-add" href="@Url.Action("", "accidents")">Перейти к списку</a>
+		</div>
+	}
+	else if (records.Count > 0)
+	{
+		var percentOfViewed = Math.Round(100 * (float)viewed.Count / (float)records.Count);
+		string color = percentOfViewed == 100 ? "good" : "warn";
+		<div></div>
+		<div class="progress" title="Прочитано @percentOfViewed% (@viewed.Count из @records.Count)">
+			<div class="@color" style="width: 0%;"> </div>
+		</div>
+
+	}
+
+	if (records.Count == 0)
+	{
+		<div class="block">Нет информационных сообщений для этой недели</div>
+	}
+
+	foreach (var record in records)
+	{
+		var creator = redactors.FirstOrDefault(x => x.UID == record.UserId);
+		bool isViewed = isRedactor || viewed.Any(x => x.AccidentId == record.Id);
+
+		string className = "block" + (!isViewed ? " safety-unviewed" : "");
+
+		<div class="@className" record-id="@record.Id">
+			<div class="news-info">
+				<div>
+					<div class="news-author">@record.DateCreated.ToString("d MMMM yyyy") &copy; @(creator?.DisplayName ?? "Витебская ТЭЦ")</div>
+				</div>
+				<div class="news-buttons">
+					@if (isRedactor)
+					{
+						<a href="~/accidents/records/edit/@record.Id">
+							<i icon title="Перейти к редактированию">edit</i>
+						</a>
+					}
+				</div>
+			</div>
+			<div class="news-body">
+				<div class="news-message">@record.Description</div>
+				<div class="news-files">
+					@if (Directory.Exists(@"\\web\Files\Час ТБ\" + record.Id))
+					{
+						var files = Directory
+							.GetFiles(@"\\web\Files\Час ТБ\" + record.Id)
+							.Select(x => x.Substring(x.LastIndexOf("\\") + 1))
+							.ToList();
+
+						if (files.Count > 0)
+						{
+							foreach (var file in files)
+							{
+								bool isDocViewed = docs.Any(x => x.AccidentId == record.Id && x.Link == file);
+
+								<div>
+									@if (!isDocViewed && !isRedactor)
+									{
+										<span class="counter">new</span>
+									}
+									<a onmousedown="setDocViewed(@record.Id, this)" target="_blank" link="@file" href="http://www.vst.vitebsk.energo.net/files/Час ТБ/@record.Id/@file">
+										<i class="material-icons">description</i> @file
+									</a>
+								</div>
+							}
+						}
+					}
+				</div>
+			</div>
+		</div>
+	}
+}

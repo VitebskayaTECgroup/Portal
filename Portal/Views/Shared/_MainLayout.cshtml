@@ -37,9 +37,7 @@
 		<a href="~/">
 			<img title='Филиал "Витебская ТЭЦ" РУП "Витебскэнерго"' src="~/Content/images/styled-logo.png" />
 		</a>
-		<div class="button rounded" style="margin-top: -.25em;" onclick="setTheme()" title="Изменить цветовую гамму">
-			<i class="material-icons">dark_mode</i>
-		</div>
+		<div style="cursor: pointer; margin-top: -.25em;" onclick="setTheme(this)" title="Изменить цветовую гамму">@(theme == "dark" ? "🌙" : "☀️")</div>
 	</div>
 
 	<div class="nav">

@@ -260,8 +260,7 @@
 		<div id="contacts"></div>
 		<div id="content">
 			<div class="block news-tab-header">
-				<div
-					 class="news-tab-button news-tab-selected"
+				<div class="news-tab-button news-tab-selected"
 					 data-tab="news"
 					 onclick="getNewNews()"
 					 ondblclick="watchAllNews()"
@@ -271,9 +270,15 @@
 					Новости
 					<span class="news-new-highlight counter" style="display: none;">new</span>
 				</div>
-				@*<div class="news-tab-button" data-tab="accidents" title="Нажмите, чтобы открыть вкладку с опубликованными материалами из модуля &quot;Час ТБ&quot;">Час ТБ</div>*@
-				<div
-					 class="news-tab-button"
+				<div class="news-tab-button"
+					 data-tab="safety"
+					 onclick="getSafety()"
+					 title="Нажмите, чтобы открыть вкладку с опубликованными материалами из модуля &quot;Час ТБ&quot;"
+				>
+					Час ТБ
+					<span id="safety-highlight" class="counter" style="display: none;">new</span>
+				</div>
+				<div class="news-tab-button"
 					 data-tab="notifications"
 					 onclick="getNotifications()"
 					 ondblclick="notesSeeAll()"
@@ -296,9 +301,7 @@
 						@Html.Action("List", "News", new { take = 20 })
 					</div>
 				</div>
-				<div class="news-tab-content" data-tab="accidents">
-					Информационные сообщения
-				</div>
+				<div class="news-tab-content" data-tab="safety" id="safety"></div>
 				<div class="news-tab-content" data-tab="notifications" id="notes" onkeydown="getNotifications()">
 					@Html.Action("Notes", "Site")
 				</div>
@@ -494,9 +497,6 @@
 	<script>
 		// виджет параметров станции
 
-		getStationParameters()
-		setInterval(getStationParameters, 5000)
-
 		function getStationParameters() {
 			fetch('@Url.Action("StationParameters", "Site")?r=' + Math.random())
 				.then(res => res.text())
@@ -505,10 +505,10 @@
 				})
 		}
 
-		// виджет погоды
+		getStationParameters()
+		setInterval(getStationParameters, 5000)
 
-		getWeather()
-		setInterval(getWeather, 5000)
+		// виджет погоды
 
 		function getWeather() {
 			fetch('@Url.Action("Weather", "Site")?r=' + Math.random())
@@ -518,10 +518,10 @@
 				})
 		}
 
-		// уведомления от других модулей сайта
+		getWeather()
+		setInterval(getWeather, 5000)
 
-		getNotifications()
-		setInterval(getNotifications, 60000)
+		// уведомления от других модулей сайта
 
 		function getNotifications() {
 			fetch('@Url.Action("Notes", "Site")?r=' + Math.random())
@@ -554,6 +554,9 @@
 					checkNewNotes()
 				})
 		}
+
+		getNotifications()
+		setInterval(getNotifications, 60000)
 
 		// действия
 
@@ -599,6 +602,71 @@
 				})
 		}
 
+		// час ТБ и информационные сообщения
+
+		function checkNewSafety() {
+			var link = document.getElementById('safety-highlight')
+			if (!link) return
+			var notes = document.querySelectorAll('#safety .safety-unviewed')
+			link.style.display = (!!notes && notes.length > 0) ? 'inline-block' : 'none'
+
+			var progress = document.querySelector('.progress div')
+			if (progress) {
+				var unviewed = document.getElementById('safety').querySelectorAll('.counter').length
+				var all = document.getElementById('safety').querySelectorAll('a[href]').length
+				var percent = (100 * (all - unviewed) / all)
+				progress.style.width = percent + '%'
+				progress.className = percent == 100 ? 'good' : 'warn'
+			}
+		}
+
+		function getSafety() {
+			fetch('@Url.Action("Week", "Safety")?r=' + Math.random())
+				.then(res => {
+					if (res.status == 200) {
+						return res.text().then(text => {
+							document.getElementById('safety').innerHTML = text
+							checkNewSafety()
+						})
+					}
+					else {
+						document.getElementById('safety').innerHTML = "<div class=\"block\">Произошла ошибка сервера.<br/>Вы можете обратиться в уАСУТП по тел. 3-34 для исправления этой ошибки</div>"
+							+ "<div style='display: none'>" + res.status + "</div>"
+					}
+				})
+				.catch(err => {
+					document.getElementById('safety').innerHTML = "<div class=\"block\">Произошла ошибка сервера.<br/>Вы можете обратиться в уАСУТП по тел. 3-34 для исправления этой ошибки</div>"
+						+ "<div style='display: none'>" + err + "</div>"
+				})
+		}
+
+		function setDocViewed(recordId, link) {
+			var form = new FormData()
+			form.append('recordId', recordId)
+			form.append('link', link.getAttribute('link'))
+			fetch('@Url.Action("SetDocViewed", "Safety")', { method: 'POST', body: form })
+				.then(function () {
+					var counter = link.parentNode.querySelector('.counter')
+					if (counter) counter.remove()
+					var block = link.closest('.block')
+					if (block.querySelectorAll('.counter').length == 0) setAccidentViewed(recordId, block)
+					checkNewSafety()
+				})
+		}
+
+		function setAccidentViewed(recordId, block) {
+			var form = new FormData()
+			form.append('recordId', recordId)
+			fetch('@Url.Action("SetAccidentViewed", "Safety")', { method: 'POST', body: form })
+				.then(function () {
+					block.classList.remove('safety-unviewed')
+					checkNewSafety()
+				})
+		}
+
+		getSafety()
+		//setInterval(getSafety, 10000)
+
 		// поиск по телефонному справочнику
 
 		document.querySelector('.search').addEventListener('search', function (ev) {
@@ -626,7 +694,7 @@
 
 			function show(text) {
 				document.getElementById('preloader').style.display = 'none'
-				document.getElementById('news').style.display = 'none'
+				document.getElementById('content').style.display = 'none'
 				document.getElementById('contacts').innerHTML = text
 				document.getElementById('contacts').style.display = 'block'
 			}
@@ -635,7 +703,7 @@
 				document.getElementById('preloader').style.display = 'none'
 				document.getElementById('contacts').style.display = 'none'
 				document.getElementById('contacts').innerHTML = ''
-				document.getElementById('news').style.display = 'block'
+				document.getElementById('content').style.display = 'block'
 			}
 		})
 

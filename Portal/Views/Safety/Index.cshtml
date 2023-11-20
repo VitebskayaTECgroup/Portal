@@ -1,0 +1,259 @@
+﻿@{
+	ViewBag.Title = "Просмотр | Новости";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+@using (var db = new SiteContext())
+{
+	var user = db.Authorize(User);
+	bool open;
+
+	var guilds = db.NewsGuilds
+		.OrderBy(x => x.Name)
+		.ToList();
+
+	var pinnedGuilds = db.UsersToGuilds
+		.Where(x => x.UserName == user.UName)
+		.Select(x => x.GuildId)
+		.ToList();
+
+	var newsTags = db.NewsTags
+		.ToDictionary(x => x.Token, x => x.Name);
+
+	ViewBag.NewsTags = newsTags;
+
+	// filter
+
+	string keyword = Request.QueryString.Get("k");
+	int guildId = int.TryParse(Request.QueryString.Get("g"), out int i) ? i : 0;
+	bool enableHided = Request.QueryString.Get("h") == "1";
+	bool enableExpired = Request.QueryString.Get("e") == "1";
+	bool onlySelf = Request.QueryString.Get("u") == "1";
+	string[] tags = (Request.QueryString.Get("tags") ?? "").Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+
+	// news list
+
+	var query = from n in db.News
+				from u in db.Users.Where(x => x.UID == n.UserId).DefaultIfEmpty()
+				from g in db.NewsGuilds.LeftJoin(x => x.Id == n.GuildId)
+				where !n.IsTemplate
+				orderby n.DateAdd descending
+				select new News
+				{
+					Id = n.Id,
+					Priority = n.Priority,
+					DateAdd = n.DateAdd,
+					DateExpire = n.DateExpire,
+					Title = n.Title,
+					Message = n.Message,
+					Links = n.Links,
+					UserName = n.UserName,
+					Tags = n.Tags ?? "",
+					Creator = new User
+					{
+						UID = u.UID,
+						UName = u.UName,
+					},
+					GuildId = n.GuildId,
+					Guild = g ?? new NewsGuild { Id = 0, IsPrivate = false, Name = "Общий" },
+					IsWatched = db.NewsViews.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() > 0,
+					IsHide = db.NewsHides.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() > 0,
+					IsRedactor = n.UserId == user.UID || user.UClass.Contains("site_admin")
+				};
+
+	var news = query.ToList();
+
+	// filtering
+
+	if (!string.IsNullOrEmpty(keyword))
+	{
+		news = news
+			.Where(x => (x.Title + x.Message + x.Links + x.UserName).ToLower().Contains(keyword.ToLower()))
+			.ToList();
+	}
+	if (!enableHided)
+	{
+		news = news
+			.Where(x => !x.IsHide)
+			.ToList();
+	}
+	if (!enableExpired)
+	{
+		news = news
+			.Where(x => x.DateExpire < x.DateAdd || x.DateExpire >= DateTime.Now.Date)
+			.ToList();
+	}
+	if (onlySelf)
+	{
+		news = news
+			.Where(x => x.Creator.UID == user.UID)
+			.ToList();
+	}
+	if (guildId == 0)
+	{
+		news = news
+			.Where(x => x.GuildId == 0 || !x.Guild.IsPrivate || pinnedGuilds.Contains(x.GuildId))
+			.ToList();
+	}
+	else
+	{
+		news = news
+			.Where(x => x.GuildId == guildId)
+			.ToList();
+	}
+
+	// категории
+	if (tags.Length > 0)
+	{
+		news = news
+			.Where(x => tags.Count(y => x.Tags.Contains(y)) > 0)
+			.ToList();
+	}
+
+	<div class="left">
+
+		@if (user.UClass.Contains("site_red"))
+		{
+			<div class="menu open">
+				<div class="menu_header">
+					<table>
+						<tr>
+							<td>Новости</td>
+						</tr>
+					</table>
+				</div>
+				<div class="menu_body">
+					<a href="~/news/create">Создать новую новость</a>
+				</div>
+			</div>
+		}
+
+		@{ open = Request.Cookies.Get("news-filter")?.Value != "0"; }
+		<div data-mode="view" class="menu @(open ? "open" : "")" id="news-filter">
+			<div class="menu_header" onclick="toggleMenu(this, 'news-filter')">
+				<table>
+					<tr>
+						<td>Фильтр</td>
+						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+					</tr>
+				</table>
+			</div>
+			<div class="menu_body">
+				<input id="keyword" placeholder="Введите запрос" value="@keyword" onkeyup="keyword()" />
+				<select id="guildId" onchange="filter()">
+					<option value="0" @(guildId == 0 ? "selected" : "")>Все подразделения</option>
+					@foreach (var g in pinnedGuilds)
+					{
+						var guild = guilds.FirstOrDefault(x => x.Id == g);
+						if (guild != null)
+						{
+							if (guildId == guild.Id)
+							{
+								<option value="@guild.Id" selected>@guild.Name</option>
+							}
+							else
+							{
+								<option value="@guild.Id">@guild.Name</option>
+							}
+						}
+
+					}
+				</select>
+				<label><input type="checkbox" onchange="filter()" id="hided" @(enableHided ? "checked" : "")/>Отображать скрытые</label>
+				<label><input type="checkbox" onchange="filter()" id="expired" @(enableExpired ? "checked" : "") />Отображать устаревшие</label>
+				<label><input type="checkbox" onchange="filter()" id="self" @(onlySelf ? "checked" : "")/>Только свои</label>
+				<a href="~/news/">Сброс параметров</a>
+			</div>
+		</div>
+
+		@{ open = Request.Cookies.Get("news-tags")?.Value != "0"; }
+		<div data-mode="view" class="menu @(open ? "open" : "")">
+			<div class="menu_header" onclick="toggleMenu(this, 'news-tags')">
+				<table>
+					<tr>
+						<td>Теги</td>
+						<td class="menu_arrow"><div class="icon ic-arrow-@(open ? "up" : "down")"></div></td>
+					</tr>
+				</table>
+			</div>
+			<div class="menu_body">
+				<label>
+					<input type="checkbox" onclick="setTagsToNothing(this)" />
+					Сброс выбранных тегов
+				</label>
+				@foreach (var tag in newsTags)
+				{
+					<label>
+						<input type="checkbox" class="tags" name="@tag.Key" onchange="filter()" @(tags.Contains(tag.Key) ? "checked" : "") />
+						@tag.Value
+					</label>
+				}
+			</div>
+		</div>
+
+		<div class="widget">
+			<a class="widget_link" href="/files/Руководство по размещению новостей.mp4">Руководство по размещению новостей</a>
+		</div>
+	</div>
+
+	<div class="center-right">
+		@foreach (var n in news)
+		{
+			@Html.Partial("News", n)
+		}
+		@if (news.Count == 0)
+		{
+			<div class="news">Нет новостей для отображения</div>
+		}
+	</div>
+}
+
+
+@section scripts {
+	<script src="~/Content/js/news.js"></script>
+	<script>
+		function keyword(e) {
+			var e = e || window.event
+			if (e.keyCode == 13) filter()
+		}
+
+		function filter() {
+			var host = '@Url.Action(null, "news")';
+			var filters = [];
+
+			var key = document.getElementById('keyword').value
+			if (key && key != '') filters.push('k=' + encodeURIComponent(key))
+
+			var hided = document.getElementById('hided').checked
+			if (hided) filters.push('h=1')
+
+			var expired = document.getElementById('expired').checked
+			if (expired) filters.push('e=1')
+
+			var self = document.getElementById('self').checked
+			if (self) filters.push('u=1')
+
+			var guildId = document.getElementById('guildId').value
+			if (guildId && guildId != '0') filters.push('g=' + guildId)
+
+			var labels = document.querySelectorAll('.tags')
+			var tags = []
+			labels.forEach(function (el) {
+				if (el.checked) tags.push(el.name)
+			})
+			if (tags.length > 0) {
+				filters.push('tags=' + tags.join('|'))
+			}
+
+			document.location = host + (filters.length > 0 ? '?' : '') + filters.join('&')
+		}
+
+		function setTagsToNothing(input) {
+			var container = input.parentNode.parentNode
+			container.querySelectorAll('input').forEach(function (el) {
+				el.checked = false
+			})
+			filter()
+		}
+	</script>
+}

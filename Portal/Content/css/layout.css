@@ -80,6 +80,7 @@ body {
 	width: 100%;
 	/* position: relative; */
 	display: table;
+	min-width: 1200px;
 }
 
 .dark .nav {
@@ -176,6 +177,7 @@ body {
 	background-size: cover;
 	justify-content: space-between;
 	align-items: flex-start;
+	min-width: 1200px;
 }
 
 .dark .header {
@@ -194,6 +196,9 @@ body {
 
 .body {
 	margin-top: .5em;
+	display: table;
+	width: 100%;
+	min-width: 1200px;
 }
 
 	.body.visible {
@@ -205,36 +210,47 @@ body {
 	}
 
 .left {
-	position: absolute;
+	/* position: absolute; */
 	width: 30em;
 	padding: 1em;
+	display: table-cell;
+	vertical-align: top;
 }
 
 .left-column {
-	position: absolute;
+	/* position: absolute; */
 	width: 22em;
 	padding: 1em;
+	display: table-cell;
+	vertical-align: top;
 }
 
 .center {
-	position: absolute;
+	/* position: absolute; */
 	left: 22em;
 	right: 22em;
 	padding: 1em;
+	min-width: 460px;
+	display: table-cell;
+	vertical-align: top;
 }
 
 .center-right {
-	position: absolute;
+	/* position: absolute; */
 	left: 30em;
 	right: 0;
 	padding: 1em;
+	display: table-cell;
+	vertical-align: top;
 }
 
 .right-column {
-	position: absolute;
+	/* position: absolute; */
 	width: 22em;
 	right: 0;
 	padding: 1em;
+	display: table-cell;
+	vertical-align: top;
 }
 
 .page {
@@ -455,15 +471,21 @@ body {
 	width: 10em;
 }
 
-.news-new {
+.news-new,
+.safety-unviewed {
 	border: 2px solid #ff6a00;
 	border-left: 5px solid #ff6a00;
 	animation: 1s ease-in-out border-blink alternate infinite;
 }
 
 @keyframes border-blink {
-	from {border-color: #ff6a00;}
-	to {border-color: #666;}
+	from {
+		border-color: #ff6a00;
+	}
+
+	to {
+		border-color: #666;
+	}
 }
 
 @keyframes text-blink {
@@ -477,7 +499,8 @@ body {
 }
 
 
-.dark .news-new {
+.dark .news-new,
+.dark .safety-unviewed {
 	border: 2px solid #206fb6;
 	border-left: 5px solid #206fb6;
 	animation: 2s ease-in-out border-blink alternate infinite;
@@ -521,13 +544,9 @@ body {
 	padding: .5em 0;
 }
 
-.news-preview {
-	font-style: italic;
-	color: #206fb6;
-	cursor: pointer;
-}
-
-.news-minimize {
+.news-preview,
+.news-minimize,
+.news-small {
 	font-style: italic;
 	color: #206fb6;
 	cursor: pointer;
@@ -547,7 +566,7 @@ body {
 	color: #206fb6;
 	text-decoration: none;
 	margin-bottom: .5em;
-	display: block;
+	/* display: block; */
 }
 
 .news-body .material-icons {
@@ -618,6 +637,30 @@ body {
 	top: 1.3em;
 	right: 1.3em;
 	animation: spin 4s linear infinite;
+}
+
+.progress {
+	background-color: #ddd;
+	margin: .5em .05em;
+	min-height: .25em;
+}
+
+	.progress div {
+		min-height: .25em;
+		transition: width ease-in-out .5s;
+	}
+
+	.progress .good {
+		background-color: #3f8c3c;
+	}
+
+	.progress .warn {
+		background-color: #ff6a00;
+		background-color: #3cace2;
+	}
+
+.dark .progress {
+	background-color: #444;
 }
 
 /* Expanding menu */

@@ -771,6 +771,7 @@
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\PhonebookController.cs" />
+    <Compile Include="Controllers\SafetyController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\ViolationsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -935,6 +936,9 @@
     <Content Include="Views\Site\StationParameters.cshtml" />
     <Content Include="Views\News\NewsBlock.cshtml" />
     <Content Include="Views\Admin\Vacations.cshtml" />
+    <Content Include="Views\Safety\Index.cshtml" />
+    <Content Include="Views\Safety\Week.cshtml" />
+    <Content Include="Views\Safety\Accident.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -47,10 +47,11 @@ function toggleMenu(obj, name) {
 	setCookie(name, state, { expires: 9999999999 })
 }
 
-function setTheme() {
+function setTheme(button) {
 	document.body.classList.toggle('white')
 	document.body.classList.toggle('dark')
 	setCookie('theme', document.body.classList.contains('dark') ? 'dark' : 'white', { expires: 999999999999, path: '/' })
+	button.innerHTML = document.body.classList.contains('dark') ? '🌙' : '☀️'
 }
 
 function getCookie(name) {
