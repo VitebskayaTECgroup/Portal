@@ -62,6 +62,10 @@
 	{
 		<div class="block">Нет информационных сообщений для этой недели</div>
 	}
+	else
+	{
+		<div class="block">Список информационных сообщений для этой недели (@weekDay.ToString("dd.MM.yyyy"))</div>
+	}
 
 	foreach (var record in records)
 	{
