@@ -10,7 +10,7 @@ namespace Portal.Areas.Directive.Controllers
 	[Authorize]
 	public class DocumentController : Controller
 	{
-		public ActionResult Add(string name, int sectionId)
+		public ActionResult Add(string name, int sectionId, int pageId)
 		{
 			try
 			{
@@ -57,6 +57,7 @@ namespace Portal.Areas.Directive.Controllers
 					int id = db.InsertWithInt32Identity(new DirectiveDocument
 					{
 						SectionId = sectionId,
+						PageId = pageId,
 						Name = name.Replace("+", ""),
 						FilePath = filePath,
 						OrderValue = 0,

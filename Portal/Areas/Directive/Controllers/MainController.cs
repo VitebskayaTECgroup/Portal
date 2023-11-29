@@ -1,5 +1,6 @@
 ﻿using DatabaseLayer.Site;
 using LinqToDB;
+using Portal.Areas.Directive.Extensions;
 using Portal.Areas.Directive.Models;
 using System;
 using System.Linq;
@@ -98,18 +99,7 @@ namespace Portal.Areas.Directive.Controllers
 
 					page.IsAdmin = user.IsAdmin;
 
-					page.Sections = db.DirectiveSections
-						.Where(x => x.PageId == page.Id)
-						.OrderBy(x => x.OrderValue)
-						.ToList();
-
-					foreach (var sect in page.Sections)
-					{
-						sect.Documents = db.DirectiveDocuments
-							.Where(x => x.SectionId == sect.Id)
-							.OrderBy(x => x.OrderValue)
-							.ToList();
-					}
+					page.LoadContent(db);
 
 					page.Viewed = db.DirectiveDocumentsViews
 						.Where(x => x.UserId == user.UID)
@@ -172,18 +162,7 @@ namespace Portal.Areas.Directive.Controllers
 
 					page.IsAdmin = user.IsAdmin;
 
-					page.Sections = db.DirectiveSections
-						.Where(x => x.PageId == page.Id)
-						.OrderBy(x => x.OrderValue)
-						.ToList();
-
-					foreach (var sect in page.Sections)
-					{
-						sect.Documents = db.DirectiveDocuments
-							.Where(x => x.SectionId == sect.Id)
-							.OrderBy(x => x.OrderValue)
-							.ToList();
-					}
+					page.LoadContent(db);
 
 					page.Viewed = db.DirectiveDocumentsViews
 						.Where(x => x.UserId == user.UID)

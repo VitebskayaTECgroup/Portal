@@ -758,6 +758,7 @@
     <Compile Include="Areas\Directive\Controllers\PageController.cs" />
     <Compile Include="Areas\Directive\Controllers\MainController.cs" />
     <Compile Include="Areas\Directive\DirectiveAreaRegistration.cs" />
+    <Compile Include="Areas\Directive\Extensions\Page.cs" />
     <Compile Include="Areas\Directive\Models\AdminPageModel.cs" />
     <Compile Include="Areas\Directive\Models\SearchResult.cs" />
     <Compile Include="Areas\Directive\Models\SortedSection.cs" />
@@ -949,6 +950,7 @@
   <ItemGroup>
     <Folder Include="Content\html\weather\" />
     <Folder Include="Views\Directive\" />
+    <Folder Include="Views\Dir\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DatabaseLayer\DatabaseLayer.csproj">

@@ -20,67 +20,14 @@
 	<br />
 	<br />
 
-	<div id="sections">
+	<div id="sections" class="sort">
 		@foreach (var sect in Model.Sections)
 		{
-			bool isExpanded = (Request.Cookies["expand" + sect.Id]?.Value ?? "") == "1";
-
-			<div class="section" data-id="@sect.Id">
-				<div class="caption">
-					<span btn icon
-						  title="Переместить раздел"
-						  class="handler sect">drag_indicator</span>
-
-					<span btn icon
-						  toggle-fast="expand@(sect.Id)"
-						  toggle-el="expand@(sect.Id)"
-						  style="@(isExpanded ? "display: none;" : "")">expand_more</span>
-					<span btn icon
-						  toggle-fast="expand@(sect.Id)"
-						  toggle-el="expand@(sect.Id)"
-						  style="@(isExpanded ? "" : "display: none;")">expand_less</span>
-
-					<span>@sect.Caption</span>
-
-					<span icon btn
-						  title="Изменить название раздела"
-						  toggle-el="section-edit"
-						  onclick="editSection(@sect.Id, '@sect.Caption.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">edit</span>
-					<span icon btn
-						  title="Удалить раздел"
-						  toggle-el="section-del"
-						  onclick="delSection(@sect.Id, '@sect.Caption.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">clear</span>
-				</div>
-				<div class="files files-sort" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
-					@if (sect.Documents.Count > 0)
-					{
-						foreach (var doc in sect.Documents.Where(x => x != null))
-						{
-							<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
-								<span btn icon
-									  title="Переместить документ"
-									  class="handler docs">drag_indicator</span>
-
-								<a href="@doc.FileUrl">@doc.Name</a>
-
-								<span btn icon
-									  title="Изменить документ"
-									  toggle-el="document-edit"
-									  onclick="editDocument(@doc.Id, '@doc.Name.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">edit</span>
-								<span btn icon
-									  title="Удалить документ"
-									  toggle-el="document-del"
-									  onclick="delDocument(@doc.Id, '@doc.Name.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">clear</span>
-							</div>
-						}
-					}
-				</div>
-				<div class="files" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
-					<div>
-						<span icon btn toggle-el="document-add" onclick="addDocument(@sect.Id)" title="Добавить документ">file_upload</span>
-					</div>
-				</div>
-			</div>
+			@RenderSection(sect)
+		}
+		@foreach (var doc in Model.Documents.Where(x => x != null))
+		{
+			@RenderDocument(doc)
 		}
 	</div>
 
@@ -92,6 +39,81 @@
 		}
 	</div>
 </div>
+
+@helper RenderSection(DirectiveSection sect)
+{
+	bool isExpanded = (Request.Cookies["expand" + sect.Id]?.Value ?? "") == "1";
+
+	<div class="section" data-id="@sect.Id">
+		<div class="caption">
+			<span btn icon
+				  title="Переместить раздел"
+				  class="handler sect">drag_indicator</span>
+
+			<span btn icon
+				  toggle-fast="expand@(sect.Id)"
+				  toggle-el="expand@(sect.Id)"
+				  style="@(isExpanded ? "display: none;" : "")">expand_more</span>
+			<span btn icon
+				  toggle-fast="expand@(sect.Id)"
+				  toggle-el="expand@(sect.Id)"
+				  style="@(isExpanded ? "" : "display: none;")">expand_less</span>
+
+			<span class="name">@sect.Caption</span>
+
+			<span icon btn
+				  title="Изменить название раздела"
+				  toggle-el="section-edit"
+				  onclick="editSection(@sect.Id, '@sect.Caption.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">edit</span>
+			<span icon btn
+				  title="Удалить раздел"
+				  toggle-el="section-del"
+				  onclick="delSection(@sect.Id, '@sect.Caption.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">clear</span>
+		</div>
+		<div class="files sort" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
+			@if (sect.Sections.Count > 0)
+			{
+				foreach (var sub in sect.Sections)
+				{
+					@RenderSection(sub)
+				}
+			}
+			@if (sect.Documents.Count > 0)
+			{
+				foreach (var doc in sect.Documents.Where(x => x != null))
+				{
+					@RenderDocument(doc)
+				}
+			}
+		</div>
+		<div class="files" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
+			<span icon btn 
+					toggle-el="document-add" 
+					onclick="addDocument(@sect.Id)" 
+					title="Добавить документ">file_upload</span>
+		</div>
+	</div>
+}
+
+@helper RenderDocument(DirectiveDocument doc)
+{
+	<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
+		<span btn icon
+			  title="Переместить документ"
+			  class="handler docs">drag_indicator</span>
+
+		<a class="name" href="@doc.FileUrl">@doc.Name</a>
+
+		<span btn icon
+			  title="Изменить документ"
+			  toggle-el="document-edit"
+			  onclick="editDocument(@doc.Id, '@doc.Name.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">edit</span>
+		<span btn icon
+			  title="Удалить документ"
+			  toggle-el="document-del"
+			  onclick="delDocument(@doc.Id, '@doc.Name.Replace("\r\n", "").Replace("\"", "--").Replace("\'", "---")')">clear</span>
+	</div>
+}
 
 <!-- Модальные окна -->
 <div>
@@ -173,6 +195,7 @@
 		<div post="@Url.Action("add", "document")">
 			<div class="form">
 				<input type="hidden" id="document_add_id" name="sectionId" value="0" />
+				<input type="hidden" name="pageId" value="@Model.Id" />
 				<div>Наименование документа<small>&emsp;Если не задавать, будет взято имя файла</small></div>
 				<textarea name="name"></textarea>
 				<div>Файл</div>
@@ -262,7 +285,7 @@
 		document.getElementById('document_edit_name_old').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
 	}
 
-	function delDocument(id) {
+	function delDocument(id, name) {
 		document.getElementById('document_del_id').value = id
 		document.getElementById('document_del_name').innerHTML = name.replace(/--/g, '"').replace(/---/g, '\'')
 	}
@@ -279,24 +302,39 @@
 	}
 
 	$(function () {
-		$('#sections').sortable({
-			handle: '.handler.sect',
-			placeholder: "ui-state-highlight",
+		$('.sort').sortable({
+			handle: '.handler',
+			placeholder: 'ui-state-highlight',
 			forcePlaceholderSize: true,
+			connectWith: '.sort',
 			stop() {
 				saveSort()
 			},
 		})
 
-		$('.files-sort').sortable({
-			handle: '.handler.docs',
-			placeholder: 'ui-state-highlight',
-			forcePlaceholderSize: true,
-			connectWith: '.files',
-			stop() {
-				saveSort()
-			},
-		})
+		function toJson(json, el) {
+			var parent = el.closest('.section')
+			var parentId = !!parent ? Number(parent.getAttribute('data-id')) : 0
+
+			el.childNodes.forEach(function (x, i) {
+				if (!x.classList) return
+				if (x.classList.contains('section')) {
+					json.Sections.push({
+						Id: Number(x.getAttribute('data-id')),
+						SectionId: parentId || 0,
+						Order: i
+					})
+					toJson(json, x.querySelector('.sort'))
+				}
+				if (x.classList.contains('file')) {
+					json.Documents.push({
+						Id: Number(x.getAttribute('data-id')),
+						SectionId: parentId || 0,
+						Order: i,
+					})
+				}
+			})
+		}
 
 		function saveSort() {
 			var json = {
@@ -305,32 +343,8 @@
 				Sections: [],
 			}
 
-			var sectionOrder = 0
-			document.querySelectorAll('.section').forEach(sect => {
-				var sectionId = Number(sect.getAttribute('data-id'))
-
-				json.Sections.push({
-					Id: sectionId,
-					Order: sectionOrder
-				})
-
-				sectionOrder++
-
-				var docOrder = 0
-				sect.querySelectorAll('.file').forEach(doc => {
-					var docId = Number(doc.getAttribute('data-id'))
-
-					json.Documents.push({
-						Id: docId,
-						Order: docOrder,
-						SectionId: sectionId,
-					})
-
-					docOrder++
-				})
-			})
-
-			console.log(json.Documents)
+			toJson(json, document.getElementById('sections'))
+			console.log(json)
 
 			var form = new FormData()
 			form.append('json', JSON.stringify(json))

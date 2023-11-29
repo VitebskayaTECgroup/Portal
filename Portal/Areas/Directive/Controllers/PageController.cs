@@ -3,7 +3,6 @@ using LinqToDB;
 using Newtonsoft.Json;
 using Portal.Areas.Directive.Models;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -32,8 +31,8 @@ namespace Portal.Areas.Directive.Controllers
 					{
 						db.DirectiveDocuments
 							.Where(x => x.Id == doc.Id)
-							.Set(x => x.OrderValue, doc.Order)
 							.Set(x => x.SectionId, doc.SectionId)
+							.Set(x => x.OrderValue, doc.Order)
 							.Update();
 					}
 
@@ -41,6 +40,7 @@ namespace Portal.Areas.Directive.Controllers
 					{
 						db.DirectiveSections
 							.Where(x => x.Id == sect.Id)
+							.Set(x => x.SectionId, sect.SectionId)
 							.Set(x => x.OrderValue, sect.Order)
 							.Update();
 					}

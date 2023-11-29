@@ -1,4 +1,4 @@
-﻿* {
+* {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
@@ -166,73 +166,52 @@ header {
 	padding: 1.5em;
 }
 
-.section:first-child {
-	/* Табличный режим */
-	/*border-top: 1px solid #ccc;*/
-}
-
 .section {
-	margin-bottom: 1em;
-	/*padding: .2em 0;*/
-	padding: 1em 0;
+	/* padding: .2em 0; */
 	background: #fff;
-	
-	/* Табличный режим */
-	/*border: 1px solid #ccc;
-	border-top: 0;*/
-	/*margin-bottom: 0;*/
-	border-collapse: collapse;
+	border: 1px solid transparent;
+	transition: border-color ease .25s;
+	/* margin: .25em 0; */
+	display: block;
 }
-
-	.section .caption {
-		padding: .2em 0;
-		font-size: 1.1em;
-		display: flex;
-		align-items: center;
-	}
-
-	.section .number {
-		border: 1px solid #ccc;
-		border-radius: 1em;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: #eee;
-		font-weight: 500;
-		width: 2em;
-		height: 2em;
-		margin-right: 1em;
-		cursor: default;
-	}
 
 	.section:hover {
-		box-shadow: 0 1px 4px #ccc;
+		border-color: #ccc;
+		transition: border-color ease .25s;
 	}
+
+.dark .section:hover {
+	border-color: #000;
+}
 
 	.section .files {
 		padding: .5em;
-		display: flex;
-		flex-direction: column;
+		padding-left: 1.5em;
 	}
 
-		.section .files a {
-			color: #0072ff;
-			margin: 0 .3em;
-		}
+.dark .section {
+	background: #333;
+}
 
-		.section .files > div {
-			display: flex;
-			padding: .5em;
-			margin-left: 1em;
-		}
+.name {
+	/* padding-right: 1.5em; */
+	padding: 0 .5em;
+}
 
-			.section .files > div:hover {
-				box-shadow: 0 1px 4px #ccc;
-			}
+.caption {
+	display: table;
+	margin-bottom: .5em;
+}
 
-		.section .files.no-hover > div:hover {
-			box-shadow: none;
-		}
+	.caption > *,
+	.caption > [btn],
+	.caption > [icon] {
+		display: table-cell;
+	}
+
+	.caption > .name {
+		font-weight: 500;
+	}
 
 .files + .files {
 	padding-top: 0;
@@ -241,6 +220,42 @@ header {
 .handler {
 	cursor: move;
 }
+
+.file {
+	display: table;
+	padding: .2em 0;
+	border: 1px solid transparent;
+	transition: border-color ease .25s;
+}
+
+	.file > *,
+	.file > [btn],
+	.file > [icon] {
+		display: table-cell;
+	}
+
+	.file:hover {
+		border-color: #ccc;
+		transition: border-color ease .25s;
+	}
+
+	.no-hover .file:hover,
+	.dark .no-hover .file:hover {
+		border-color: transparent;
+	}
+
+	.file a {
+		color: #0072ff;
+		margin: 0 .3em;
+	}
+
+.dark .file:hover {
+	border-color: #000;
+}
+
+	.dark .file a {
+		color: #6daeff;
+	}
 
 .sign {
 	font-size: .9em;
@@ -273,31 +288,13 @@ header {
 	box-shadow: 0px 4px 6px 0px #222;
 }
 
-.dark .section {
-	background: #333;
+.pretty .section {
+	margin: .5em 0;
 }
 
-	.dark .section .number {
-		border: 1px solid #222;
-		background-color: #555;
-		color: #fff;
-	}
-
-	.dark .section:hover {
-		box-shadow: 0 1px 4px #000;
-	}
-
-.dark .section .files a {
-	color: #6daeff;
+.pretty .name {
+	font-weight: normal;
 }
-
-	.dark .section .files > div:hover {
-		box-shadow: 0 1px 4px #000;
-	}
-
-	.dark .section .files.no-hover > div:hover {
-		box-shadow: none;
-	}
 
 /*#endregion*/
 
@@ -442,14 +439,17 @@ input[type=file] {
 }
 
 .dark [icon] {
-	color: #aaa;
+	color: #888;
 }
 
 [btn] {
-	color: #000;
+	color: #444;
 	text-shadow: none;
 	cursor: pointer;
-	margin: 0 .3em;
+	/* margin: 0 .3em; */
+	/* width: 1.5em; */
+	/* min-width: 1.5em; */
+	vertical-align: top;
 }
 
 	[btn]:hover {

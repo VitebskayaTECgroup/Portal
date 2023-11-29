@@ -13,6 +13,9 @@ namespace DatabaseLayer.Site
 		public int SectionId { get; set; }
 
 		[Column]
+		public int PageId { get; set; }
+
+		[Column]
 		public string FilePath { get; set; }
 
 		[Column]

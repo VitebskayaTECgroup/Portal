@@ -15,55 +15,15 @@
 
 <header>@Model.Caption</header>
 
-<div class="container">
+<div class="container pretty">
 	<div id="sections">
 		@foreach (var sect in Model.Sections)
 		{
-			bool isExpanded = (Request.Cookies["expand" + sect.Id]?.Value ?? "") == "1";
-			bool hasUnviewed = sect.Documents.Count(x => !Model.Viewed.Contains(x.Id)) > 0;
-
-			<div class="section @(hasUnviewed ? "new-section" : "")" data-id="@sect.Id">
-				<div class="caption">
-
-					<span btn icon
-						  toggle-fast="expand@(sect.Id)"
-						  toggle-el="expand@(sect.Id)"
-						  style="@(isExpanded ? "display: none" : "")">expand_more</span>
-					<span btn icon
-						  toggle-fast="expand@(sect.Id)"
-						  toggle-el="expand@(sect.Id)"
-						  style="@(isExpanded ? "" : "display: none;")">expand_less</span>
-
-					<span>
-						@if (hasUnviewed)
-						{
-							<span class="new">new</span>
-						}
-						@sect.Caption
-					</span>
-				</div>
-				<div class="files no-hover files-sort" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
-					@if (sect.Documents.Count > 0)
-					{
-						foreach (var doc in sect.Documents.Where(x => x != null))
-						{
-							if (!Model.Viewed.Contains(doc.Id))
-							{
-								<div class="file new-document" data-id="@doc.Id" data-order="@doc.OrderValue" onmouseover="setViewed(this, @doc.Id)">
-									<span class="new observe">new</span>
-									<a href="@doc.FileUrl">@doc.Name</a>
-								</div>
-							}
-							else
-							{
-								<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
-									<a href="@doc.FileUrl">@doc.Name</a>
-								</div>
-							}
-						}
-					}
-				</div>
-			</div>
+			@RenderSection(sect)
+		}
+		@foreach (var doc in Model.Documents)
+		{
+			@RenderDocument(doc)
 		}
 	</div>
 
@@ -79,8 +39,6 @@
 		}
 	</div>
 
-	<div></div>
-
 	<script>
 		function setViewed(el, docId) {
 			fetch('@Url.Action("SetViewed", "Document")?docId=' + docId)
@@ -95,3 +53,58 @@
 		}
 	</script>
 </div>
+
+@helper RenderSection(DirectiveSection sect)
+{
+	bool isExpanded = (Request.Cookies["expand" + sect.Id]?.Value ?? "") == "1";
+	bool hasUnviewed = sect.Documents.Count(x => !Model.Viewed.Contains(x.Id)) > 0;
+
+	<div class="section @(hasUnviewed ? "new-section" : "")" data-id="@sect.Id">
+		<div class="caption">
+
+			<span btn icon
+				  toggle-fast="expand@(sect.Id)"
+				  toggle-el="expand@(sect.Id)"
+				  style="@(isExpanded ? "display: none" : "")">expand_more</span>
+			<span btn icon
+				  toggle-fast="expand@(sect.Id)"
+				  toggle-el="expand@(sect.Id)"
+				  style="@(isExpanded ? "" : "display: none;")">expand_less</span>
+
+			<span class="name">
+				@if (hasUnviewed)
+				{
+					<span class="new">new</span>
+				}
+				@sect.Caption
+			</span>
+		</div>
+		<div class="files no-hover" toggle="expand@(sect.Id)" style="@(isExpanded ? "" : "display: none;")">
+			@foreach (var sub in sect.Sections)
+			{
+				@RenderSection(sub)
+			}
+			@foreach (var doc in sect.Documents.Where(x => x != null))
+			{
+				@RenderDocument(doc)
+			}
+		</div>
+	</div>
+}
+
+@helper RenderDocument(DirectiveDocument doc)
+{
+	if (!Model.Viewed.Contains(doc.Id))
+	{
+		<div class="file new-document" data-id="@doc.Id" data-order="@doc.OrderValue" onmouseover="setViewed(this, @doc.Id)">
+			<span class="new observe">new</span>
+			<a class="name" href="@doc.FileUrl">@doc.Name</a>
+		</div>
+	}
+	else
+	{
+		<div class="file" data-id="@doc.Id" data-order="@doc.OrderValue">
+			<a class="name" href="@doc.FileUrl">@doc.Name</a>
+		</div>
+	}
+}

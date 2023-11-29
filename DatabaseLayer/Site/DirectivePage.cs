@@ -33,6 +33,8 @@ namespace DatabaseLayer.Site
 
 		public List<DirectiveSection> Sections { get; set; } = new List<DirectiveSection>();
 
+		public List<DirectiveDocument> Documents { get; set; } = new List<DirectiveDocument>();
+
 		public List<int> Viewed { get; set;} = new List<int>();
 	}
 }
