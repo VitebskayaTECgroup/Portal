@@ -43,12 +43,13 @@ namespace Portal.Areas.Directive.Controllers
 					if (!Directory.Exists(folderPath))
 						Directory.CreateDirectory(folderPath);
 
-					string filePath = folderPath + "\\" + file.FileName;
+					string filePath = (folderPath + "\\" + file.FileName)
+						.Replace("+", "");
 
 					if (System.IO.File.Exists(filePath))
 						return Content("данный файл уже есть в данном разделе");
 
-					file.SaveAs(folderPath + "\\" + file.FileName);
+					file.SaveAs(filePath);
 
 					if (string.IsNullOrEmpty(name)) 
 						name = file.FileName.Substring(0, file.FileName.LastIndexOf('.'));
@@ -56,8 +57,8 @@ namespace Portal.Areas.Directive.Controllers
 					int id = db.InsertWithInt32Identity(new DirectiveDocument
 					{
 						SectionId = sectionId,
-						Name = name,
-						FilePath = folderPath + "\\" + file.FileName,
+						Name = name.Replace("+", ""),
+						FilePath = filePath,
 						OrderValue = 0,
 						WhenUpdated = DateTime.Now,
 					});
