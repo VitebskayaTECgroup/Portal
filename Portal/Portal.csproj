@@ -195,6 +195,12 @@
     <Content Include="Content\css\violations.css" />
     <Content Include="Content\css\works.css" />
     <Content Include="Content\css\layout.css" />
+    <Content Include="Content\images\snow\snowflake-dark.png" />
+    <Content Include="Content\images\snow\snowflake.png" />
+    <Content Include="Content\images\snow\snowflake2-dark.png" />
+    <Content Include="Content\images\snow\snowflake2.png" />
+    <Content Include="Content\images\snow\snowflake3-dark.png" />
+    <Content Include="Content\images\snow\snowflake3.png" />
     <Content Include="Content\images\styled-logo.png" />
     <Content Include="Content\images\background.black.png" />
     <Content Include="Content\images\background.white.png" />
