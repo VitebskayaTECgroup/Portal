@@ -76,7 +76,7 @@
 
 	<div class="center-right">
 
-		<div class="form">
+		<div class="block form">
 
 			<div>
 				<b class="news-editor-caption">Заголовок новости:</b>
@@ -89,7 +89,7 @@
 				<textarea id="message" name="@nameof(news.Message)">@news.Message</textarea>
 			</div>
 
-			<div>
+			<div style="margin-top: 2em;">
 				<b class="news-editor-caption">Прикреплённые файлы:</b>
 				<div class="form-files">
 					<div id="form-files">
@@ -100,8 +100,7 @@
 								<table>
 									<tr>
 										<th>
-											<span>@link</span>
-											<a href="http://www.vst.vitebsk.energo.net/files/Новости/@news.Id/@link">http://www.vst.vitebsk.energo.net/files/@news.Id/@link</a>
+											<a href="http://www.vst.vitebsk.energo.net/files/Новости/@news.Id/@link">@link</a>
 											<input name="Links[]" class="hide" value="@link" />
 										</th>
 										<td width="120px">

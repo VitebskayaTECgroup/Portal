@@ -1,0 +1,52 @@
+﻿@model AccidentRecord
+
+@{
+	bool isRedactor = ViewBag.IsRedactor ?? false;
+	string className = "block" + (!Model.IsWatched ? " safety-unviewed" : "");
+
+	<div class="@className news" record-id="@Model.Id">
+		<div class="news-info">
+			<div>
+				<div class="news-author">@Model.DateCreated.ToString("d MMMM yyyy") &copy; @(Model.Creator?.DisplayName ?? "Витебская ТЭЦ")</div>
+			</div>
+			<div class="news-buttons">
+				@if (isRedactor)
+				{
+					<a href="~/safety/edit/@Model.Id">
+						<i icon title="Перейти к редактированию">edit</i>
+					</a>
+				}
+			</div>
+		</div>
+		<div class="news-body">
+			<div class="news-message">@Model.Description</div>
+			<div class="news-files">
+				@if (Directory.Exists(@"\\web\Files\Час ТБ\" + Model.Id))
+				{
+					var files = Directory
+						.GetFiles(@"\\web\Files\Час ТБ\" + Model.Id)
+						.Select(x => x.Substring(x.LastIndexOf("\\") + 1))
+						.ToList();
+
+					if (files.Count > 0)
+					{
+						foreach (var file in files)
+						{
+							bool isDocViewed = Model.Docs.Any(x => x.Link == file);
+
+							<div>
+								@if (!isDocViewed && !isRedactor)
+								{
+									<span class="counter">new</span>
+								}
+								<a onmousedown="setDocViewed(@Model.Id, this)" target="_blank" link="@file" href="http://www.vst.vitebsk.energo.net/files/Час ТБ/@Model.Id/@file">
+									<i class="material-icons">description</i> @file
+								</a>
+							</div>
+						}
+					}
+				}
+			</div>
+		</div>
+	</div>
+}

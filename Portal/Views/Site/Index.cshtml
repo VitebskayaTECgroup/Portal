@@ -159,16 +159,16 @@
 
 					var notViewedAccidents = q1.Count();
 
-					<a href="@Url.Action("", "accidents")">
+					<a href="@Url.Action("", "safety")">
 						<span class="material-icons" style="color: #37d953;">info</span> Информационные сообщения
-						@if (notViewedAccidents > 0)
+						@*@if (notViewedAccidents > 0)
 						{
 							<i class="counter" title="Есть непросмотренные сообщения">@notViewedAccidents</i>
 						}
 						else
 						{
 							<i title="Всё просмотрено!" style="display: inline-block; position: relative; top: -.5em;"><span class="material-icons" style="color: #20b332; font-size: 18px;">done</span></i>
-						}
+						}*@
 					</a>
 				}
 				@if (user.Groups.Contains("group_orders"))

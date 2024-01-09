@@ -580,6 +580,7 @@ body {
 
 .dark .news-body a[href],
 .dark .center a[href],
+.dark .center-right a[href],
 .dark .page a[href] {
 	color: #3cace2;
 }

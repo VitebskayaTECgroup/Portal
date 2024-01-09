@@ -1,0 +1,157 @@
+﻿@model SafetyEditModel
+
+@{
+	ViewBag.Title = "Редактор | Час ТБ";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+@section styles {
+	<link rel="stylesheet" href="~/Content/css/editor.css" />
+}
+
+<div class="left">
+	<div class="menu open">
+		<div class="menu_header">
+			<table>
+				<tr>
+					<td>Операции</td>
+				</tr>
+			</table>
+		</div>
+		<div class="menu_body">
+			<a onclick="update()">Сохранить</a>
+			<a onclick="del()">Удалить</a>
+		</div>
+	</div>
+	<div class="menu open">
+		<div class="menu_header">
+			<table>
+				<tr>
+					<td>Навигация</td>
+				</tr>
+			</table>
+		</div>
+		<div class="menu_body">
+			<a href="~/safety?date=@Model.Record.DateControl.ToString("dd.MM.yyyy")">К списку информационных сообщений</a>
+		</div>
+	</div>
+</div>
+
+<div class="center-right">
+	<div class="block form" id="form">
+		<input name="Id" value="@Model.Record.Id" type="hidden" />
+
+		<div style="margin-bottom: .25em;">Дата для ознакомления. Устанавливается на начало рабочей недели, для проработки на "Часе ТБ"</div>
+		<input type="date" name="DateControl" value="@Model.Record.DateControl.ToString("yyyy-MM-dd")" />
+
+		<div style="margin-top: .75em; margin-bottom: .25em;">Дата, когда произошло событие, описываемое в информационном сообщении</div>
+		<input type="date" name="Date" value="@Model.Record.Date.ToString("yyyy-MM-dd")" />
+
+		<div style="margin-top: .75em; margin-bottom: .25em;">Описание</div>
+		<textarea style="width: 100%; resize: vertical;" rows="6" name="Description">@Model.Record.Description</textarea>
+
+		<div style="margin-top: .75em; margin-bottom: .25em;">
+			<small>
+				Добавлено: @(Model.Record.Creator?.DisplayName ?? "неизв.") @Model.Record.DateCreated.ToString("d MMMM yyyy")
+			</small>
+		</div>
+	</div>
+	<div class="block form">
+		<div class="form-files">
+			<div>Прикреплённые документы</div>
+			<div id="files">
+				@if (Directory.Exists(@"\\web\Files\Час ТБ\" + Model.Record.Id))
+				{
+					var files = Directory
+						.GetFiles(@"\\web\Files\Час ТБ\" + Model.Record.Id)
+						.Select(x => x.Substring(x.LastIndexOf("\\") + 1))
+						.ToList();
+
+					foreach (var file in files)
+					{
+						<table>
+							<tr>
+								<td style="text-align: left;">
+									<a target="_blank" href="http://www.vst.vitebsk.energo.net/files/Час ТБ/@Model.Record.Id/@file">@file</a>
+								</td>
+								<td style="width: 10em;">
+									<button onclick="removeFile(this, '@file')">
+										<span class="material-icons">clear</span>
+										<span class="form-button-caption">Удалить файл</span>
+									</button>
+								</td>
+							</tr>
+						</table>
+					}
+				}
+			</div>
+		</div>
+
+		<form id="fileform" class="files">
+			<label for="file" class="form-upload">
+				<input class="hided" type="file" name="file" id="file" onchange="document.getElementById('uploadButton').click()" />
+				<span class="material-icons">file_upload</span>
+				<span class="form-button-caption">Добавить файл</span>
+			</label>
+			<input type="submit" id="uploadButton" style="display: none" />
+		</form>
+	</div>
+</div>
+
+@section scripts {
+	<script>
+		function update() {
+			var form = new FormData()
+			document.getElementById('form').querySelectorAll('input,select,textarea').forEach(el => {
+				form.append(el.getAttribute('name'), el.value)
+			})
+
+			fetch('@Url.Action("Update", "Safety")', { method: 'POST', body: form })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Error) return alert(json.Error)
+					if (json.Done) location.reload()
+				})
+		}
+
+		function del() {
+			if (!confirm('Уверены, что хотите удалить это информационное сообщение?')) return
+
+			fetch('@Url.Action("Delete", "Safety", new { Id = Model.Record.Id })', { method: 'POST' })
+				.then(res => location = '@Url.Action("", "Safety")')
+		}
+
+		fileform.onsubmit = function (e) {
+			e.preventDefault()
+
+			fetch('@Url.Action("Upload", "Safety", new { Id = Model.Record.Id })', { method: 'POST', body: new FormData(fileform) })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Done) {
+						location.reload()
+					}
+					else {
+						alert(json.Error)
+						console.error(json)
+					}
+				})
+		}
+
+		function removeFile(button, name) {
+			var form = new FormData()
+			form.append('Name', name)
+
+			fetch('@Url.Action("Remove", "Safety", new { Id = Model.Record.Id })', { method: 'POST', body: form })
+				.then(res => res.json())
+				.then(json => {
+					if (json.Done) {
+						location.reload()
+					}
+					else {
+						alert(json.Error)
+						console.error(json)
+					}
+				})
+		}
+	</script>
+}

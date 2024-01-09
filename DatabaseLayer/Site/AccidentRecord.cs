@@ -1,5 +1,6 @@
 ﻿using LinqToDB.Mapping;
 using System;
+using System.Collections.Generic;
 
 namespace DatabaseLayer.Site
 {
@@ -36,6 +37,12 @@ namespace DatabaseLayer.Site
 		public bool IsWatched { get; set; } = false;
 
 		public AccidentView Watch { get; set; } = null;
+
+		public User Creator { get; set; } = null;
+
+		public List<AccidentDocView> Docs {  get; set; } = new List<AccidentDocView>();
+
+		public List<AccidentView> Views { get; set; } = new List<AccidentView>();
 
 		public DateTime GetWeek()
 		{

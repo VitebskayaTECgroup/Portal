@@ -786,6 +786,8 @@
     </Compile>
     <Compile Include="Models\LiveDateFolder.cs" />
     <Compile Include="Models\LiveFolder.cs" />
+    <Compile Include="Models\SafetyEditModel.cs" />
+    <Compile Include="Models\SafetyWeekRecords.cs" />
     <Compile Include="Models\StationParametersModel.cs" />
     <Compile Include="Models\ViolationsFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -945,7 +947,8 @@
     <Content Include="Views\Admin\Vacations.cshtml" />
     <Content Include="Views\Safety\Index.cshtml" />
     <Content Include="Views\Safety\Week.cshtml" />
-    <Content Include="Views\Safety\Accident.cshtml" />
+    <Content Include="Views\Shared\Accident.cshtml" />
+    <Content Include="Views\Safety\Edit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,4 +1,4 @@
-﻿.form {
+.form {
 	margin-right: 20px;
 }
 
@@ -9,12 +9,24 @@
 		margin-bottom: 10px;
 	}
 
+	.form input[type=date] {
+		padding: 10px;
+		box-sizing: border-box;
+		margin-bottom: 10px;
+	}
+
+	.form textarea {
+		padding: 10px;
+		box-sizing: border-box;
+		margin-bottom: 10px;
+	}
+
 .form-files {
-	margin: 25px 0 10px;
+	/* margin: 25px 0 10px; */
 }
 
 	.form-files th {
-		background: #fff;
+		/* background: #fff; */
 		border: 1px solid #eee;
 		padding: 5px 0 5px 15px;
 		padding: 0;
@@ -27,9 +39,9 @@
 
 	.form-files a {
 		color: #1e8ef7;
-		font-size: 8pt;
-		display: block;
-		margin: 0 10px;
+		/* font-size: 8pt; */
+		/* display: block; */
+		/* margin: 0 10px; */
 	}
 
 	.form-files button {
@@ -62,6 +74,7 @@
 
 .form td {
 	text-align: right;
+	vertical-align: top;
 }
 
 .form select {
@@ -157,3 +170,21 @@ input[type=file].hided {
 	.news .material-icons:hover {
 		color: #1e8ef7;
 	}
+
+.dark .form-files th {
+	/* background: #333; */
+	border: 1px solid transparent;
+}
+
+.dark .form label,
+.dark .form button {
+	color: #fff;
+	background: #444;
+	border: 1px solid #222;
+}
+
+.dark .form-settings th > span,
+.dark .form-settings div > span {
+	background: #333;
+	border: 1px solid #222;
+}
