@@ -100,7 +100,7 @@
 
 @section scripts {
 	<script>
-		function update() {
+		function update(noReload) {
 			var form = new FormData()
 			document.getElementById('form').querySelectorAll('input,select,textarea').forEach(el => {
 				form.append(el.getAttribute('name'), el.value)
@@ -110,19 +110,24 @@
 				.then(res => res.json())
 				.then(json => {
 					if (json.Error) return alert(json.Error)
-					if (json.Done) location.reload()
+					if (json.Done && !noReload) location.reload()
 				})
 		}
 
-		function del() {
+		function del(noReload) {
 			if (!confirm('Уверены, что хотите удалить это информационное сообщение?')) return
 
 			fetch('@Url.Action("Delete", "Safety", new { Id = Model.Record.Id })', { method: 'POST' })
-				.then(res => location = '@Url.Action("", "Safety")')
+				.then(res => res.json())
+				.then(json => {
+					if (json.Error) return alert(json.Error)
+					if (json.Done && !noReload) location = '@Url.Action("", "Safety")'
+				})
 		}
 
 		fileform.onsubmit = function (e) {
 			e.preventDefault()
+			update(true)
 
 			fetch('@Url.Action("Upload", "Safety", new { Id = Model.Record.Id })', { method: 'POST', body: new FormData(fileform) })
 				.then(res => res.json())
@@ -138,6 +143,9 @@
 		}
 
 		function removeFile(button, name) {
+
+			update(true)
+
 			var form = new FormData()
 			form.append('Name', name)
 
