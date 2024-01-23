@@ -160,7 +160,6 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Accidents\Content\accidents.css" />
     <Content Include="Areas\Directive\Content\css\layout.css" />
     <Content Include="Areas\Directive\Content\images\nuclear.png" />
     <Content Include="Areas\Directive\Content\images\fire.png" />
@@ -755,10 +754,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Areas\Accidents\AccidentsAreaRegistration.cs" />
-    <Compile Include="Areas\Accidents\Controllers\LogsController.cs" />
-    <Compile Include="Areas\Accidents\Controllers\RecordsController.cs" />
-    <Compile Include="Areas\Accidents\Controllers\ListController.cs" />
     <Compile Include="Areas\Directive\Controllers\DocumentController.cs" />
     <Compile Include="Areas\Directive\Controllers\SectionController.cs" />
     <Compile Include="Areas\Directive\Controllers\PageController.cs" />
@@ -799,16 +794,6 @@
     <Content Include="Content\documents\п. 31 Приказа по филиалу от 22.09.2016 г. № 192.pdf" />
     <Content Include="Content\documents\План работ.xls" />
     <Content Include="Content\documents\orders.xls" />
-    <Content Include="Areas\Accidents\Views\web.config" />
-    <Content Include="Areas\Accidents\Views\List\Add.cshtml" />
-    <Content Include="Areas\Accidents\Content\fonts\MaterialIcons-Regular.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Areas\Accidents\Content\fonts\MaterialIconsOutlined-Regular.otf" />
-    <Content Include="Areas\Accidents\Content\fonts\MaterialIconsRound-Regular.otf" />
-    <Content Include="Areas\Accidents\Content\fonts\MaterialIconsSharp-Regular.otf" />
-    <Content Include="Areas\Accidents\Content\fonts\MaterialIconsTwoTone-Regular.otf" />
-    <Content Include="Areas\Accidents\Views\Records\Index.cshtml" />
     <Content Include="Areas\Directive\Views\web.config" />
     <Content Include="Areas\Directive\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Directive\Views\Main\Index.cshtml" />
@@ -865,8 +850,6 @@
     <Content Include="Content\lib\ckeditor\skins\moono-lisa\readme.md" />
     <Content Include="Views\Guest\Index.cshtml" />
     <Content Include="Views\Site\Index.cshtml" />
-    <Content Include="Areas\Accidents\Views\Records\Lists.cshtml" />
-    <Content Include="Areas\Accidents\Views\Records\Edit.cshtml" />
     <Content Include="Views\Admin\Errors.cshtml" />
     <Content Include="Views\Admin\Granties.cshtml" />
     <Content Include="Views\Admin\Guests.cshtml" />
@@ -923,8 +906,6 @@
     <Content Include="Views\Orders\Index.cshtml" />
     <Content Include="Views\Docs\О филиале\Ветераны ТЭЦ.cshtml" />
     <Content Include="Views\Docs\Деятельность\Социальная реклама.cshtml" />
-    <Content Include="Areas\Accidents\Views\Records\Details.cshtml" />
-    <Content Include="Areas\Accidents\Views\Logs\Index.cshtml" />
     <Content Include="Views\Docs\Ресурсы\Карты оценки опасностей и рисков.cshtml" />
     <Content Include="Views\Violations\Details.cshtml" />
     <Content Include="Views\Violations\Edit.cshtml" />
@@ -932,10 +913,6 @@
     <Content Include="Views\Shared\_ViolationsLayout.cshtml" />
     <Content Include="Views\Violations\Search.cshtml" />
     <Content Include="Views\Docs\Деятельность\Входной контроль.cshtml" />
-    <Content Include="Areas\Accidents\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Accidents\Views\List\Index.cshtml" />
-    <Content Include="Areas\Accidents\Views\List\Edit.cshtml" />
-    <Content Include="Areas\Accidents\Views\Records\List.cshtml" />
     <Content Include="Views\Site\MetalCosts.cshtml" />
     <Content Include="Views\Docs\Ресурсы\Реестр экологической информации.cshtml" />
     <Content Include="Views\Guest\NewsBlock.cshtml" />
