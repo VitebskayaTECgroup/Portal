@@ -63,5 +63,7 @@ namespace DatabaseLayer.Site
 		public bool IsTimed => DateAdd.Date < DateExpire.Date;
 
 		public int DaysRemains => (DateExpire.Date - DateTime.Now.Date).Days;
-	}
+
+		public int WatchedCount { get; set; }
+    }
 }

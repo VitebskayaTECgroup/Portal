@@ -303,6 +303,12 @@
 					{
 						<a class="news-add" href="@Url.Action("Create", "News")" title="Нажмите, чтобы перейти к форме создания новостей">Добавить новость</a>
 					}
+					<!--потому что Каплевский-->
+                <div>
+                    <img src="\..\..\25022024-01.jpg" alt="Выборы 25 февраля" width="100%" height="100%" /><br />
+                    <img src="\..\..\25022024-02.png" alt="Выборы 25 февраля" width="100%" height="100%" /><br />
+                </div>
+					<!--end-->
 					<div id="news">
 						@Html.Action("List", "News", new { take = 20 })
 					</div>

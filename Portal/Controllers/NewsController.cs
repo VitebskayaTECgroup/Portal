@@ -59,8 +59,9 @@ namespace Portal.Controllers
 								IsWatched = db.NewsViews.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() > 0,
 								IsHide = false,
 								IsRedactor = n.UserId == user.UID || user.IsAdmin,
-								IsPinned = p.UserId > 0
-							};
+								IsPinned = p.UserId > 0,
+								WatchedCount = db.NewsViews.Where(x => x.NewsId == n.Id).Count()
+                            };
 
 				query = query
 					.OrderByDescending(x => x.IsPinned)

@@ -471,6 +471,11 @@ body {
 	width: 10em;
 }
 
+.news-watchedcount {
+	display: inline-block;
+	width: 4em;
+}
+
 .news-new,
 .safety-unviewed {
 	border: 2px solid #ff6a00;

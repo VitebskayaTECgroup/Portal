@@ -58,7 +58,8 @@
 					Guild = g ?? new NewsGuild { Id = 0, IsPrivate = false, Name = "Общий" },
 					IsWatched = db.NewsViews.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() > 0,
 					IsHide = db.NewsHides.Where(x => x.NewsId == n.Id && x.UserId == user.UID).Count() > 0,
-					IsRedactor = n.UserId == user.UID || user.UClass.Contains("site_admin")
+					IsRedactor = n.UserId == user.UID || user.UClass.Contains("site_admin"),
+					WatchedCount = db.NewsViews.Where(x => x.NewsId == n.Id).Count()
 				};
 
 	var news = query.ToList();

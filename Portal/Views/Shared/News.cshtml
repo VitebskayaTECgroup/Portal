@@ -17,69 +17,84 @@
 	news-id="@Model.Id"
 >
 	<div class="news-info">
-		<div style="font-size: .8em;">
-			<span class="news-date">@Model.DateAdd.ToString("d MMMM yyyy")</span>
-			@if (isNew)
-			{
-				<span class="tag highlight news-if-new" title="Новая новость. Чтобы она была отмечена как прочитанная, достаточно клика по ней">
-					<i icon>fiber_new</i>
-					Новая
-				</span>
-			}
-			@if (isPriority)
-			{
-				<span class="tag highlight" title="Новость обозначена как важная">
-					<i icon>priority_high</i>
-					Важно
-				</span>
-			}
-			@if (Model.Guild?.Id != 0)
-			{
-				if (Model.Guild.IsPrivate)
-				{
-					<span class="tag" title="Новость видна только подписчикам канала">
-						<i icon>lock</i>
-						@Model.Guild.Name
-					</span>
-				}
-				else
-				{
-					<span class="tag" title="Новость относится к общедоступному каналу">
-						<i icon>sell</i>
-						@Model.Guild.Name
-					</span>
-				}
-			}
-			@if (isTemp)
-			{
-				<span class="tag" title="Новость является временной и будет скрыта по истечению указанного времени">
-					<i icon>timer</i>
-					@if (daysRemains == 0)
-					{
-						@: Истекает: сегодня
-					}
-					else if (Model.DateExpire.Date < DateTime.Now.Date)
-					{
-						@: Истекла: @(0 - daysRemains) дн. назад
-					}
-					else
-					{
-						@: @daysRemains дн.
-					}
-				</span>
-			}
-			@if (!string.IsNullOrEmpty(Model.Tags))
-			{
-				var tags = Model.Tags.Split('|');
-				foreach (var tag in tags)
-				{
-					if (NewsTags.TryGetValue(tag, out string tagName))
-					{
-						<small class="tag">@tagName</small>
-					}
-				}
-			}
-		</div>
+        <div style="font-size: .8em;">
+            <span class="news-date">@Model.DateAdd.ToString("d MMMM yyyy")</span>
+
+            @if (isNew)
+            {
+                <span class="tag highlight news-if-new" title="Новая новость. Чтобы она была отмечена как прочитанная, достаточно клика по ней">
+                    <i icon>fiber_new</i>
+                    Новая
+                </span>
+            }
+            @if (isPriority)
+            {
+                <span class="tag highlight" title="Новость обозначена как важная">
+                    <i icon>priority_high</i>
+                    Важно
+                </span>
+            }
+            @if (Model.Guild?.Id != 0)
+            {
+                if (Model.Guild.IsPrivate)
+                {
+                    <span class="tag" title="Новость видна только подписчикам канала">
+                        <i icon>lock</i>
+                        @Model.Guild.Name
+                    </span>
+                }
+                else
+                {
+                    <span class="tag" title="Новость относится к общедоступному каналу">
+                        <i icon>sell</i>
+                        @Model.Guild.Name
+                    </span>
+                }
+            }
+            @if (isTemp)
+            {
+                <span class="tag" title="Новость является временной и будет скрыта по истечению указанного времени">
+                    <i icon>timer</i>
+                    @if (daysRemains == 0)
+                    {
+                        @: Истекает: сегодня
+                    }
+                    else if (Model.DateExpire.Date < DateTime.Now.Date)
+                    {
+                        @: Истекла: @(0 - daysRemains) дн. назад
+                    }
+                    else
+                    {
+                        @: @daysRemains дн.
+                    }
+                </span>
+            }
+            @if (!string.IsNullOrEmpty(Model.Tags))
+            {
+                var tags = Model.Tags.Split('|');
+                foreach (var tag in tags)
+                {
+                    if (NewsTags.TryGetValue(tag, out string tagName))
+                    {
+                        <small class="tag">@tagName</small>
+                    }
+                }
+            }
+            <!-- количество посмотревших новость людей. по просьбе Бондаренко -->
+            <!-- SiteContext - костыль. не придумал как осуществить проверку в других местах -->
+            @using (var db = new SiteContext())
+            {
+                var user = db.Authorize(User);
+                if (user.Groups.Contains("group_nwc"))
+                {
+                    <span class="news-watchedcount" title="Количество просмотров новости">
+                        <i icon style="font-size:14px; vertical-align:bottom">face</i>
+                        @Model.WatchedCount
+                    </span>
+                }
+            }
+
+        </div>
 		<div class="news-buttons">
 			@if (Model.IsRedactor)
 			{
