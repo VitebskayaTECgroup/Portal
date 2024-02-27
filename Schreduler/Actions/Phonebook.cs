@@ -17,7 +17,8 @@ namespace Schreduler.Actions
 
 			var persons = new List<Person>();
 			var vacations = new List<Vacation>();
-			DateTime d;
+            var dutyJourneys = new List<DutyJourney>();
+            DateTime d;
 			int i;
 
 			for (int k = 1; k < 5; k++)
@@ -58,10 +59,18 @@ namespace Schreduler.Actions
 								DateEnd = DateTime.TryParse(zzz._source.dtotpk, out d) ? d : DateTime.MinValue
 							};
 
+                            var dutyJorney = new DutyJourney
+                            {
+                                TabId = person.TabId,
+                                DateStart = DateTime.TryParse(zzz._source.dtkomn, out d) ? d : DateTime.MinValue,
+                                DateEnd = DateTime.TryParse(zzz._source.dtkomk, out d) ? d : DateTime.MinValue
+                            };
+                            
 							persons.Add(person);
 							vacations.Add(vacation);
+                            dutyJourneys.Add(dutyJorney);
 
-							Console.WriteLine(person.TabId + " " + person.Family + " " + person.Phone + " " + person.PhoneInner);
+                            Console.WriteLine(person.TabId + " " + person.Family + " " + person.Phone + " " + person.PhoneInner);
 						}
 					}
 				}
@@ -69,8 +78,9 @@ namespace Schreduler.Actions
 
 			Console.WriteLine("Persons: " + persons.Count);
 			Console.WriteLine("Vacations: " + vacations.Count);
+            Console.WriteLine("DutyJourneys: " + dutyJourneys.Count);
 
-			using (var db = new SiteContext())
+            using (var db = new SiteContext())
 			{
 				foreach (var person in persons)
 				{
@@ -123,9 +133,22 @@ namespace Schreduler.Actions
 						}
 					}
 				}
-			}
 
-			Console.WriteLine("Phonebook => stop");
+                foreach (var dutyJourney in dutyJourneys)
+                {
+                    if (dutyJourney.IsValid)
+                    {
+                        if (db.DutyJourneys.Count(x => x.TabId == dutyJourney.TabId && x.DateStart == dutyJourney.DateStart && x.DateEnd == dutyJourney.DateEnd) == 0)
+                        {
+                            db.Insert(dutyJourney);
+
+                            Console.WriteLine("DutyJourney: " + dutyJourney.TabId);
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine("Phonebook => stop");
 		}
 	}
 
@@ -154,17 +177,48 @@ namespace Schreduler.Actions
 
     public class HitSource
     {
+		//должность
         public string dolgn;
-        public string dtotpk;
+		//командировка, начало
+        public string dtkomn;
+        //командировка, конец
+        public string dtkomk;
+        //отпуск, начало
         public string dtotpn;
+        //отпуск, конец
+        public string dtotpk;
+        //
+        public string dtotsproch_n;
+        //
+        public string dtotsproch_k;
+        //
+        public string dtotsproch_opis;
+        //др
         public string dtrogd;
+		//почта
         public string email;
+		//ФИО
         public string fio;
+        //чем больше значение порядкового номера, тем выше в списке поставлен
+        //порядковый номер должности
         public int order_dolgn;
+        //порядковый номер организации
+        public int order_org;
+        //порядковый номер подразделения
         public int order_podr;
+        //организация / филиал
+        public int org;
+        //подразделение / цех / участок
+        public int podr;
+        //подразделение, полное название / расшифровка
+        public int podrfull;
+        //телефон, внутренний
         public string telef;
+		//телефон, код для внутреннего
         public string telefkod;
+		//телефон, городской
         public string telefrab;
+		//табельный номер
         public string tn;
     }
 }

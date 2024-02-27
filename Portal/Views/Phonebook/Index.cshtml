@@ -56,6 +56,18 @@
 		})
 		.ToList();
 
+	var dutyJorneys = db.DutyJourneys
+		.Where(x => x.DateStart <= DateTime.Today)
+		.Where(x => x.DateEnd >= DateTime.Today)
+		.ToList()
+		.Select(x => new
+		{
+			Family = persons.FirstOrDefault(y => y.TabId == x.TabId)?.Family ?? "",
+			x.DateStart,
+			x.DateEnd,
+		})
+		.ToList();
+
 	<div class="left">
 
 		<div class="menu open">
@@ -106,40 +118,48 @@
 						.Where(x => x.Family == phone.Name)
 						.FirstOrDefault();
 
+					var dutyJorney = dutyJorneys
+						.Where(x => x.Family == phone.Name)
+						.FirstOrDefault();
+
 					<div class="block phone" style="min-height: 155px">
 						<div class="phone-image">
 							<img src="@phone.Image()" title="@phone.Name" onclick="getBigPhoto('@phone.Image(true)')" />
 						</div>
-						<div class="phone-text">
-							@if (!string.IsNullOrEmpty(phone.Name))
-							{
-								<div class="blue">@phone.Name</div>
-								<div class="normal">@phone.Guild</div>
-								<div class="normal">@phone.Position</div>
-							}
-							else
-							{
-								<div class="blue">@phone.Position</div>
-								<div class="normal">@phone.Guild</div>
-								<div></div>
-							}
-							@if (!string.IsNullOrEmpty(phone.InnerPhone))
-							{
-								<div><span style="display: inline-block; width: 11em;">внутренний телефон: </span><span class="blue">@phone.InnerPhone</span></div>
-							}
-							@if (!string.IsNullOrEmpty(phone.OuterPhone))
-							{
-								<div><span style="display: inline-block; width: 11em;">городской телефон: </span><span class="blue">@phone.OuterPhone</span></div>
-							}
-							@if (!string.IsNullOrEmpty(phone.Email))
-							{
-								<div><span style="display: inline-block; width: 11em;">email: </span><a href="mailto:@phone.Email">@phone.Email</a></div>
-							}
-							@if (vacation != null)
-							{
-								<div class="red">в отпуске с @vacation.DateStart.ToString("dd.MM.yyyy") по @vacation.DateEnd.ToString("dd.MM.yyyy")</div>
-							}
-						</div>
+                        <div class="phone-text">
+                            @if (!string.IsNullOrEmpty(phone.Name))
+                            {
+                                <div class="blue">@phone.Name</div>
+                                <div class="normal">@phone.Guild</div>
+                                <div class="normal">@phone.Position</div>
+                            }
+                            else
+                            {
+                                <div class="blue">@phone.Position</div>
+                                <div class="normal">@phone.Guild</div>
+                                <div></div>
+                            }
+                            @if (!string.IsNullOrEmpty(phone.InnerPhone))
+                            {
+                                <div><span style="display: inline-block; width: 11em;">внутренний телефон: </span><span class="blue">@phone.InnerPhone</span></div>
+                            }
+                            @if (!string.IsNullOrEmpty(phone.OuterPhone))
+                            {
+                                <div><span style="display: inline-block; width: 11em;">городской телефон: </span><span class="blue">@phone.OuterPhone</span></div>
+                            }
+                            @if (!string.IsNullOrEmpty(phone.Email))
+                            {
+                                <div><span style="display: inline-block; width: 11em;">email: </span><a href="mailto:@phone.Email">@phone.Email</a></div>
+                            }
+                            @if (vacation != null)
+                            {
+                                <div class="red">Отпуск с @vacation.DateStart.ToString("dd.MM.yyyy") по @vacation.DateEnd.ToString("dd.MM.yyyy")</div>
+                            }
+                            @if (dutyJorney != null)
+                            {
+                                <div class="blye">Командировка с @dutyJorney.DateStart.ToString("dd.MM.yyyy") по @dutyJorney.DateEnd.ToString("dd.MM.yyyy")</div>
+                            }
+                        </div>
 					</div>
 				}
 			}

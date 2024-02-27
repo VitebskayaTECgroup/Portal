@@ -20,7 +20,10 @@ namespace DatabaseLayer.Site
 		public ITable<Vacation> Vacations
 			=> this.GetTable<Vacation>();
 
-		public ITable<Guest> Guests
+        public ITable<DutyJourney> DutyJourneys
+            => this.GetTable<DutyJourney>();
+
+        public ITable<Guest> Guests
 			=> this.GetTable<Guest>();
 
 		public ITable<Appeal> Appeals
