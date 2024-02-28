@@ -42,7 +42,8 @@ namespace Schreduler.Actions
 								TabId = int.TryParse(zzz._source.tn, out i) ? i : 0,
 								Family = zzz._source.fio.Replace("  ", " ").Replace("  ", " ").Trim(),
 								Department = yyy.name,
-								Position = zzz._source.dolgn,
+                                //Department = zzz._source.podr,
+                                Position = zzz._source.dolgn,
 								Phone = zzz._source.telefrab,
 								PhoneInner = zzz._source.telef,
 								OnWork = false,
@@ -71,7 +72,7 @@ namespace Schreduler.Actions
                             dutyJourneys.Add(dutyJorney);
 
                             Console.WriteLine(person.TabId + " " + person.Family + " " + person.Phone + " " + person.PhoneInner);
-						}
+                        }
 					}
 				}
 			}
@@ -207,11 +208,11 @@ namespace Schreduler.Actions
         //порядковый номер подразделения
         public int order_podr;
         //организация / филиал
-        public int org;
+        public string org;
         //подразделение / цех / участок
-        public int podr;
+        public string podr;
         //подразделение, полное название / расшифровка
-        public int podrfull;
+        public string podrfull;
         //телефон, внутренний
         public string telef;
 		//телефон, код для внутреннего

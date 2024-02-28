@@ -331,6 +331,10 @@ body {
 	color: red;
 }
 
+.blue {
+	color: blue;
+}
+
 .hide,
 .menu .hide {
 	display: none;
