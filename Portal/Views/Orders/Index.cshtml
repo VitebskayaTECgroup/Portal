@@ -38,7 +38,7 @@
 		new
 		{
 			Name = "ЦТАИ",
-			Users = new [] { "tai_gen", "tai_zam", "tai_mast", "tai_mast2", "shumeiko", "ustinkov", "void", "tai_duty", "esmal" },
+			Users = new [] { "tai_gen", "tai_zam", "tai_mast", "tai_mast2", "shumeiko", "crow", "void", "tai_duty", "esmal" },
 		},
 		new
 		{
@@ -58,6 +58,7 @@
 	};
 
 		bool isNSS = user.UName == "gcu_user";
+		bool isENGGEN = user.UName == "eng_gen";
 
 		if (!user.Groups.Contains("group_orders"))
 		{
@@ -174,7 +175,7 @@
 						orderRecords.Add(record);
 					}
 
-					if (isNSS)
+					if (isNSS || isENGGEN)
 					{
 						string border = orderRecords.Count < 2 ? "border" : "";
 						<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
