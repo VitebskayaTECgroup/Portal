@@ -42,7 +42,7 @@ namespace Portal.Controllers
 					NumberUnplannedCommand = 0,
 					NumberUnplannedOrder = 0,
 					ReasonToUndone = "",
-					AnswerCode = 1,
+					AnswerCode = 0, //1
 					AnswerDate = null,
 					AnswerUserId = 0,
 				});
@@ -57,7 +57,21 @@ namespace Portal.Controllers
 
 			using (var db = new SiteContext())
 			{
-				switch (Name)
+                //запись считается не новой
+				bool isNewRecord = false;
+				//если изменяется тип - "наряд" или "распоряжение", то определяем новая ли запись
+				if (Name.Contains("Command") || Name.Contains("Order"))
+				{
+					//забрать AnswerCode для текущей работы
+					int recordAnswer = db.OrdersRecords.Where(x => x.Id == RecordId).Select(x => x.AnswerCode).FirstOrDefault();
+					//если AnswerCode == 0 (Неизвестно), то запись новая
+					if (recordAnswer == 0)
+					{
+						isNewRecord = true;
+					}
+				}
+
+                switch (Name)
 				{
 					case "Description":
 						db.OrdersRecords
@@ -76,25 +90,57 @@ namespace Portal.Controllers
 							.Where(x => x.Id == RecordId)
 							.Set(x => x.NumberPlannedOrder, value)
 							.Update();
-						break;
+                        // если запись новая, добавить запрет, т.к. это наряд
+                        if (isNewRecord)
+                        {
+                            db.OrdersRecords
+                                .Where(x => x.Id == RecordId)
+                                .Set(x => x.AnswerCode, 2)
+                                .Update();
+                        }
+                        break;
 					case "NumberPlannedCommand":
 						db.OrdersRecords
 							.Where(x => x.Id == RecordId)
 							.Set(x => x.NumberPlannedCommand, value)
 							.Update();
-						break;
+						// если запись новая, добавить разрешение, т.к. это распоряжение
+						if (isNewRecord)
+						{
+                            db.OrdersRecords
+                                .Where(x => x.Id == RecordId)
+                                .Set(x => x.AnswerCode, 1)
+                                .Update();
+                        }
+                        break;
 					case "NumberUnplannedOrder":
 						db.OrdersRecords
 							.Where(x => x.Id == RecordId)
 							.Set(x => x.NumberUnplannedOrder, value)
 							.Update();
-						break;
+                        // если запись новая, добавить запрет, т.к. это наряд
+                        if (isNewRecord)
+                        {
+                            db.OrdersRecords
+                                .Where(x => x.Id == RecordId)
+                                .Set(x => x.AnswerCode, 2)
+                                .Update();
+                        }
+                        break;
 					case "NumberUnplannedCommand":
 						db.OrdersRecords
 							.Where(x => x.Id == RecordId)
 							.Set(x => x.NumberUnplannedCommand, value)
 							.Update();
-						break;
+                        // если запись новая, добавить разрешение, т.к. это распоряжение
+                        if (isNewRecord)
+                        {
+                            db.OrdersRecords
+                                .Where(x => x.Id == RecordId)
+                                .Set(x => x.AnswerCode, 1)
+                                .Update();
+                        }
+                        break;
 					case "ReasonToUndone":
 						db.OrdersRecords
 							.Where(x => x.Id == RecordId)

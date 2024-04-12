@@ -52,7 +52,8 @@ namespace DatabaseLayer.Site
 		{
 			switch (AnswerCode)
 			{
-				case 1: return "разрешено";
+                case 0: return "неизвестно";
+                case 1: return "разрешено";
 				case 2: return "запрещено";
 				default: return "";
 			}

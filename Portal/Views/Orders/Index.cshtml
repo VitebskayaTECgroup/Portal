@@ -166,7 +166,7 @@
 							NumberUnplannedCommand = 0,
 							NumberUnplannedOrder = 0,
 							ReasonToUndone = "",
-							AnswerCode = 1,
+							AnswerCode = 0, //1
 							AnswerDate = null,
 							AnswerUserId = 0,
 						};
@@ -175,8 +175,11 @@
 						orderRecords.Add(record);
 					}
 
+					string answerCodeN = "answercode0";
+
 					if (isNSS || isENGGEN)
 					{
+						answerCodeN = "answercode" + orderRecords[0].AnswerCode;
 						string border = orderRecords.Count < 2 ? "border" : "";
 						<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
 							<td class="border left" rowspan="@orderRecords.Count">
@@ -194,7 +197,7 @@
 							<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
 							@if (date.Date >= DateTime.Today)
 							{
-								<td class="@border">
+								<td class="@border @answerCodeN">
 									<select name="AnswerCode">
 										<option value="0">Неизвестно</option>
 										<option value="1" @(orderRecords[0].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
@@ -204,12 +207,13 @@
 							}
 							else
 							{
-								<td class="text right">@orderRecords[0].GetAnswer()</td>
+								<td class="text right @answerCodeN">@orderRecords[0].GetAnswer()</td>
 							}
 						</tr>
 
 						for (int i = 1; i < orderRecords.Count; i++)
 						{
+							answerCodeN = "answercode" + orderRecords[i].AnswerCode;
 							string cls = i < (orderRecords.Count - 1) ? "" : "border";
 							<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
 								<td class="@cls"></td>
@@ -222,7 +226,7 @@
 								<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
 								@if (date.Date >= DateTime.Today)
 								{
-									<td class="@cls right">
+									<td class="@cls right @answerCodeN">
 										<select name="AnswerCode">
 											<option value="0">Неизвестно</option>
 											<option value="1" @(orderRecords[i].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
@@ -232,13 +236,14 @@
 								}
 								else
 								{
-									<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+									<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
 								}
 							</tr>
 						}
 					}
 					else if (guilds.Where(x => x.Name == order.Guild).FirstOrDefault().Users.Contains(user.UName))
 					{
+						answerCodeN = "answercode" + orderRecords[0].AnswerCode;
 						string border = orderRecords.Count < 2 ? "border" : "";
 						if (date.Date >= DateTime.Today)
 						{
@@ -268,11 +273,12 @@
 								<td class="border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
 									<textarea onchange="checkEmpty(this)" name="NumberMasters">@AsNumber(order.NumberMasters)</textarea>
 								</td>
-								<td class="text right @border">@orderRecords[0].GetAnswer()</td>
+								<td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
 							</tr>
 
 							for (int i = 1; i < orderRecords.Count; i++)
 							{
+								answerCodeN = "answercode" + orderRecords[i].AnswerCode;
 								string cls = i < (orderRecords.Count - 1) ? "" : "border";
 								<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
 									<td class="@cls"><button onclick="delRecord(@orderRecords[i].Id)">-</button></td>
@@ -291,12 +297,13 @@
 									<td class="@cls"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[i].NumberUnplannedOrder)</textarea></td>
 									<td class="@cls"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[i].NumberUnplannedCommand)</textarea></td>
 									<td class="@cls"><textarea name="ReasonToUndone">@orderRecords[i].ReasonToUndone</textarea></td>
-									<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+									<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
 								</tr>
 							}
 						}
 						else
 						{
+							answerCodeN = "answercode" + orderRecords[0].AnswerCode;
 							<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
 								<td class="border left" rowspan="@orderRecords.Count">
 									<span>@order.Guild</span>
@@ -311,11 +318,12 @@
 								<td class="text @border">@orderRecords[0].ReasonToUndone</td>
 								<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
 								<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
-								<td class="text right @border">@orderRecords[0].GetAnswer()</td>
+								<td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
 							</tr>
 
 							for (int i = 1; i < orderRecords.Count; i++)
 							{
+								answerCodeN = "answercode" + orderRecords[i].AnswerCode;
 								string cls = i < (orderRecords.Count - 1) ? "" : "border";
 								<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
 									<td></td>
@@ -326,13 +334,14 @@
 									<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
 									<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
 									<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
-									<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+									<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
 								</tr>
 							}
 						}
 					}
 					else if (viewers.Contains(user.UName) || user.Groups.Contains("group_orders"))
 					{
+						answerCodeN = "answercode" + orderRecords[0].AnswerCode;
 						string border = orderRecords.Count < 2 ? "border" : "";
 						<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
 							<td class="border left" rowspan="@orderRecords.Count">
@@ -348,11 +357,12 @@
 							<td class="text @border">@orderRecords[0].ReasonToUndone</td>
 							<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
 							<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
-							<td class="text right @border">@orderRecords[0].GetAnswer()</td>
+							<td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
 						</tr>
 
 						for (int i = 1; i < orderRecords.Count; i++)
 						{
+							answerCodeN = "answercode" + orderRecords[i].AnswerCode;
 							string cls = i < (orderRecords.Count  - 1) ? "" : "border";
 							<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
 								<td class="@cls"></td>
@@ -363,7 +373,7 @@
 								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
 								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
 								<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
-								<td class="@cls text right">@orderRecords[i].GetAnswer()</td>
+								<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
 							</tr>
 						}
 					}

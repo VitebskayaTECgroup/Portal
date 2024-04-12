@@ -138,6 +138,18 @@ select {
     border-bottom: 1px solid #03a9f4;
 }
 
+.answercode0 {
+    background-color: #70bfff;
+}
+
+.answercode1 {
+    background-color: #A5FF7F;
+}
+
+.answercode2 {
+    background-color: #FF7F7F;
+}
+
 .left {
     border-left: 1px solid #03a9f4;
 }
@@ -273,6 +285,18 @@ body.dark {
 
 .dark .border {
     border-bottom: 1px solid #0366ad;
+}
+
+.dark .answercode0 {
+    background-color: #0072c3;
+}
+
+.dark .answercode1 {
+    background-color: #007b00;
+}
+
+.dark .answercode2 {
+    background-color: #750000;
 }
 
 .dark .left {
