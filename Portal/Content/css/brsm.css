@@ -1,0 +1,146 @@
+
+
+/*стили для страницы БРСМ*/
+
+.invisibleline {
+	height: 25px;
+}
+
+.brsm_td {
+	display: inline-block;
+	text-align: center;
+	table-layout: fixed;
+}
+
+.td3 {
+	width: 33.3%;
+}
+
+.td2 {
+	width: 50%;
+}
+
+.td1 {
+	width: 100%;
+}
+
+.img3inline {
+	max-width: 270px;
+	max-height: 190px;
+}
+
+.img2inline {
+	max-width: 420px;
+	max-height: 235px;
+}
+
+.img1inline {
+	max-width: 880px;
+	max-height: 350px;
+}
+
+.img-in-slide {
+	object-fit: contain;
+	width: 100%;
+	height: 100%;
+	max-height: 460px;
+}
+
+.sim-slider {
+	min-height: 300px;
+	height: 460px;
+	max-width: 1000px;
+	min-width: 320px;
+	margin: 20px auto;
+	padding: 0px 50px;
+	/*background-color: white;*/
+	position: relative;
+}
+
+.sim-slider-list {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	position: relative;
+}
+
+.sim-slider-element {
+	width: 100%;
+	height: 460px;
+	transition: opacity 1s ease-in;
+	opacity: 0;
+	position: absolute;
+	z-index: 2;
+	left: 0;
+	top: 0;
+	display: block;
+}
+
+div.sim-slider-arrow-left,
+div.sim-slider-arrow-right {
+	width: 22px;
+	height: 40px;
+	position: absolute;
+	cursor: pointer;
+	opacity: 0.6;
+	z-index: 4;
+}
+
+div.sim-slider-arrow-left {
+	left: 10px;
+	top: 45%;
+	display: block;
+	background: url("/Content/images/brsm/service/sim-arrow-left.png") no-repeat;
+}
+
+div.sim-slider-arrow-right {
+	right: 10px;
+	top: 45%;
+	display: block;
+	background: url("/Content/images/brsm/service/sim-arrow-right.png") no-repeat;
+}
+
+div.sim-slider-arrow-left:hover {
+	opacity: 1.0;
+}
+
+div.sim-slider-arrow-right:hover {
+	opacity: 1.0;
+}
+
+div.sim-slider-dots {
+	width: 100%;
+	height: auto;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	z-index: 3;
+	text-align: center;
+}
+
+span.sim-dot {
+	border: 1px solid white;
+	width: 19px;
+	height: 5px;
+	margin: 5px 7px;
+	padding: 0;
+	display: inline-block;
+	background-color: #fff;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+/*.dark .*/
+.dark div.sim-slider-arrow-left {
+	left: 10px;
+	top: 45%;
+	display: block;
+	background: url("/Content/images/brsm/service/sim-arrow-left-white.png") no-repeat;
+}
+
+.dark div.sim-slider-arrow-right {
+	right: 10px;
+	top: 45%;
+	display: block;
+	background: url("/Content/images/brsm/service/sim-arrow-right-white.png") no-repeat;
+}

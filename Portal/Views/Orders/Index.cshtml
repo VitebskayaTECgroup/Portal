@@ -59,6 +59,7 @@
 
 		bool isNSS = user.UName == "gcu_user";
 		bool isENGGEN = user.UName == "eng_gen";
+		bool isENGZAM = user.UName == "eng_zam";
 
 		if (!user.Groups.Contains("group_orders"))
 		{
@@ -145,240 +146,429 @@
 					<th width="110px">распоряжения (@unplannedCommands)</th>
 				</tr>
 			</thead>
-			<tbody>
-				@foreach (var order in orders)
-				{
-					var orderRecords = records
-						.Where(x => x.OrderId == order.Id)
-						.ToList();
+            <tbody>
+                @foreach (var order in orders)
+                {
+                    var orderRecords = records
+                        .Where(x => x.OrderId == order.Id)
+                        .ToList();
 
-					if (orderRecords.Count == 0)
-					{
-						var record = new OrderRecord
-						{
-							DateCreated = DateTime.Now,
-							OrderId = order.Id,
-							UserId = user.UID,
-							Description = "",
-							Comment = "",
-							NumberPlannedCommand = 0,
-							NumberPlannedOrder = 0,
-							NumberUnplannedCommand = 0,
-							NumberUnplannedOrder = 0,
-							ReasonToUndone = "",
-							AnswerCode = 0, //1
-							AnswerDate = null,
-							AnswerUserId = 0,
-						};
+                    if (orderRecords.Count == 0)
+                    {
+                        var record = new OrderRecord
+                        {
+                            DateCreated = DateTime.Now,
+                            OrderId = order.Id,
+                            UserId = user.UID,
+                            Description = "",
+                            Comment = "",
+                            NumberPlannedCommand = 0,
+                            NumberPlannedOrder = 0,
+                            NumberUnplannedCommand = 0,
+                            NumberUnplannedOrder = 0,
+                            ReasonToUndone = "",
+                            AnswerCode = 0, //1
+                            AnswerDate = null,
+                            AnswerUserId = 0,
+                        };
 
-						record.Id = db.InsertWithInt32Identity(record);
-						orderRecords.Add(record);
-					}
+                        record.Id = db.InsertWithInt32Identity(record);
+                        orderRecords.Add(record);
+                    }
 
-					string answerCodeN = "answercode0";
+                    string answerCodeN = "answercode0";
 
-					if (isNSS || isENGGEN)
-					{
-						answerCodeN = "answercode" + orderRecords[0].AnswerCode;
-						string border = orderRecords.Count < 2 ? "border" : "";
-						<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
-							<td class="border left" rowspan="@orderRecords.Count">
-								<span>@order.Guild</span>
-							</td>
-							<td class="@border"></td>
-							<td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
-							<td class="@border"><textarea name="Comment" style="text-align: left;">@orderRecords[0].Comment</textarea></td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
-							<td class="text @border">@orderRecords[0].ReasonToUndone</td>
-							<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
-							<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
-							@if (date.Date >= DateTime.Today)
-							{
-								<td class="@border @answerCodeN">
-									<select name="AnswerCode">
-										<option value="0">Неизвестно</option>
-										<option value="1" @(orderRecords[0].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
-										<option value="2" @(orderRecords[0].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
-									</select>
-								</td>
-							}
-							else
-							{
-								<td class="text right @answerCodeN">@orderRecords[0].GetAnswer()</td>
-							}
-						</tr>
+                    @*if (isNSS || user.UName == "crow")
+            {
+                answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                string border = orderRecords.Count < 2 ? "border" : "";
+                <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+                    <td class="border left" rowspan="@orderRecords.Count">
+                        <span>@order.Guild</span>
+                    </td>
+                    <td class="@border"></td>
+                    <td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+                    <td class="@border"><textarea name="Comment" style="text-align: left;">@orderRecords[0].Comment</textarea></td>
+                    <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+                    <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+                    <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+                    <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+                    <td class="text @border">@orderRecords[0].ReasonToUndone</td>
+                    <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+                    <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                    @if (date.Date >= DateTime.Today)
+                    {
+                        <td class="@border @answerCodeN">
+                            <select name="AnswerCode">
+                                <option value="0">Неизвестно</option>
+                                <option value="1" @(orderRecords[0].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+                                <option value="2" @(orderRecords[0].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+                            </select>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="text right @answerCodeN">@orderRecords[0].GetAnswer()</td>
+                    }
+                </tr>
 
-						for (int i = 1; i < orderRecords.Count; i++)
-						{
-							answerCodeN = "answercode" + orderRecords[i].AnswerCode;
-							string cls = i < (orderRecords.Count - 1) ? "" : "border";
-							<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
-								<td class="@cls"></td>
-								<td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
-								<td class="@cls"><textarea name="Comment" style="text-align: left;">@orderRecords[i].Comment</textarea></td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
-								<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
-								@if (date.Date >= DateTime.Today)
-								{
-									<td class="@cls right @answerCodeN">
-										<select name="AnswerCode">
-											<option value="0">Неизвестно</option>
-											<option value="1" @(orderRecords[i].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
-											<option value="2" @(orderRecords[i].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
-										</select>
-									</td>
-								}
-								else
-								{
-									<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
-								}
-							</tr>
-						}
-					}
-					else if (guilds.Where(x => x.Name == order.Guild).FirstOrDefault().Users.Contains(user.UName))
-					{
-						answerCodeN = "answercode" + orderRecords[0].AnswerCode;
-						string border = orderRecords.Count < 2 ? "border" : "";
-						if (date.Date >= DateTime.Today)
-						{
-							<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
-								<td class="border left" rowspan="@orderRecords.Count">
-									<span>@order.Guild</span> <button onclick="addRecord(@order.Id)">+</button>
-								</td>
-								<td class="@border"><button onclick="delRecord(@orderRecords[0].Id)">-</button></td>
-								<td class="@border"><textarea name="Description" style="text-align: left;">@orderRecords[0].Description</textarea></td>
-								<td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
-								@if (date.Date > DateTime.Today)
-								{
-									<td class="@border"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[0].NumberPlannedOrder)</textarea></td>
-									<td class="@border"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[0].NumberPlannedCommand)</textarea></td>
-								}
-								else
-								{
-									<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
-									<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
-								}
-								<td class="@border"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[0].NumberUnplannedOrder)</textarea></td>
-								<td class="@border"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[0].NumberUnplannedCommand)</textarea></td>
-								<td class="@border"><textarea name="ReasonToUndone">@orderRecords[0].ReasonToUndone</textarea></td>
-								<td class="border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
-									<textarea onchange="checkEmpty(this)" name="NumberPersonal">@AsNumber(order.NumberPersonal)</textarea>
-								</td>
-								<td class="border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
-									<textarea onchange="checkEmpty(this)" name="NumberMasters">@AsNumber(order.NumberMasters)</textarea>
-								</td>
-								<td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
-							</tr>
+                for (int i = 1; i < orderRecords.Count; i++)
+                {
+                    answerCodeN = "answercode" + orderRecords[i].AnswerCode;
+                    string cls = i < (orderRecords.Count - 1) ? "" : "border";
+                    <tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+                        <td class="@cls"></td>
+                        <td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+                        <td class="@cls"><textarea name="Comment" style="text-align: left;">@orderRecords[i].Comment</textarea></td>
+                        <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+                        <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+                        <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+                        <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+                        <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                        @if (date.Date >= DateTime.Today)
+                        {
+                            <td class="@cls right @answerCodeN">
+                                <select name="AnswerCode">
+                                    <option value="0">Неизвестно</option>
+                                    <option value="1" @(orderRecords[i].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+                                    <option value="2" @(orderRecords[i].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+                                </select>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
+                        }
+                    </tr>
+                }
+            }*@
+                    if (isNSS || user.UName == "crow")
+                    {
+                        answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                        string border = orderRecords.Count < 2 ? "border" : "";
+                        if (date.Date >= DateTime.Today)
+                        {
+                            <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+                                <td class="border left" rowspan="@orderRecords.Count">
+                                    <span>@order.Guild</span> <button onclick="addRecord(@order.Id)">+</button>
+                                </td>
+                                <td class="@border"><button onclick="delRecord(@orderRecords[0].Id)">-</button></td>
+                                <td class="@border"><textarea name="Description" style="text-align: left;">@orderRecords[0].Description</textarea></td>
+                                <td class="@border"><textarea name="Comment" style="text-align: left;">@orderRecords[0].Comment</textarea></td>
+                                @if (date.Date > DateTime.Today)
+                                {
+                                    <td class="@border"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[0].NumberPlannedOrder)</textarea></td>
+                                    <td class="@border"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[0].NumberPlannedCommand)</textarea></td>
+                                }
+                                else
+                                {
+                                    <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+                                    <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+                                }
+                                <td class="@border"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[0].NumberUnplannedOrder)</textarea></td>
+                                <td class="@border"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[0].NumberUnplannedCommand)</textarea></td>
+                                <td class="@border"><textarea name="ReasonToUndone">@orderRecords[0].ReasonToUndone</textarea></td>
+                                <td class="border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
+                                    <textarea onchange="checkEmpty(this)" name="NumberPersonal">@AsNumber(order.NumberPersonal)</textarea>
+                                </td>
+                                <td class="border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
+                                    <textarea onchange="checkEmpty(this)" name="NumberMasters">@AsNumber(order.NumberMasters)</textarea>
+                                </td>
+                                @if (date.Date >= DateTime.Today)
+                                {
+                                    <td class="@border @answerCodeN">
+                                        <select name="AnswerCode">
+                                            <option value="0">Неизвестно</option>
+                                            <option value="1" @(orderRecords[0].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+                                            <option value="2" @(orderRecords[0].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+                                        </select>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="text right @answerCodeN">@orderRecords[0].GetAnswer()</td>
+                                }
+                            </tr>
 
-							for (int i = 1; i < orderRecords.Count; i++)
-							{
-								answerCodeN = "answercode" + orderRecords[i].AnswerCode;
-								string cls = i < (orderRecords.Count - 1) ? "" : "border";
-								<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
-									<td class="@cls"><button onclick="delRecord(@orderRecords[i].Id)">-</button></td>
-									<td class="@cls"><textarea name="Description" style="text-align: left;">@orderRecords[i].Description</textarea></td>
-									<td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
-									@if (date.Date > DateTime.Today)
-									{
-										<td class="@cls"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[i].NumberPlannedOrder)</textarea></td>
-										<td class="@cls"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[i].NumberPlannedCommand)</textarea></td>
-									}
-									else
-									{
-										<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
-										<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
-									}
-									<td class="@cls"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[i].NumberUnplannedOrder)</textarea></td>
-									<td class="@cls"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[i].NumberUnplannedCommand)</textarea></td>
-									<td class="@cls"><textarea name="ReasonToUndone">@orderRecords[i].ReasonToUndone</textarea></td>
-									<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
-								</tr>
-							}
-						}
-						else
-						{
-							answerCodeN = "answercode" + orderRecords[0].AnswerCode;
-							<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
-								<td class="border left" rowspan="@orderRecords.Count">
-									<span>@order.Guild</span>
-								</td>
-								<td class="@border"></td>
-								<td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
-								<td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
-								<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
-								<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
-								<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
-								<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
-								<td class="text @border">@orderRecords[0].ReasonToUndone</td>
-								<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
-								<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
-								<td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
-							</tr>
+                            for (int i = 1; i < orderRecords.Count; i++)
+                            {
+                                answerCodeN = "answercode" + orderRecords[i].AnswerCode;
+                                string cls = i < (orderRecords.Count - 1) ? "" : "border";
+                                <tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+                                    <td class="@cls"><button onclick="delRecord(@orderRecords[i].Id)">-</button></td>
+                                    <td class="@cls"><textarea name="Description" style="text-align: left;">@orderRecords[i].Description</textarea></td>
+                                    <td class="@cls"><textarea name="Comment" style="text-align: left;">@orderRecords[i].Comment</textarea></td>
+                                    @if (date.Date > DateTime.Today)
+                                    {
+                                        <td class="@cls"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[i].NumberPlannedOrder)</textarea></td>
+                                        <td class="@cls"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[i].NumberPlannedCommand)</textarea></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+                                        <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+                                    }
+                                    <td class="@cls"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[i].NumberUnplannedOrder)</textarea></td>
+                                    <td class="@cls"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[i].NumberUnplannedCommand)</textarea></td>
+                                    <td class="@cls"><textarea name="ReasonToUndone">@orderRecords[i].ReasonToUndone</textarea></td>
+                                    @if (date.Date >= DateTime.Today)
+                                    {
+                                        <td class="@cls right @answerCodeN">
+                                            <select name="AnswerCode">
+                                                <option value="0">Неизвестно</option>
+                                                <option value="1" @(orderRecords[i].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+                                                <option value="2" @(orderRecords[i].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+                                            </select>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
+                                    }
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                            <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+                                <td class="border left" rowspan="@orderRecords.Count">
+                                    <span>@order.Guild</span>
+                                </td>
+                                <td class="@border"></td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+                                <td class="text @border">@orderRecords[0].ReasonToUndone</td>
+                                <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+                                <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                                <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
+                            </tr>
 
-							for (int i = 1; i < orderRecords.Count; i++)
-							{
-								answerCodeN = "answercode" + orderRecords[i].AnswerCode;
-								string cls = i < (orderRecords.Count - 1) ? "" : "border";
-								<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
-									<td></td>
-									<td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
-									<td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
-									<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
-									<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
-									<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
-									<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
-									<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
-									<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
-								</tr>
-							}
-						}
-					}
-					else if (viewers.Contains(user.UName) || user.Groups.Contains("group_orders"))
-					{
-						answerCodeN = "answercode" + orderRecords[0].AnswerCode;
-						string border = orderRecords.Count < 2 ? "border" : "";
-						<tr orderId="@order.Id" recordId="@orderRecords[0].Id">
-							<td class="border left" rowspan="@orderRecords.Count">
-								<span>@order.Guild</span>
-							</td>
-							<td class="@border"></td>
-							<td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
-							<td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
-							<td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
-							<td class="text @border">@orderRecords[0].ReasonToUndone</td>
-							<td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
-							<td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
-							<td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
-						</tr>
+                            for (int i = 1; i < orderRecords.Count; i++)
+                            {
+                                answerCodeN = "answercode" + orderRecords[i].AnswerCode;
+                                string cls = i < (orderRecords.Count - 1) ? "" : "border";
+                                <tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+                                    <td></td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+                                    <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                    <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
+                                </tr>
+                            }
+                        }
+                    }
 
-						for (int i = 1; i < orderRecords.Count; i++)
-						{
-							answerCodeN = "answercode" + orderRecords[i].AnswerCode;
-							string cls = i < (orderRecords.Count  - 1) ? "" : "border";
-							<tr orderId="@order.Id" recordId="@orderRecords[i].Id">
-								<td class="@cls"></td>
-								<td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
-								<td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
-								<td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
-								<td class="@cls text">@orderRecords[i].ReasonToUndone</td>
-								<td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
-							</tr>
-						}
-					}
-				}
-			</tbody>
+                    else if (isENGGEN || isENGZAM)
+                    {
+                        answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                        string border = orderRecords.Count < 2 ? "border" : "";
+                        <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+                            <td class="border left" rowspan="@orderRecords.Count">
+                                <span>@order.Guild</span>
+                            </td>
+                            <td class="@border"></td>
+                            <td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+                            <td class="@border"><textarea name="Comment" style="text-align: left;">@orderRecords[0].Comment</textarea></td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+                            <td class="text @border">@orderRecords[0].ReasonToUndone</td>
+                            <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+                            <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                            @if (date.Date >= DateTime.Today)
+                            {
+                                <td class="@border @answerCodeN">
+                                    <select name="AnswerCode">
+                                        <option value="0">Неизвестно</option>
+                                        <option value="1" @(orderRecords[0].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+                                        <option value="2" @(orderRecords[0].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+                                    </select>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="text right @answerCodeN">@orderRecords[0].GetAnswer()</td>
+                            }
+                        </tr>
+
+                        for (int i = 1; i < orderRecords.Count; i++)
+                        {
+                            answerCodeN = "answercode" + orderRecords[i].AnswerCode;
+                            string cls = i < (orderRecords.Count - 1) ? "" : "border";
+                            <tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+                                <td class="@cls"></td>
+                                <td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+                                <td class="@cls"><textarea name="Comment" style="text-align: left;">@orderRecords[i].Comment</textarea></td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+                                <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                @if (date.Date >= DateTime.Today)
+                                {
+                                    <td class="@cls right @answerCodeN">
+                                        <select name="AnswerCode">
+                                            <option value="0">Неизвестно</option>
+                                            <option value="1" @(orderRecords[i].AnswerCode == 1 ? "selected" : "")>Разрешено</option>
+                                            <option value="2" @(orderRecords[i].AnswerCode == 2 ? "selected" : "")>Запрещено</option>
+                                        </select>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
+                                }
+                            </tr>
+                        }
+                    }
+                    else if (guilds.Where(x => x.Name == order.Guild).FirstOrDefault().Users.Contains(user.UName))
+                    {
+                        answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                        string border = orderRecords.Count < 2 ? "border" : "";
+                        if (date.Date >= DateTime.Today)
+                        {
+                            <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+                                <td class="border left" rowspan="@orderRecords.Count">
+                                    <span>@order.Guild</span> <button onclick="addRecord(@order.Id)">+</button>
+                                </td>
+                                <td class="@border"><button onclick="delRecord(@orderRecords[0].Id)">-</button></td>
+                                <td class="@border"><textarea name="Description" style="text-align: left;">@orderRecords[0].Description</textarea></td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
+                                @if (date.Date > DateTime.Today)
+                                {
+                                    <td class="@border"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[0].NumberPlannedOrder)</textarea></td>
+                                    <td class="@border"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[0].NumberPlannedCommand)</textarea></td>
+                                }
+                                else
+                                {
+                                    <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+                                    <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+                                }
+                                <td class="@border"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[0].NumberUnplannedOrder)</textarea></td>
+                                <td class="@border"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[0].NumberUnplannedCommand)</textarea></td>
+                                <td class="@border"><textarea name="ReasonToUndone">@orderRecords[0].ReasonToUndone</textarea></td>
+                                <td class="border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
+                                    <textarea onchange="checkEmpty(this)" name="NumberPersonal">@AsNumber(order.NumberPersonal)</textarea>
+                                </td>
+                                <td class="border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
+                                    <textarea onchange="checkEmpty(this)" name="NumberMasters">@AsNumber(order.NumberMasters)</textarea>
+                                </td>
+                                <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
+                            </tr>
+
+                            for (int i = 1; i < orderRecords.Count; i++)
+                            {
+                                answerCodeN = "answercode" + orderRecords[i].AnswerCode;
+                                string cls = i < (orderRecords.Count - 1) ? "" : "border";
+                                <tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+                                    <td class="@cls"><button onclick="delRecord(@orderRecords[i].Id)">-</button></td>
+                                    <td class="@cls"><textarea name="Description" style="text-align: left;">@orderRecords[i].Description</textarea></td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
+                                    @if (date.Date > DateTime.Today)
+                                    {
+                                        <td class="@cls"><textarea name="NumberPlannedOrder">@AsNumber(orderRecords[i].NumberPlannedOrder)</textarea></td>
+                                        <td class="@cls"><textarea name="NumberPlannedCommand">@AsNumber(orderRecords[i].NumberPlannedCommand)</textarea></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+                                        <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+                                    }
+                                    <td class="@cls"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[i].NumberUnplannedOrder)</textarea></td>
+                                    <td class="@cls"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[i].NumberUnplannedCommand)</textarea></td>
+                                    <td class="@cls"><textarea name="ReasonToUndone">@orderRecords[i].ReasonToUndone</textarea></td>
+                                    <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                            <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+                                <td class="border left" rowspan="@orderRecords.Count">
+                                    <span>@order.Guild</span>
+                                </td>
+                                <td class="@border"></td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+                                <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+                                <td class="text @border">@orderRecords[0].ReasonToUndone</td>
+                                <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+                                <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                                <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
+                            </tr>
+
+                            for (int i = 1; i < orderRecords.Count; i++)
+                            {
+                                answerCodeN = "answercode" + orderRecords[i].AnswerCode;
+                                string cls = i < (orderRecords.Count - 1) ? "" : "border";
+                                <tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+                                    <td></td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+                                    <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+                                    <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                    <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else if (viewers.Contains(user.UName) || user.Groups.Contains("group_orders"))
+                    {
+                        answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                        string border = orderRecords.Count < 2 ? "border" : "";
+                        <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
+                            <td class="border left" rowspan="@orderRecords.Count">
+                                <span>@order.Guild</span>
+                            </td>
+                            <td class="@border"></td>
+                            <td class="text @border" style="text-align: left;">@orderRecords[0].Description</td>
+                            <td class="text @border" style="text-align: left;">@orderRecords[0].Comment</td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedOrder)</td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
+                            <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
+                            <td class="text @border">@orderRecords[0].ReasonToUndone</td>
+                            <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
+                            <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                            <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
+                        </tr>
+
+                        for (int i = 1; i < orderRecords.Count; i++)
+                        {
+                            answerCodeN = "answercode" + orderRecords[i].AnswerCode;
+                            string cls = i < (orderRecords.Count - 1) ? "" : "border";
+                            <tr orderId="@order.Id" recordId="@orderRecords[i].Id">
+                                <td class="@cls"></td>
+                                <td class="@cls text" style="text-align: left;">@orderRecords[i].Description</td>
+                                <td class="@cls text" style="text-align: left;">@orderRecords[i].Comment</td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedOrder)</td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
+                                <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
+                                <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
 		</table>
 
 		<div class="messages" id="messages"></div>
