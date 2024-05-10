@@ -64,50 +64,50 @@
 		if (!user.Groups.Contains("group_orders"))
 		{
 			<div>Нет доступа в данный раздел. Для получения доступа обратитесь в уАСУТП по тел. 3-34</div>
-			return;
-		}
+            return;
+        }
 
-		var orders = db.Orders
-			.Where(x => x.Date.Date == date.Date)
-			.ToList();
+        var orders = db.Orders
+            .Where(x => x.Date.Date == date.Date)
+            .ToList();
 
-		if (orders.Count == 0)
-		{
-			// создание новых записей на указанную дату
-			foreach (var guild in guilds)
-			{
-				db.Insert(new Order
-				{
-					Date = date.Date,
-					Guild = guild.Name,
-					NumberMasters = 0,
-					NumberPersonal = 0,
-				});
-			}
+        if (orders.Count == 0)
+        {
+            // создание новых записей на указанную дату
+            foreach (var guild in guilds)
+            {
+                db.Insert(new Order
+                {
+                    Date = date.Date,
+                    Guild = guild.Name,
+                    NumberMasters = 0,
+                    NumberPersonal = 0,
+                });
+            }
 
-			orders = db.Orders
-				.Where(x => x.Date.Date == date.Date)
-				.ToList();
-		}
+            orders = db.Orders
+                .Where(x => x.Date.Date == date.Date)
+                .ToList();
+        }
 
-		string AsNumber(int number)
-		{
-			return number == 0 ? "" : number.ToString();
-		}
+        string AsNumber(int number)
+        {
+            return number == 0 ? "" : number.ToString();
+        }
 
-		var records = db.OrdersRecords
-			.Where(x => orders.Select(y => y.Id).ToList().Contains(x.OrderId))
-			.ToList();
+        var records = db.OrdersRecords
+            .Where(x => orders.Select(y => y.Id).ToList().Contains(x.OrderId))
+            .ToList();
 
-		var ftpDate = db.Constants.Where(x => x.Keyword == "OrdersFTPDate").FirstOrDefault()?.Value ?? "";
+        var ftpDate = db.Constants.Where(x => x.Keyword == "OrdersFTPDate").FirstOrDefault()?.Value ?? "";
 
-		int plannedCommands = records.Select(x => x.NumberPlannedCommand).Sum();
-		int plannedOrders = records.Select(x => x.NumberPlannedOrder).Sum();
-		int unplannedCommands = records.Select(x => x.NumberUnplannedCommand).Sum();
-		int unplannedOrders = records.Select(x => x.NumberUnplannedOrder).Sum();
+        int plannedCommands = records.Select(x => x.NumberPlannedCommand).Sum();
+        int plannedOrders = records.Select(x => x.NumberPlannedOrder).Sum();
+        int unplannedCommands = records.Select(x => x.NumberUnplannedCommand).Sum();
+        int unplannedOrders = records.Select(x => x.NumberUnplannedOrder).Sum();
 
-		int masters = orders.Select(x => x.NumberMasters).Sum();
-		int personal = orders.Select(x => x.NumberPersonal).Sum();
+        int masters = orders.Select(x => x.NumberMasters).Sum();
+        int personal = orders.Select(x => x.NumberPersonal).Sum();
 
 		<div class="header">
 			Просматриваемая дата: <span>@date.ToString("d MMMM yyyy")</span>
@@ -128,11 +128,11 @@
 					<th rowspan="3" width="120px">Наименование подразделения</th>
 					<th rowspan="3" width="30px"></th>
 					<th rowspan="3" width="500px">Порученная работа</th>
-					<th rowspan="3">Примечание</th>
+					<th rowspan="3" width="95px">Примечание</th>
 					<th colspan="4">Количество заданий на производство работ (шт.)</th>
-					<th rowspan="3">Причина невыполнения плановых работ</th>
-					<th rowspan="3">Количество ремонтного персонала (@personal)</th>
-					<th rowspan="3">Ответственные за выполнение работ (мастера) (@masters)</th>
+                    <th rowspan="3" width="95px">Количество ремонтного персонала</th>
+                    <th rowspan="3">Руководитель или производитель работ</th>
+                    <th rowspan="3">Исполнитель работ</th>
 					<th rowspan="3" width="140px">Отметка о получении разрешения на выполнение работ от главного инженера</th>
 				</tr>
 				<tr>
@@ -167,6 +167,9 @@
                             NumberUnplannedCommand = 0,
                             NumberUnplannedOrder = 0,
                             ReasonToUndone = "",
+                            NumberOfRepairStaff = "",
+                            HeadOfWork = "",
+                            Contractor = "",
                             AnswerCode = 0, //1
                             AnswerDate = null,
                             AnswerUserId = 0,
@@ -267,13 +270,9 @@
                                 }
                                 <td class="@border"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[0].NumberUnplannedOrder)</textarea></td>
                                 <td class="@border"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[0].NumberUnplannedCommand)</textarea></td>
-                                <td class="@border"><textarea name="ReasonToUndone">@orderRecords[0].ReasonToUndone</textarea></td>
-                                <td class="border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
-                                    <textarea onchange="checkEmpty(this)" name="NumberPersonal">@AsNumber(order.NumberPersonal)</textarea>
-                                </td>
-                                <td class="border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
-                                    <textarea onchange="checkEmpty(this)" name="NumberMasters">@AsNumber(order.NumberMasters)</textarea>
-                                </td>
+                                <td class="@border"><textarea name="NumberOfRepairStaff">@orderRecords[0].NumberOfRepairStaff</textarea></td>
+                                <td class="@border"><textarea name="HeadOfWork" style="text-align: left;">@orderRecords[0].HeadOfWork</textarea></td>
+                                <td class="@border"><textarea name="Contractor" style="text-align: left;">@orderRecords[0].Contractor</textarea></td>
                                 @if (date.Date >= DateTime.Today)
                                 {
                                     <td class="@border @answerCodeN">
@@ -310,7 +309,9 @@
                                     }
                                     <td class="@cls"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[i].NumberUnplannedOrder)</textarea></td>
                                     <td class="@cls"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[i].NumberUnplannedCommand)</textarea></td>
-                                    <td class="@cls"><textarea name="ReasonToUndone">@orderRecords[i].ReasonToUndone</textarea></td>
+                                    <td class="@cls"><textarea name="NumberOfRepairStaff">@orderRecords[i].NumberOfRepairStaff</textarea></td>
+                                    <td class="@cls"><textarea name="HeadOfWork" style="text-align: left;">@orderRecords[i].HeadOfWork</textarea></td>
+                                    <td class="@cls"><textarea name="Contractor" style="text-align: left;">@orderRecords[i].Contractor</textarea></td>
                                     @if (date.Date >= DateTime.Today)
                                     {
                                         <td class="@cls right @answerCodeN">
@@ -342,9 +343,9 @@
                                 <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
                                 <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
                                 <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
-                                <td class="text @border">@orderRecords[0].ReasonToUndone</td>
-                                <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
-                                <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                                <td class="text @border">@orderRecords[0].NumberOfRepairStaff</td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].HeadOfWork</td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].Contractor</td>
                                 <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
                             </tr>
 
@@ -360,7 +361,9 @@
                                     <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
                                     <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
                                     <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
-                                    <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                    <td class="@cls text">@orderRecords[i].NumberOfRepairStaff</td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].HeadOfWork</td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].Contractor</td>
                                     <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
                                 </tr>
                             }
@@ -382,9 +385,9 @@
                             <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
                             <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
                             <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
-                            <td class="text @border">@orderRecords[0].ReasonToUndone</td>
-                            <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
-                            <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                            <td class="text @border">@orderRecords[0].NumberOfRepairStaff</td>
+                            <td class="text @border" style="text-align: left;">@orderRecords[0].HeadOfWork</td>
+                            <td class="text @border" style="text-align: left;">@orderRecords[0].Contractor</td>
                             @if (date.Date >= DateTime.Today)
                             {
                                 <td class="@border @answerCodeN">
@@ -413,7 +416,9 @@
                                 <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
                                 <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
                                 <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
-                                <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                <td class="@cls text">@orderRecords[i].NumberOfRepairStaff</td>
+                                <td class="@cls text" style="text-align: left;">@orderRecords[i].HeadOfWork</td>
+                                <td class="@cls text" style="text-align: left;">@orderRecords[i].Contractor</td>
                                 @if (date.Date >= DateTime.Today)
                                 {
                                     <td class="@cls right @answerCodeN">
@@ -456,13 +461,9 @@
                                 }
                                 <td class="@border"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[0].NumberUnplannedOrder)</textarea></td>
                                 <td class="@border"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[0].NumberUnplannedCommand)</textarea></td>
-                                <td class="@border"><textarea name="ReasonToUndone">@orderRecords[0].ReasonToUndone</textarea></td>
-                                <td class="border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
-                                    <textarea onchange="checkEmpty(this)" name="NumberPersonal">@AsNumber(order.NumberPersonal)</textarea>
-                                </td>
-                                <td class="border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">
-                                    <textarea onchange="checkEmpty(this)" name="NumberMasters">@AsNumber(order.NumberMasters)</textarea>
-                                </td>
+                                <td class="@border"><textarea name="NumberOfRepairStaff">@orderRecords[0].NumberOfRepairStaff</textarea></td>
+                                <td class="@border"><textarea name="HeadOfWork" style="text-align: left;">@orderRecords[0].HeadOfWork</textarea></td>
+                                <td class="@border"><textarea name="Contractor" style="text-align: left;">@orderRecords[0].Contractor</textarea></td>
                                 <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
                             </tr>
 
@@ -486,7 +487,9 @@
                                     }
                                     <td class="@cls"><textarea name="NumberUnplannedOrder">@AsNumber(orderRecords[i].NumberUnplannedOrder)</textarea></td>
                                     <td class="@cls"><textarea name="NumberUnplannedCommand">@AsNumber(orderRecords[i].NumberUnplannedCommand)</textarea></td>
-                                    <td class="@cls"><textarea name="ReasonToUndone">@orderRecords[i].ReasonToUndone</textarea></td>
+                                    <td class="@cls"><textarea name="NumberOfRepairStaff">@orderRecords[i].NumberOfRepairStaff</textarea></td>
+                                    <td class="@cls"><textarea name="HeadOfWork" style="text-align: left;">@orderRecords[i].HeadOfWork</textarea></td>
+                                    <td class="@cls"><textarea name="Contractor" style="text-align: left;">@orderRecords[i].Contractor</textarea></td>
                                     <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
                                 </tr>
                             }
@@ -505,9 +508,9 @@
                                 <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
                                 <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
                                 <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
-                                <td class="text @border">@orderRecords[0].ReasonToUndone</td>
-                                <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
-                                <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                                <td class="text @border">@orderRecords[0].NumberOfRepairStaff</td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].HeadOfWork</td>
+                                <td class="text @border" style="text-align: left;">@orderRecords[0].Contractor</td>
                                 <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
                             </tr>
 
@@ -523,7 +526,9 @@
                                     <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
                                     <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
                                     <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
-                                    <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                    <td class="@cls text">@orderRecords[i].NumberOfRepairStaff</td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].HeadOfWork</td>
+                                    <td class="@cls text" style="text-align: left;">@orderRecords[i].Contractor</td>
                                     <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
                                 </tr>
                             }
@@ -544,9 +549,9 @@
                             <td class="text @border">@AsNumber(orderRecords[0].NumberPlannedCommand)</td>
                             <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedOrder)</td>
                             <td class="text @border">@AsNumber(orderRecords[0].NumberUnplannedCommand)</td>
-                            <td class="text @border">@orderRecords[0].ReasonToUndone</td>
-                            <td class="text border @(order.NumberPersonal < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberPersonal)</td>
-                            <td class="text border @(order.NumberMasters < 1 ? "empty" : "")" rowspan="@orderRecords.Count">@AsNumber(order.NumberMasters)</td>
+                            <td class="text @border">@orderRecords[0].NumberOfRepairStaff</td>
+                            <td class="text @border" style="text-align: left;">@orderRecords[0].HeadOfWork</td>
+                            <td class="text @border" style="text-align: left;">@orderRecords[0].Contractor</td>
                             <td class="text right @border @answerCodeN">@orderRecords[0].GetAnswer()</td>
                         </tr>
 
@@ -562,7 +567,9 @@
                                 <td class="@cls text">@AsNumber(orderRecords[i].NumberPlannedCommand)</td>
                                 <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedOrder)</td>
                                 <td class="@cls text">@AsNumber(orderRecords[i].NumberUnplannedCommand)</td>
-                                <td class="@cls text">@orderRecords[i].ReasonToUndone</td>
+                                <td class="@cls text">@orderRecords[i].NumberOfRepairStaff</td>
+                                <td class="@cls text" style="text-align: left;">@orderRecords[i].HeadOfWork</td>
+                                <td class="@cls text" style="text-align: left;">@orderRecords[i].Contractor</td>
                                 <td class="@cls text right @answerCodeN">@orderRecords[i].GetAnswer()</td>
                             </tr>
                         }

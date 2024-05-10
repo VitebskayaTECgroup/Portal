@@ -42,7 +42,10 @@ namespace Portal.Controllers
 					NumberUnplannedCommand = 0,
 					NumberUnplannedOrder = 0,
 					ReasonToUndone = "",
-					AnswerCode = 0, //1
+                    NumberOfRepairStaff = "",
+                    HeadOfWork = "",
+                    Contractor = "",
+                    AnswerCode = 0, //1
 					AnswerDate = null,
 					AnswerUserId = 0,
 				});
@@ -147,10 +150,31 @@ namespace Portal.Controllers
 							.Set(x => x.ReasonToUndone, Value)
 							.Update();
 						break;
-					case "AnswerCode":
+                    case "NumberOfRepairStaff":
+                        db.OrdersRecords
+                            .Where(x => x.Id == RecordId)
+                            .Set(x => x.NumberOfRepairStaff, Value)
+                            .Update();
+                        break;
+                    case "HeadOfWork":
+                        db.OrdersRecords
+                            .Where(x => x.Id == RecordId)
+                            .Set(x => x.HeadOfWork, Value)
+                            .Update();
+                        break;
+                    case "Contractor":
+                        db.OrdersRecords
+                            .Where(x => x.Id == RecordId)
+                            .Set(x => x.Contractor, Value)
+                            .Update();
+                        break;
+                    case "AnswerCode":
+                        int userID = db.Authorize(User).UID;
 						db.OrdersRecords
 							.Where(x => x.Id == RecordId)
 							.Set(x => x.AnswerCode, value)
+							.Set(x => x.AnswerUserId, userID)
+							.Set(x => x.AnswerDate, DateTime.Now)
 							.Update();
 						break;
 

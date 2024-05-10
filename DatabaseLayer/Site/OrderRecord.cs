@@ -39,7 +39,16 @@ namespace DatabaseLayer.Site
 		[Column]
 		public string ReasonToUndone { get; set; }
 
-		[Column]
+        [Column]
+        public string NumberOfRepairStaff { get; set; }
+
+        [Column]
+        public string HeadOfWork { get; set; }
+
+        [Column]
+        public string Contractor { get; set; }
+
+        [Column]
 		public int AnswerCode { get; set; }
 
 		[Column]
