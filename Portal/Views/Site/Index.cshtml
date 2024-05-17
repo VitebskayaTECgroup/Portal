@@ -297,58 +297,90 @@
 				@*<div class="news-tab-button" data-tab="technic" title="Нажмите, чтобы открыть вкладку с формами электронных обращений к участку АСУТП филиала">Заявки к АСУТП</div>*@
 				<div class="news-tab-button" data-tab="actions" title="Нажмите, чтобы открыть вкладку с ссылками на действия, доступные через сайт">Действия</div>
 			</div>
-			<div class="news-tab-body">
-				<div class="news-tab-content news-tab-selected" data-tab="news">
-					@if (user.IsNewsCreator)
-					{
-						<a class="news-add" href="@Url.Action("Create", "News")" title="Нажмите, чтобы перейти к форме создания новостей">Добавить новость</a>
-					}
-					<div id="news">
-						@Html.Action("List", "News", new { take = 20 })
-					</div>
-				</div>
-				<div class="news-tab-content" data-tab="safety" id="safety"></div>
-				<div class="news-tab-content" data-tab="notifications" id="notes" onkeydown="getNotifications()">
-					@Html.Action("Notes", "Site")
-				</div>
-				<div class="news-tab-content" data-tab="technic">
-					Заявки на картриджи
-				</div>
-				<div class="news-tab-content" data-tab="actions">
-					<div class="block">
-						<a class="widget_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
-						@if (user.UName == "vtg" || user.UName == "void")
-						{
-							<a class="widget_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
-						}
-						else if (user.UName == "esmal" || user.UName == "crow")
-						{
-							<a class="widget_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
-						}
-						<span class="widget_break"> </span>
-						@using (var devin = new DatabaseLayer.Devin.DevinContext())
-						{
-							var printers = devin.Devices
-								.Where(x => x.Users.Contains(user.UName))
-								.ToList();
+            <div class="news-tab-body">
+                <div class="news-tab-content news-tab-selected" data-tab="news">
+                    @try
+                    {
+                        string folderImgMainPagePath = @"\\web\Files\imgMainPage\";
+                        string[] fileImgMainPageMass = Directory.GetFiles(folderImgMainPagePath);
+                        List<string> imgMainPageList = new List<string>();
+                        string[] imgMainPageMass = new string[0] { };
 
-							int numberOfPrinters = printers
-								.Where(x => x.Users.Split(';').Contains(user.UName))
-								.Count();
+                        if (fileImgMainPageMass.Length > 0)
+                        {
+                            foreach (string fileImgMainPagePath in fileImgMainPageMass)
+                            {
+                                string extension = Path.GetExtension(fileImgMainPagePath).Replace(".", "");
+                                if (extension == "bmp" || extension == "gif" || extension == "jpg" || extension == "png" || extension == "jpe" || extension == "jpeg")
+                                {
+                                    imgMainPageList.Add(fileImgMainPagePath);
+                                }
+                            }
+                            if (imgMainPageList.Count > 0)
+                            {
+                                imgMainPageMass = imgMainPageList.ToArray();
+                                int n = imgMainPageMass[0].LastIndexOf("\\");
+                                string firstImgMainPage = imgMainPageMass[0].Substring(n + 1);
+                                <div class="img-main-page">
+                                    <img style="width:100%; height:100%" title='@firstImgMainPage' src="http://www.vst.vitebsk.energo.net/files/imgMainPage/@firstImgMainPage" />
+                                </div>
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
 
-							if (numberOfPrinters > 0 || user.IsAdmin)
-							{
-								<span class="widget_break"> </span>
-								if (numberOfPrinters > 0)
-								{
-									<a class="widget_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
-								}
-								<a class="widget_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
-							}
-						}
-					</div>
-				</div>
-			</div>
+                    @if (user.IsNewsCreator)
+                    {
+                        <a class="news-add" href="@Url.Action("Create", "News")" title="Нажмите, чтобы перейти к форме создания новостей">Добавить новость</a>
+                    }
+                    <div id="news">
+                        @Html.Action("List", "News", new { take = 20 })
+                    </div>
+                </div>
+                <div class="news-tab-content" data-tab="safety" id="safety"></div>
+                <div class="news-tab-content" data-tab="notifications" id="notes" onkeydown="getNotifications()">
+                    @Html.Action("Notes", "Site")
+                </div>
+                <div class="news-tab-content" data-tab="technic">
+                    Заявки на картриджи
+                </div>
+                <div class="news-tab-content" data-tab="actions">
+                    <div class="block">
+                        <a class="widget_link" onclick="printReport()">Получить карточку учёта выч. техники</a>
+                        @if (user.UName == "vtg" || user.UName == "void")
+                        {
+                            <a class="widget_link" onclick="printReportMol('КОСТЮЧЕНКО Т.Г.')">Получить карточку учёта по М.О.Л.</a>
+                        }
+                        else if (user.UName == "esmal" || user.UName == "crow")
+                        {
+                            <a class="widget_link" onclick="printReportMol('ОСМОЛОВСКИЙ А.В.')">Получить карточку учёта по М.О.Л.</a>
+                        }
+                        <span class="widget_break"> </span>
+                        @using (var devin = new DatabaseLayer.Devin.DevinContext())
+                        {
+                            var printers = devin.Devices
+                                .Where(x => x.Users.Contains(user.UName))
+                                .ToList();
+
+                            int numberOfPrinters = printers
+                                .Where(x => x.Users.Split(';').Contains(user.UName))
+                                .Count();
+
+                            if (numberOfPrinters > 0 || user.IsAdmin)
+                            {
+                                <span class="widget_break"> </span>
+                                if (numberOfPrinters > 0)
+                                {
+                                    <a class="widget_link" href="/pages/cartridges/">Оставить заявку на замену картриджа</a>
+                                }
+                                <a class="widget_link" href="/pages/cartridges/home/list">Список заявок на замену картриджей</a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
 			<script>
 				document.querySelectorAll('.news-tab-button').forEach(function (el) {
 					el.addEventListener('click', function (ev) {
