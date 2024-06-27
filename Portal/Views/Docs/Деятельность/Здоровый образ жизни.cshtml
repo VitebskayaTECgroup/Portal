@@ -1,94 +1,114 @@
 ﻿@{
-	ViewBag.Title = "Здоровый образ жизни";
-	Layout = "~/Views/Shared/_MainLayout.cshtml";
+    ViewBag.Title = "Здоровый образ жизни";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 <div>
-	<h4>Телефоны доверия</h4>
-	<button onclick="toggle('box1')">Открыть</button>
-	<div id="box1" style="display: none;">
-		<table>
-			<thead>
-				<tr>
-					<th>№ п/п</th>
-					<th>Наименование учреждения здравоохранения</th>
-					<th>Телефон доверия</th>
-					<th>График работы телефона доверия</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>1.</td>
-					<td>УЗ «Витебская городская станция скорой и неотложной медицинской помощи»</td>
-					<td>+375 (212) 67-36-44</td>
-					<td>Круглосуточно</td>
-				</tr>
-				<tr>
-					<td>2.</td>
-					<td>УЗ «Витебский  областной  клинический центр психиатрии и наркологии» </td>
-					<td>+375 (212) 61-60-60</td>
-					<td>Круглосуточно</td>
-				</tr>
-				<tr>
-					<td>3.</td>
-					<td>УЗ «Оршанский психоневрологический диспансер»</td>
-					<td>+375 (216) 51-00-19</td>
-					<td>с 8.00 до 20.00</td>
-				</tr>
-				<tr>
-					<td>4.</td>
-					<td>УЗ «Полоцкая областная психиатрическая больница»</td>
-					<td>+375 (214) 77-22-20</td>
-					<td>с 8.00 до 20.00</td>
-				</tr>
-				<tr>
-					<td>5.</td>
-					<td>УЗ «Новополоцкий психоневрологический диспансер»</td>
-					<td>+375 (214) 37-13-75</td>
-					<td>с 8.00 до 17.00</td>
-				</tr>
-				<tr>
-					<td>6.</td>
-					<td>УЗ «Глубокская центральная районная больница»</td>
-					<td>+375 (215) 62-92-53</td>
-					<td>с 9.00 до 15.00</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <h4>Телефоны доверия</h4>
+    <button onclick="toggle('box1')">Открыть</button>
+    <div id="box1" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>№ п/п</th>
+                    <th>Наименование учреждения здравоохранения</th>
+                    <th>Телефон доверия</th>
+                    <th>График работы телефона доверия</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1.</td>
+                    <td>УЗ «Витебская городская станция скорой и неотложной медицинской помощи»</td>
+                    <td>+375 (212) 67-36-44</td>
+                    <td>Круглосуточно</td>
+                </tr>
+                <tr>
+                    <td>2.</td>
+                    <td>УЗ «Витебский  областной  клинический центр психиатрии и наркологии» </td>
+                    <td>+375 (212) 61-60-60</td>
+                    <td>Круглосуточно</td>
+                </tr>
+                <tr>
+                    <td>3.</td>
+                    <td>УЗ «Оршанский психоневрологический диспансер»</td>
+                    <td>+375 (216) 51-00-19</td>
+                    <td>с 8.00 до 20.00</td>
+                </tr>
+                <tr>
+                    <td>4.</td>
+                    <td>УЗ «Полоцкая областная психиатрическая больница»</td>
+                    <td>+375 (214) 77-22-20</td>
+                    <td>с 8.00 до 20.00</td>
+                </tr>
+                <tr>
+                    <td>5.</td>
+                    <td>УЗ «Новополоцкий психоневрологический диспансер»</td>
+                    <td>+375 (214) 37-13-75</td>
+                    <td>с 8.00 до 17.00</td>
+                </tr>
+                <tr>
+                    <td>6.</td>
+                    <td>УЗ «Глубокская центральная районная больница»</td>
+                    <td>+375 (215) 62-92-53</td>
+                    <td>с 9.00 до 15.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
+
+
 <script>
-	function toggle(id) {
-		var el = document.getElementById(id)
-		el.style.display = el.style.display == 'none' ? 'block' : 'none'
-	}
+    function toggle(id) {
+        var el = document.getElementById(id)
+        el.style.display = el.style.display == 'none' ? 'block' : 'none'
+    }
 </script>
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-	Name = "Материалы за 2023 год",
-	RelativePath = @"Деятельность\Здоровый образ жизни\2023\",
-	NoImages = true,
+    Name = "Материалы за 2024 год",
+    RelativePath = @"Деятельность\Здоровый образ жизни\2024\",
+    NoImages = true,
+})
+
+<div>
+    <a href="https://www.formed.by/index.php?vop/">
+        <span class="material-icons" style="color: #999999; margin-left: 16px; margin-right: 16px; ">description</span>БЕЛМЕД. Инструкции о порядке организации медицинской помощи в отношении прекращения курения
+    </a>
+</div>
+<div>
+    <a href="https://www.who.int/ru/campaigns/s-a-r-a-h/">
+        <span class="material-icons" style="color: #999999; margin-left: 16px; margin-right: 16px; ">help_center</span>S.A.R.A.H. – автоматизированный помощник по вопросам здоровья на основе искусственного интеллекта
+    </a>
+</div>
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+    Name = "Материалы за 2023 год",
+    RelativePath = @"Деятельность\Здоровый образ жизни\2023\",
+    NoImages = true,
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-	Name = "Материалы за 2022 год",
-	RelativePath = @"Деятельность\Здоровый образ жизни\2022\",
-	NoImages = true,
+    Name = "Материалы за 2022 год",
+    RelativePath = @"Деятельность\Здоровый образ жизни\2022\",
+    NoImages = true,
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-	Name = "Материалы за 2021 год",
-	RelativePath = @"Деятельность\Здоровый образ жизни\2021\",
-	NoImages = true,
+    Name = "Материалы за 2021 год",
+    RelativePath = @"Деятельность\Здоровый образ жизни\2021\",
+    NoImages = true,
 })
 
 @Html.Partial("_LiveFolder", new LiveFolder
 {
-	Name = "Материалы за 2020 год",
-	RelativePath = @"Деятельность\Здоровый образ жизни\2020\",
-	NoImages = true,
+    Name = "Материалы за 2020 год",
+    RelativePath = @"Деятельность\Здоровый образ жизни\2020\",
+    NoImages = true,
 })
