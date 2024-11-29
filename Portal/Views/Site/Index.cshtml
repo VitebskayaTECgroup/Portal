@@ -397,137 +397,143 @@
 		</div>
 	</div>
 
-	<div class="right-column" id="mnemo">
+    <div class="right-column" id="mnemo">
 
-		<div class="widget">
-			<a href="~/phonebook" class="link bold">
-				Телефонный справочник <i class="material-icons" style="font-size: .75em;">open_in_new</i>
-				<i class="material-icons preloader" id="preloader">sync</i>
-			</a>
-			<input type="search" class="search" placeholder="введите запрос и нажмите Enter" autofocus />
-			<a class="widget_link" style="margin-top: .5em;" href="http://phone.vitebsk.energo.net/">Справочник РУП "Витебскэнерго" <i class="material-icons" style="font-size: .75em;">open_in_new</i></a>
-		</div>
+        <div class="widget">
+            <a href="~/phonebook" class="link bold">
+                Телефонный справочник <i class="material-icons" style="font-size: .75em;">open_in_new</i>
+                <i class="material-icons preloader" id="preloader">sync</i>
+            </a>
+            <input type="search" class="search" placeholder="введите запрос и нажмите Enter" autofocus />
+            <a class="widget_link" style="margin-top: .5em;" href="http://phone.vitebsk.energo.net/">Справочник РУП "Витебскэнерго" <i class="material-icons" style="font-size: .75em;">open_in_new</i></a>
+        </div>
 
-		<div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://project.vst.vitebsk.energo.net/asu/#/http://project.vst.vitebsk.energo.net/mnemonica/sonar/'">
-			<div class="link bold">Основные параметры ТЭЦ <i class="material-icons" style="font-size: .75em;">open_in_new</i></div>
-			<div id="station-parameters">
-				
-			</div>
-		</div>
+        <div title='Нажмите для перехода к мнемосхеме "SONAR"' class="widget" onclick="document.location='http://project.vst.vitebsk.energo.net/asu/#/http://project.vst.vitebsk.energo.net/mnemonica/sonar/'">
+            <div class="link bold">Основные параметры ТЭЦ <i class="material-icons" style="font-size: .75em;">open_in_new</i></div>
+            <div id="station-parameters">
 
-		@if (user.IsAdmin)
-		{
-			<div class="widget" style="text-align: center;" title="Нажмите для перехода к просмотру расписания дней рождений сотрудников" onclick="location='@Url.Action("birthdays", "site")'">
-				@{
-					var date = DateTime.Now.AddDays(-1);
-					var yesterdayBirthdays = db.Persons
-						.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
-						.Select(x => x.Family)
-						.ToList();
+            </div>
+        </div>
 
-					date = date.AddDays(1);
-					var todayBirthdays = db.Persons
-						.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
-						.Select(x => x.Family)
-						.ToList();
+        @if (user.IsAdmin)
+        {
+            <div class="widget" style="text-align: center;" title="Нажмите для перехода к просмотру расписания дней рождений сотрудников" onclick="location='@Url.Action("birthdays", "site")'">
+                @{
+                    var date = DateTime.Now.AddDays(-1);
+                    var yesterdayBirthdays = db.Persons
+                        .Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
+                        .Select(x => x.Family)
+                        .ToList();
 
-					date = date.AddDays(1);
-					var tomorrowBirthdays = db.Persons
-						.Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
-						.Select(x => x.Family)
-						.ToList();
+                    date = date.AddDays(1);
+                    var todayBirthdays = db.Persons
+                        .Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
+                        .Select(x => x.Family)
+                        .ToList();
 
-					if (yesterdayBirthdays.Count > 0 || todayBirthdays.Count > 0 || tomorrowBirthdays.Count > 0)
-					{
-						if (yesterdayBirthdays.Count > 0)
-						{
-							<div class="weather_another">
-								<i>Вчера был день рождения:</i><br />
-								@foreach (var s in yesterdayBirthdays)
-								{
-									<div class="blue">@s</div>
-								}
-							</div>
-						}
+                    date = date.AddDays(1);
+                    var tomorrowBirthdays = db.Persons
+                        .Where(x => x.BirthDate.Day == date.Day && x.BirthDate.Month == date.Month)
+                        .Select(x => x.Family)
+                        .ToList();
 
-						if (todayBirthdays.Count > 0)
-						{
-							<div class="weather_today">
-								<b>
-									Поздравляем с днем рождения!
-								</b>
-								@foreach (var s in todayBirthdays)
-								{
-									<div class="blue">@s</div>
-								}
-							</div>
-						}
+                    if (yesterdayBirthdays.Count > 0 || todayBirthdays.Count > 0 || tomorrowBirthdays.Count > 0)
+                    {
+                        if (yesterdayBirthdays.Count > 0)
+                        {
+                            <div class="weather_another">
+                                <i>Вчера был день рождения:</i><br />
+                                @foreach (var s in yesterdayBirthdays)
+                                {
+                                    <div class="blue">@s</div>
+                                }
+                            </div>
+                        }
 
-						if (tomorrowBirthdays.Count > 0)
-						{
-							<div class="weather_another">
-								<i>День рождения завтра:</i><br />
-								@foreach (var s in tomorrowBirthdays)
-								{
-									<div class="blue">@s</div>
-								}
-							</div>
-						}
-					}
-					else
-					{
-						<span>В ближайшее время нет дней рождений</span>
-					}
-				}
-			</div>
-		}
+                        if (todayBirthdays.Count > 0)
+                        {
+                            <div class="weather_today">
+                                <b>
+                                    Поздравляем с днем рождения!
+                                </b>
+                                @foreach (var s in todayBirthdays)
+                                {
+                                    <div class="blue">@s</div>
+                                }
+                            </div>
+                        }
 
-		<div class="widget">
-			<table>
-				<tr>
-					<td width="40px"><img src="~/Content/images/money.rub.gif" /></td>
-					<td>100 российских рублей</td>
-					<td class="blue">@values["RUB"]</td>
-				</tr>
-				<tr>
-					<td><img src="~/Content/images/money.eur.gif" /></td>
-					<td>1 евро</td>
-					<td class="blue">@values["EUR"]</td>
-				</tr>
-				<tr>
-					<td><img src="~/Content/images/money.usd.gif" /></td>
-					<td>1 доллар США</td>
-					<td class="blue">@values["USD"]</td>
-				</tr>
-			</table>
-		</div>
+                        if (tomorrowBirthdays.Count > 0)
+                        {
+                            <div class="weather_another">
+                                <i>День рождения завтра:</i><br />
+                                @foreach (var s in tomorrowBirthdays)
+                                {
+                                    <div class="blue">@s</div>
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span>В ближайшее время нет дней рождений</span>
+                    }
+                }
+            </div>
+        }
 
-		<div class="widget" id="metals-container">
-			@Html.Action("MetalCosts")
-		</div>
+        <div class="widget">
+            <table>
+                <tr>
+                    <td width="40px"><img src="~/Content/images/money.rub.gif" /></td>
+                    <td>100 российских рублей</td>
+                    <td class="blue">@values["RUB"]</td>
+                </tr>
+                <tr>
+                    <td><img src="~/Content/images/money.eur.gif" /></td>
+                    <td>1 евро</td>
+                    <td class="blue">@values["EUR"]</td>
+                </tr>
+                <tr>
+                    <td><img src="~/Content/images/money.usd.gif" /></td>
+                    <td>1 доллар США</td>
+                    <td class="blue">@values["USD"]</td>
+                </tr>
+            </table>
+        </div>
 
-		<div class="widget" title="Нажмите для перехода к просмотру прогноза погоды" onclick="location = 'http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today'">
-			<a class="link bold" href="http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды <i class="material-icons" style="font-size: .75em;">open_in_new</i></a>
-			@{
-				try
-				{
-					var html = File.ReadAllText(@"\\web\wwwroot\Content\html\weather\MeteoBy\main.html");
-					html = html.Replace("src=\"img/", "src=\"http://www.vst.vitebsk.energo.net/Content/html/weather/MeteoBy/img/");
-					<div>
-						@Html.Raw(html)
-					</div>
-				}
-				catch (Exception e)
-				{
-					<div class="hide">@e.Message</div>
-				}
-			}
-			<div>
-				Сейчас <div class="blue" id="weather" style="display: inline; font-size: 1.2em;" title="Текущая температура на улице (основная мазутнонасосная)"></div> °C
-				&emsp;
-			</div>
-		</div>
-	</div>
+        <div class="widget" id="metals-container">
+            @Html.Action("MetalCosts")
+        </div>
+
+        <div class="widget" title="Нажмите для перехода к просмотру прогноза погоды" onclick="location = 'http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today'">
+            <a class="link bold" href="http://www.vst.vitebsk.energo.net/pages/weather/?date=@DateTime.Today.ToString("ddMMyyyy")">Прогноз погоды <i class="material-icons" style="font-size: .75em;">open_in_new</i></a>
+            @{
+                try
+                {
+                    var html = File.ReadAllText(@"\\web\wwwroot\Content\html\weather\MeteoBy\main.html");
+                    html = html.Replace("src=\"img/", "src=\"http://www.vst.vitebsk.energo.net/Content/html/weather/MeteoBy/img/");
+                    <div>
+                        @Html.Raw(html)
+                    </div>
+                }
+                catch (Exception e)
+                {
+                    <div class="hide">@e.Message</div>
+                }
+            }
+            <div>
+                Сейчас <div class="blue" id="weather" style="display: inline; font-size: 1.2em;" title="Текущая температура на улице (основная мазутнонасосная)"></div> °C
+                &emsp;
+            </div>
+        </div>
+
+        <div class="widget" id="restaurant">
+            <a href="http://www.vitebsk.energo.net/cfor/menu/menu_vst.xls">
+                <span class="material-icons" style="color: #ccc;">restaurant</span> Меню столовой ВТЭЦ
+            </a>
+        </div>
+    </div>
 }
 
 @section scripts {
