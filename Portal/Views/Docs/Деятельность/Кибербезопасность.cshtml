@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Кибербезопасность";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+
+    string parentPath = @"Деятельность\Кибербезопасность\";
+}
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+    SortByDate = true,
+    Name = "Кибербезопасность",
+    //RelativePath = parentPath + @"Кибербезопасность\",
+    RelativePath = parentPath,
+})
