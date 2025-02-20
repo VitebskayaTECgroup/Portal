@@ -283,8 +283,15 @@
 	color: #1e8ef7;
 }
 
-.img-main-page{
+.img-main-page-div {
 	margin-bottom: 12px;
+	text-align: center;
+}
+
+.img-main-page-img {
+	max-width: 100%;
+	max-height: 400px;
+	display: inline-block;
 }
 
 .news-tab-content {
