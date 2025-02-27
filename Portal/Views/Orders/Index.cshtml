@@ -16,7 +16,7 @@
 	<title>Ежедневная информация об организации работ</title>
 </head>
 <body class="@theme">
-	@using (var db = new SiteContext())
+    @using (var db = new SiteContext())
 	{
 		var user = db.Authorize(User);
 		var date = DateTime.TryParse(Request.QueryString.Get("date") ?? "", out DateTime d) ? d : DateTime.Today;
@@ -120,6 +120,13 @@
 			{
 				<button onclick="sendToFTP()">Отправить отчёт в РУП по FTP</button>
 			}
+            @if ((date.Date - DateTime.Today).Days > 0)
+            {
+                <br /><br />
+                <div style="width: 100%; text-align: center; vertical-align: middle; font-size: 15px">
+                    <span style="width: 45px; margin: 1px; font-size: 30px; color: red">&#9888;</span> Кнопка "Копия" копирует все работы за прошедший день, содержащий хотябы одну запланированную работу <span style="width: 45px; margin: 1px; font-size: 30px; color: red">&#9888;</span>
+                </div>
+            }
 		</div>
 
 		<table>
@@ -245,15 +252,23 @@
                     </tr>
                 }
             }*@
-                    if (isNSS || user.UName == "crow")
+                if (isNSS || user.UName == "crow")
+                {
+                    answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                    string border = orderRecords.Count < 2 ? "border" : "";
+                    if (date.Date >= DateTime.Today)
                     {
-                        answerCodeN = "answercode" + orderRecords[0].AnswerCode;
-                        string border = orderRecords.Count < 2 ? "border" : "";
-                        if (date.Date >= DateTime.Today)
-                        {
                             <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
                                 <td class="border left" rowspan="@orderRecords.Count">
                                     <span>@order.Guild</span> <button onclick="addRecord(@order.Id)">+</button>
+                                    @if (user.UName == "crow")
+                                    {
+                                        if ((date.Date - DateTime.Today).Days > 0)
+                                        {
+                                            <br />
+                                            <button onclick="copyRecords(@order.Id)">Копия</button>
+                                        }
+                                    }
                                 </td>
                                 <td class="@border"><button onclick="delRecord(@orderRecords[0].Id)">-</button></td>
                                 <td class="@border"><textarea name="Description" style="text-align: left;">@orderRecords[0].Description</textarea></td>
@@ -445,6 +460,11 @@
                             <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
                                 <td class="border left" rowspan="@orderRecords.Count">
                                     <span>@order.Guild</span> <button onclick="addRecord(@order.Id)">+</button>
+                                    @if ((date.Date - DateTime.Today).Days > 0)
+                                    {
+                                        <br />
+                                        <button onclick="copyRecords(@order.Id)">Копия</button>
+                                    }
                                 </td>
                                 <td class="@border"><button onclick="delRecord(@orderRecords[0].Id)">-</button></td>
                                 <td class="@border"><textarea name="Description" style="text-align: left;">@orderRecords[0].Description</textarea></td>
@@ -580,101 +600,112 @@
 
 		<div class="messages" id="messages"></div>
 
-		<script>
-		function delRecord(recordId) {
-			var form = new FormData()
-			form.append('Id', recordId)
-			form.append('UserId', @user.UID)
+        <script>
+		    function delRecord(recordId) {
+			    var form = new FormData()
+			    form.append('Id', recordId)
+			    form.append('UserId', @user.UID)
 
-			fetch('@Url.Action("DelRecord", "Orders")', { method: 'post', body: form })
-				.then(function () { location.reload() })
+			    fetch('@Url.Action("DelRecord", "Orders")', { method: 'post', body: form })
+				    .then(function () { location.reload() })
+		    }
+
+		    function addRecord(orderId) {
+			    var form = new FormData()
+			    form.append('Id', orderId)
+			    form.append('UserId', @user.UID)
+
+			    fetch('@Url.Action("AddRecord", "Orders")', { method: 'post', body: form })
+				    .then(function () { location.reload() })
+		    }
+
+            function copyRecords(orderId) {
+                var form = new FormData()
+                //var row = el.parentNode.parentNode
+                form.append('IdOrderWork', orderId)
+                //form.append('orderId', row.getAttribute('orderId'))
+                form.append('UserId', @user.UID)
+
+                fetch('@Url.Action("CopyRecords", "Orders")', { method: 'post', body: form })
+                    .then(function () { location.reload() })
+	        }
+
+            function checkEmpty(textarea) {
+                if (textarea.value && textarea.value != '') {
+                    textarea.parentNode.className = ''
+                }
+                else {
+                    textarea.parentNode.className = 'empty'
+                }
+            }
+
+            document.querySelectorAll('textarea').forEach(function (el) {
+                el.style.height = "5px";
+                el.style.height = (el.scrollHeight) + "px";
+                el.addEventListener('input', function () {
+                    el.style.height = "5px";
+                    el.style.height = (el.scrollHeight) + "px";
+                })
+			        el.addEventListener('resize', function () {
+                    el.style.height = "5px";
+                    el.style.height = (el.scrollHeight) + "px";
+                })
+
+			        var old = ''
+                    el.addEventListener('focus', function () {
+                        old = el.value
+                    })
+			        el.addEventListener('blur', function () {
+                        if (old != el.value) save(el)
+                    })
+		        })
+
+		        document.querySelectorAll('select').forEach(function (el) {
+                el.addEventListener('change', function () {
+                    save(el)
+                    })
+		        })
+
+		        function save(el) {
+                var row = el.parentNode.parentNode
+                    var form = new FormData()
+                    form.append('OrderId', row.getAttribute('orderId'))
+                    form.append('RecordId', row.getAttribute('recordId'))
+                    form.append('Name', el.getAttribute('name'))
+                    if (el.tagName == 'DIV') {
+                    form.append('Value', el.innerHTML)
+                }
+                else {
+                    form.append('Value', el.value)
+                }
+
+                fetch('@Url.Action("Save", "Orders")', { method: 'post', body: form })
+				        .then(function () { message('Сохранено') })
+		        }
+
+                function message(text) {
+                    var container = document.getElementById('messages')
+                        var ms = document.createElement('div')
+                        ms.innerHTML = text
+                        container.appendChild(ms)
+                        setTimeout(function () { container.removeChild(ms) }, 3000)
+		            }
+
+                function sendToFTP() {
+                    var form = new FormData()
+                        form.append('Date', '@date.ToString("dd.MM.yyyy")')
+
+                        fetch('@Url.Action("SendToFTP", "Orders")', { method: 'post', body: form })
+				            .then(function (res) { return res.json() })
+				            .then(function (json) {
+                        if (json.Done) location.reload()
+                        if (json.Error) {
+                            alert('Произошла ошибка загрузки. Сообщите в уАСУТП по тел. 3-34')
+                            console.log(json.e)
+                        }
+                })
 		}
-
-		function addRecord(orderId) {
-			var form = new FormData()
-			form.append('Id', orderId)
-			form.append('UserId', @user.UID)
-
-			fetch('@Url.Action("AddRecord", "Orders")', { method: 'post', body: form })
-				.then(function () { location.reload() })
-		}
-
-		function checkEmpty(textarea) {
-			if (textarea.value && textarea.value != '') {
-				textarea.parentNode.className = ''
-			}
-			else {
-				textarea.parentNode.className = 'empty'
-			}
-		}
-
-		document.querySelectorAll('textarea').forEach(function (el) {
-			el.style.height = "5px";
-			el.style.height = (el.scrollHeight) + "px";
-			el.addEventListener('input', function () {
-				el.style.height = "5px";
-				el.style.height = (el.scrollHeight) + "px";
-			})
-			el.addEventListener('resize', function () {
-				el.style.height = "5px";
-				el.style.height = (el.scrollHeight) + "px";
-			})
-
-			var old = ''
-			el.addEventListener('focus', function () {
-				old = el.value
-			})
-			el.addEventListener('blur', function () {
-				if (old != el.value) save(el)
-			})
-		})
-
-		document.querySelectorAll('select').forEach(function (el) {
-			el.addEventListener('change', function () {
-				save(el)
-			})
-		})
-
-		function save(el) {
-			var row = el.parentNode.parentNode
-			var form = new FormData()
-			form.append('OrderId', row.getAttribute('orderId'))
-			form.append('RecordId', row.getAttribute('recordId'))
-			form.append('Name', el.getAttribute('name'))
-			if (el.tagName == 'DIV') {
-				form.append('Value', el.innerHTML)
-			}
-			else {
-				form.append('Value', el.value)
-			}
-
-			fetch('@Url.Action("Save", "Orders")', { method: 'post', body: form })
-				.then(function () { message('Сохранено') })
-		}
-
-		function message(text) {
-			var container = document.getElementById('messages')
-			var ms = document.createElement('div')
-			ms.innerHTML = text
-			container.appendChild(ms)
-			setTimeout(function () { container.removeChild(ms) }, 3000)
-		}
-
-		function sendToFTP() {
-			var form = new FormData()
-			form.append('Date', '@date.ToString("dd.MM.yyyy")')
-
-			fetch('@Url.Action("SendToFTP", "Orders")', { method: 'post', body: form })
-				.then(function (res) { return res.json() })
-				.then(function (json) {
-					if (json.Done) location.reload()
-					if (json.Error) {
-						alert('Произошла ошибка загрузки. Сообщите в уАСУТП по тел. 3-34')
-						console.log(json.e)
-					}
-				})
-		}
-		</script>
+        </script>
 	}
 </body>
 </html>

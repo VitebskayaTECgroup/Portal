@@ -938,6 +938,7 @@
     <Content Include="Views\Shared\Accident.cshtml" />
     <Content Include="Views\Safety\Edit.cshtml" />
     <Content Include="Views\Docs\Деятельность\Кибербезопасность.cshtml" />
+    <Content Include="Views\Docs\Деятельность\Идеология.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

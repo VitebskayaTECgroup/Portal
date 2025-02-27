@@ -1,11 +1,15 @@
 ﻿using DatabaseLayer.Site;
 using LinqToDB;
 using NPOI.HSSF.UserModel;
+using NPOI.SS.Formula.Functions;
 using System;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using static LinqToDB.Common.Configuration;
+using static LinqToDB.Sql;
 
 namespace Portal.Controllers
 {
@@ -25,6 +29,173 @@ namespace Portal.Controllers
 
 			return Json(new { Done = true });
 		}
+
+        public ActionResult CopyRecords(int IdOrderWork, int UserId)
+        {
+            /*
+            заметки, могут быть неточными
+
+
+            DateWork = дата, на которую планируются работы
+            GuildWork = подразделение, с которым работаем
+            IdOrderWork = Id из таблицы Order - текущий день, нужен для всей работы, найти в Orders по GuildWork и DateWork
+
+
+            в Orders по GuildWork найти последних 15 дат
+            из этих строк забрать Id в массив IdGldMass
+            гнать циклом все от самого большого значения к меньшему
+            в OrdersRecords найти все записи с OrderId == IdGldMass[i]
+            если записей нет - переход на следующий элемент массива
+            если запись одна - проверить, пустая ли она (Description == ""); если пустая - переход на следующий элемент массива, если не пустая - копируем и останавливаемся в переборе массива
+            если записей больше одной - копируем и останавливаемся в переборе массива
+
+            при копировании использовать 
+            новые / действующие     DateCreated = Now, UserId = user, OrderId = IdOrderWork
+            старые                  Description, NumberPlannedOrder, NumberPlannedCommand, NumberUnplannedOrder, NumberUnplannedCommand, NumberOfRepairStaff, HeadOfWork, Contractor
+            нулевые                 Comment = "", AnswerUserId = 0, AnswerDate = NULL
+            проверяемые             AnswerCode = 
+            0, если NumberPlannedCommand или NumberUnplannedCommand == 1
+            1, если NumberPlannedOrder или NumberUnplannedOrder == 1
+            2 в остальных случаях
+
+
+            найти пустую (Description == "") запись с IdOrderWork и удалить
+            */
+
+            using (var db = new SiteContext())
+			{
+				//забираем название подразделения по Id из таблицы Orders
+                string orderSingleGuild = db.Orders.Where(x => x.Id == IdOrderWork).Select(x => x.Guild).FirstOrDefault();
+
+				//по названию подразделения забираем Id последних 15 дней
+                var ordersListId = db.Orders.Where(x => x.Guild == orderSingleGuild).OrderByDescending(x => x.Date).Take(15).Select(x => x.Id).ToList();
+
+				//ближайший день с работами = непустой
+				int nearId = 0;
+
+				for (int i = 0; i < 15; i++)
+				{
+					//можно ли копировать день
+                    bool canCopyWork = false;
+                    
+					//день не должен совпадать с тем, на который планирут копию
+					if (ordersListId[i] != IdOrderWork)
+					{
+						//забираем все работы за день
+                        var ordersRecordsListById = db.OrdersRecords.Where(x => x.OrderId == ordersListId[i]).ToList();
+
+						//если есть одна запись и она содержит описание - можно копировать
+						if (ordersRecordsListById.Count == 1 && ordersRecordsListById.First().Description != "")
+						{
+							canCopyWork = true;
+						}
+                        //если записей больше одной - можно копировать
+                        if (ordersRecordsListById.Count > 1)
+                        {
+                            canCopyWork = true;
+                        }
+
+                        //если есть одна запись, но она пустая - копировать нельзя
+                        if (ordersRecordsListById.Count == 1 && ordersRecordsListById.First().Description == "")
+                        {
+                            canCopyWork = false;
+                        }
+                        //если записей меньше одной - копировать нельзя
+                        if (ordersRecordsListById.Count < 1)
+                        {
+                            canCopyWork = false;
+                        }
+                    }
+
+					//если можно копировать день
+                    if (canCopyWork)
+                    {
+                        //присваиваем Id переменной и выходим из цикла, т.к. остальные дни уже не нужны
+                        nearId = ordersListId[i];
+                        break;
+                    }
+                }
+
+				//если нашёлся день, который можно копировать
+				if (nearId != 0)
+				{
+					//за какую дату будут скопированы записи
+					//string orderDateToCopy = "Скопированы работы за " + db.Orders.Where(x => x.Id == nearId).Select(x => x.Date).FirstOrDefault().ToString("dd.MM.yyyy");
+
+					//все записи за копируемый день
+					var ordersRecordsListToCopy = db.OrdersRecords.Where(x => x.OrderId == nearId).OrderBy(x => x.Id).ToList();
+
+					//прогоняем каждую запись
+					foreach (OrderRecord orderRecordToCopy in ordersRecordsListToCopy)
+					{
+						//создаём новую запись, т.к. часть данных должна быть из старой записи, а часть из новой
+						OrderRecord orderRecordNew = new OrderRecord
+						{
+							//new
+							DateCreated = DateTime.Now,
+							OrderId = IdOrderWork,
+							UserId = UserId,
+							//old
+							Description = orderRecordToCopy.Description,
+                            NumberPlannedCommand = orderRecordToCopy.NumberPlannedCommand,
+                            NumberPlannedOrder = orderRecordToCopy.NumberPlannedOrder,
+                            NumberUnplannedCommand = orderRecordToCopy.NumberUnplannedCommand,
+                            NumberUnplannedOrder = orderRecordToCopy.NumberUnplannedOrder,
+                            HeadOfWork = orderRecordToCopy.HeadOfWork,
+                            Contractor = orderRecordToCopy.Contractor,
+                            NumberOfRepairStaff = orderRecordToCopy.NumberOfRepairStaff,
+                            //0
+                            Comment = "",
+							ReasonToUndone = "",
+                            AnswerDate = null,
+                            AnswerUserId = 0,
+							//calc
+                            AnswerCode = 0
+						};
+
+                        //т.к. записи "новые", то AnswerCode будет
+                        //1 = разрешающим, если это распоряжение
+                        //2 = запрещающим, если это наряд
+						//0 = неопределённым в остальных случаях
+                        if (orderRecordNew.NumberPlannedCommand == 1 || orderRecordNew.NumberUnplannedCommand == 1)
+						{
+							orderRecordNew.AnswerCode = 1;
+						}
+						else
+						{
+							if (orderRecordNew.NumberPlannedOrder == 1 || orderRecordNew.NumberUnplannedOrder == 1)
+							{
+								orderRecordNew.AnswerCode = 2;
+							}
+							else
+							{ 
+								orderRecordNew.AnswerCode = 0;
+                            }
+                        }
+
+						//добавление записи в базу
+						db.Insert(orderRecordNew);
+					}
+
+					//Id пустой записи, которую надо удалить
+					int idToDel = 0;
+                    idToDel = db.OrdersRecords.Where(x => x.OrderId == IdOrderWork).Where(x => x.Description == "").Select(x => x.Id).FirstOrDefault();
+
+					if (idToDel != 0)
+					{
+						db.OrdersRecords
+							.Where(x => x.Id == idToDel)
+							.Delete();
+					}
+                }
+				else
+				{
+                    //возвращаем сообщение, если не получилось выбрать Id прошлого рабочего дня
+                    //return "Не удалось получить данные за прошлый рабочий день";
+                }
+            }
+            return Json(new { Done = true });
+        }
 
         public ActionResult AddRecord(int Id, int UserId)
 		{

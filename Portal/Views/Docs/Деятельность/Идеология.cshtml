@@ -1,0 +1,32 @@
+﻿@{
+	ViewBag.Title = "Идеология";
+	Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<h3>Идеология</h3>
+
+<div style="border: 1px solid initial; padding: 2em;">
+
+    <script>
+        function toggle(id) {
+            var el = document.getElementById(id)
+            el.style.display = el.style.display == 'none' ? 'block' : 'none'
+        }
+    </script>
+
+    @Html.Partial("_LiveFolder", new LiveFolder
+    {
+        Name = "План мероприятий",
+        RelativePath = @"Деятельность\Идеология\План мероприятий\",
+        NoImages = true,
+    })
+
+    @Html.Partial("_LiveFolder", new LiveFolder
+    {
+        Name = "",
+        RelativePath = @"Деятельность\Идеология\",
+        NoImages = true,
+    })
+
+
+</div>
