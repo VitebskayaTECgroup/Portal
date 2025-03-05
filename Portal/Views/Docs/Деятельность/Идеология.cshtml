@@ -1,6 +1,6 @@
 ﻿@{
-	ViewBag.Title = "Идеология";
-	Layout = "~/Views/Shared/_MainLayout.cshtml";
+    ViewBag.Title = "Идеология";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
 <h3>Идеология</h3>
@@ -30,3 +30,20 @@
 
 
 </div>
+
+
+
+@*@{
+    ViewBag.Title = "Идеология";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<h3>@ViewBag.Title</h3>
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+    Name = null,
+    RelativePath = "Деятельность/Идеология/",
+    ViewNested = true,
+    WriteImageBox = true
+})*@
