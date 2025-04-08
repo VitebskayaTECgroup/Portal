@@ -1,4 +1,4 @@
-﻿@{
+﻿@*@{
     ViewBag.Title = "Отдых, оздоровление";
     Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
@@ -21,4 +21,24 @@
 
 <div class="iframer">
     <iframe src="http://www.vst.vitebsk.energo.net/files/Одно окно/Деятельность/5. Отдых/Приказ №311 от 14.03.2025.pdf"></iframe>
-</div>
+</div>*@
+
+@*
+сверху старое, метод с фреймом инетерсный, может где-нибудь в другом месте понадобится
+внизу "новое", аналогично другим "живым" папкам
+*@
+
+@{
+    ViewBag.Title = "Отдых, оздоровление";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+
+    string parentPath = @"Деятельность\5. Отдых\";
+}
+
+@Html.Partial("_LiveFolder", new LiveFolder
+{
+    ViewNested = true,
+    NoImages = true,
+    Name = "Отдых, оздоровление",
+    RelativePath = parentPath,
+})
