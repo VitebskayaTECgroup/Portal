@@ -91,41 +91,46 @@
 		</div>
 	</div>
 
-	<div class="center-right">
+    <div class="center-right">
 
-		<ul class="search">
-			<li class="search_caption">Поиск: </li>
-			<li>
-				<form action="~/phonebook/" id="form">
-					<input name="q" placeholder="Введите поисковый запрос..." value="@key" />
-				</form>
-			</li>
-			<li class="search_button">
-				<button onclick="$('#form').submit()">Искать</button>
-			</li>
-		</ul>
+        @*<div style="width: 100%; text-align: center; vertical-align: middle; font-size: 15px">
+            <span style="width: 45px; margin: 1px; font-size: 30px; color: yellow">&#9888;</span> При указании адреса электронной почты за пределами филиалов и РУПов энергосистемы необходимо заменять ".net" на ".by" в конце адреса
+        </div>*@
 
-		<div class="view" id="view">
-			@{
-				if (phones.Count() == 0)
-				{
-					<div>По данному запросу ничего не найдено</div>
-				}
 
-				foreach (var phone in phones)
-				{
-					var vacation = vacations
-						.Where(x => x.Family == phone.Name)
-						.FirstOrDefault();
+        <ul class="search">
+            <li class="search_caption">Поиск: </li>
+            <li>
+                <form action="~/phonebook/" id="form">
+                    <input name="q" placeholder="Введите поисковый запрос..." value="@key" />
+                </form>
+            </li>
+            <li class="search_button">
+                <button onclick="$('#form').submit()">Искать</button>
+            </li>
+        </ul>
 
-					var dutyJorney = dutyJorneys
-						.Where(x => x.Family == phone.Name)
-						.FirstOrDefault();
+        <div class="view" id="view">
+            @{
+                if (phones.Count() == 0)
+                {
+                    <div>По данному запросу ничего не найдено</div>
+                }
 
-					<div class="block phone" style="min-height: 155px">
-						<div class="phone-image">
-							<img src="@phone.Image()" title="@phone.Name" onclick="getBigPhoto('@phone.Image(true)')" />
-						</div>
+                foreach (var phone in phones)
+                {
+                    var vacation = vacations
+                        .Where(x => x.Family == phone.Name)
+                        .FirstOrDefault();
+
+                    var dutyJorney = dutyJorneys
+                        .Where(x => x.Family == phone.Name)
+                        .FirstOrDefault();
+
+                    <div class="block phone" style="min-height: 155px">
+                        <div class="phone-image">
+                            <img src="@phone.Image()" title="@phone.Name" onclick="getBigPhoto('@phone.Image(true)')" />
+                        </div>
                         <div class="phone-text">
                             @if (!string.IsNullOrEmpty(phone.Name))
                             {
@@ -160,11 +165,11 @@
                                 <div class="blue">Командировка с @dutyJorney.DateStart.ToString("dd.MM.yyyy") по @dutyJorney.DateEnd.ToString("dd.MM.yyyy")</div>
                             }
                         </div>
-					</div>
-				}
-			}
-		</div>
-	</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 }
 
 <div id="big_photo" class="hide" onclick="document.getElementById('big_photo').style.display = 'none';">
