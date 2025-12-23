@@ -131,111 +131,114 @@
 					</tr>
 				</table>
 			</div>
-			<div class="menu_body" id="links">
-				<a href="~/news/">
-					<span class="material-icons" style="color: #ff5050;">article</span> Новости
-				</a>
-				<a href="http://10.178.9.31/ask/">
-					<span class="material-icons" style="color: #f45936;">laptop</span> АСК "Выбросы"
-				</a>
-				<a href="http://project.vst.vitebsk.energo.net/asu/">
-					<span class="material-icons" style="color: #f19018;">settings</span> АСУ
-				</a>
-				@if (user.Groups.Contains("group_checkpoint") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_gen") || user.Groups.Contains("group_tb") || user.Groups.Contains("group_ok"))
-				{
-					<a href="http://www.vst.vitebsk.energo.net/checkpoint/">
-						<span class="material-icons" style="color: #ffa700;">videocam</span> Проходная
-					</a>
-				}
-				<a href="https://email.vst.vitebsk.energo.net">
-					<span class="material-icons" style="color: #69b307;">email</span> Почта
-				</a>
-				@{
-					var q1 = from record in db.AccidentsRecords
-							 from recordList in db.AccidentsRecordsLists.LeftJoin(x => x.RecordId == record.Id)
-							 from list in db.AccidentsLists.LeftJoin(x => x.Id == recordList.ListId)
-							 from listUser in db.AccidentsUsersLists.LeftJoin(x => x.ListId == list.Id)
-							 from view in db.AccidentsViews.LeftJoin(x => x.AccidentId == record.Id && x.UserId == user.UID)
-							 where listUser.UserId == user.UID && !record.IsTemplate && !record.IsDeleted && view == null
-							 orderby record.DateControl descending, list.Name
-							 select new
-							 {
-								 Record = new { record.Id, record.DateControl, record.Description },
-							 };
+            <div class="menu_body" id="links">
+                <a href="~/news/">
+                    <span class="material-icons" style="color: #ff5050;">article</span> Новости
+                </a>
+                <a href="http://10.178.9.31/ask/">
+                    <span class="material-icons" style="color: #f45936;">laptop</span> АСК "Выбросы"
+                </a>
+                <a href="http://project.vst.vitebsk.energo.net/asu/">
+                    <span class="material-icons" style="color: #f19018;">settings</span> АСУ
+                </a>
+                @if (user.Groups.Contains("group_checkpoint") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_gen") || user.Groups.Contains("group_tb") || user.Groups.Contains("group_ok"))
+                {
+                    <a href="http://www.vst.vitebsk.energo.net/checkpoint/">
+                        <span class="material-icons" style="color: #ffa700;">videocam</span> Проходная
+                    </a>
+                }
+                <a href="https://email.vst.vitebsk.energo.net">
+                    <span class="material-icons" style="color: #69b307;">email</span> Почта
+                </a>
+                @{
+                    var q1 = from record in db.AccidentsRecords
+                             from recordList in db.AccidentsRecordsLists.LeftJoin(x => x.RecordId == record.Id)
+                             from list in db.AccidentsLists.LeftJoin(x => x.Id == recordList.ListId)
+                             from listUser in db.AccidentsUsersLists.LeftJoin(x => x.ListId == list.Id)
+                             from view in db.AccidentsViews.LeftJoin(x => x.AccidentId == record.Id && x.UserId == user.UID)
+                             where listUser.UserId == user.UID && !record.IsTemplate && !record.IsDeleted && view == null
+                             orderby record.DateControl descending, list.Name
+                             select new
+                             {
+                                 Record = new { record.Id, record.DateControl, record.Description },
+                             };
 
-					var notViewedAccidents = q1.Count();
+                    var notViewedAccidents = q1.Count();
 
-					<a href="@Url.Action("", "safety")">
-						<span class="material-icons" style="color: #37d953;">info</span> Информационные сообщения
-						@*@if (notViewedAccidents > 0)
-						{
-							<i class="counter" title="Есть непросмотренные сообщения">@notViewedAccidents</i>
-						}
-						else
-						{
-							<i title="Всё просмотрено!" style="display: inline-block; position: relative; top: -.5em;"><span class="material-icons" style="color: #20b332; font-size: 18px;">done</span></i>
-						}*@
-					</a>
-				}
-				@if (user.Groups.Contains("group_orders"))
-				{
-					<a href="@Url.Action("", "orders")">
-						<span class="material-icons" style="color: #1fbbbb;">list_alt</span> План работ
-					</a>
-				}
-				@if (user.Groups.Contains("group_pto") || user.Groups.Contains("group_boss") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_tb") || user.UName == "tai_duty" || user.UName == "gcu_user" || user.UName == "elec_duty" || user.UName == "el_mast" || user.UName == "el_mast2")
-				{<a href="http://web.vst.vitebsk.energo.net/mnemo/#TEC_osn_oborud">
-						<span class="material-icons" style="color: #189dc5;">view_column</span> Схема основного оборудования ТЭЦ
-					</a>
-					<a href="http://web.vst.vitebsk.energo.net/mnemonica/el_main">
-						<span class="material-icons" style="color: #3a7ffd;">bolt</span> Главная электрическая схема ТЭЦ
-					</a>
-				}
-				@if (user.Groups.Contains("group_uchet") || user.Groups.Contains("group_ASUP"))
-				{
-					<a href="http://info.energo.net:9858/Home/Identificate">
-						<span class="material-icons" style="color: #0546bd;">cast</span> Каскад
-					</a>
-					<a href="http://info.energo.net:8088/Home/Vitebsktc">
-						<span class="material-icons" style="color: #0546bd;">cast</span> 777
-					</a>
-				}
-				<a href="~/auto/">
-					<span class="material-icons" style="color: #6b3ef7;">phone_in_talk</span> Заявки на автомобиль
-				</a>
-				@if ("gen gen_zam eng_gen eng_zam".Contains(user.UName) || user.Groups.Contains("group_ttc") || user.Groups.Contains("group_ASUP"))
-				{
-					<a href="http://track.vitebskenergo.by">
-						<span class="material-icons" style="color: #913bdf;">local_shipping</span> Трекер автотранспорта
-					</a>
-				}
-				@*<a href="~/site/birthdays/">
-					<span class="material-icons" style="color: #cd27c8;">cake</span> Дни рождений
-				</a>*@
-				@if (user.Groups.Contains("group_inet") || user.Groups.Contains("group_inet_restricted") || user.Groups.Contains("group_gen"))
-				{
-					<a href="http://frw.vst.vitebsk.energo.net:4080/login/?NTLM=1">
-						<span class="material-icons" style="color: #d40062;">language</span> Просмотр интернет статистики
-					</a>
-					<script>
-						try {
-							var xhr = new XMLHttpRequest()
-							xhr.open('GET', 'http://frw.vst.vitebsk.energo.net:4080/internal/ntlm/dologin.php?', true)
-							xhr.withCredentials = true
-							xhr.send()
-						} catch (e) { }
-					</script>
-				}
-				@*@if (user.Groups.Contains("group_violations"))
-					{
-						<a href="~/violations/">
-							<span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
-						</a>
-					}*@
-				@*<a href="http://web.vst.vitebsk.energo.net:88">
-						<span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
-					</a>*@
-			</div>
+                    <a href="@Url.Action("", "safety")">
+                        <span class="material-icons" style="color: #37d953;">info</span> Информационные сообщения
+                        @*@if (notViewedAccidents > 0)
+                {
+                    <i class="counter" title="Есть непросмотренные сообщения">@notViewedAccidents</i>
+                }
+                else
+                {
+                    <i title="Всё просмотрено!" style="display: inline-block; position: relative; top: -.5em;"><span class="material-icons" style="color: #20b332; font-size: 18px;">done</span></i>
+                }*@
+                    </a>
+                }
+                @if (user.Groups.Contains("group_orders"))
+                {
+                    <a href="@Url.Action("", "orders")">
+                        <span class="material-icons" style="color: #1fbbbb;">list_alt</span> План работ
+                    </a>
+                }
+                @if (user.Groups.Contains("group_pto") || user.Groups.Contains("group_boss") || user.Groups.Contains("group_ASUP") || user.Groups.Contains("group_tb") || user.UName == "tai_duty" || user.UName == "gcu_user" || user.UName == "elec_duty" || user.UName == "el_mast" || user.UName == "el_mast2")
+                {<a href="http://web.vst.vitebsk.energo.net/mnemo/#TEC_osn_oborud">
+                        <span class="material-icons" style="color: #189dc5;">view_column</span> Схема основного оборудования ТЭЦ
+                    </a>
+                    <a href="https://sinus.vitebsk.energo.net/desktops/399/">
+                        <span class="material-icons" style="color: #ff2f2f;">factory</span> Режим работы ВТЭЦ
+                    </a>
+                    <a href="http://web.vst.vitebsk.energo.net/mnemonica/el_main">
+                        <span class="material-icons" style="color: #3a7ffd;">bolt</span> Главная электрическая схема ТЭЦ
+                    </a>
+                }
+                @if (user.Groups.Contains("group_uchet") || user.Groups.Contains("group_ASUP"))
+                {
+                    <a href="http://info.energo.net:9858/Home/Identificate">
+                        <span class="material-icons" style="color: #0546bd;">cast</span> Каскад
+                    </a>
+                    <a href="http://info.energo.net:8088/Home/Vitebsktc">
+                        <span class="material-icons" style="color: #0546bd;">cast</span> 777
+                    </a>
+                }
+                <a href="~/auto/">
+                    <span class="material-icons" style="color: #6b3ef7;">phone_in_talk</span> Заявки на автомобиль
+                </a>
+                @if ("gen gen_zam eng_gen eng_zam".Contains(user.UName) || user.Groups.Contains("group_ttc") || user.Groups.Contains("group_ASUP"))
+                {
+                    <a href="http://track.vitebskenergo.by">
+                        <span class="material-icons" style="color: #913bdf;">local_shipping</span> Трекер автотранспорта
+                    </a>
+                }
+                @*<a href="~/site/birthdays/">
+            <span class="material-icons" style="color: #cd27c8;">cake</span> Дни рождений
+        </a>*@
+                @if (user.Groups.Contains("group_inet") || user.Groups.Contains("group_inet_restricted") || user.Groups.Contains("group_gen"))
+                {
+                    <a href="http://frw.vst.vitebsk.energo.net:4080/login/?NTLM=1">
+                        <span class="material-icons" style="color: #d40062;">language</span> Просмотр интернет статистики
+                    </a>
+                    <script>
+                        try {
+                            var xhr = new XMLHttpRequest()
+                            xhr.open('GET', 'http://frw.vst.vitebsk.energo.net:4080/internal/ntlm/dologin.php?', true)
+                            xhr.withCredentials = true
+                            xhr.send()
+                        } catch (e) { }
+                    </script>
+                }
+                @*@if (user.Groups.Contains("group_violations"))
+        {
+            <a href="~/violations/">
+                <span class="material-icons" style="color: #ffc107;">assignment_ind</span> Накопительный учет нарушений
+            </a>
+        }*@
+                @*<a href="http://web.vst.vitebsk.energo.net:88">
+            <span class="material-icons" style="color: #2196f3;">email</span> Почта (старая)
+        </a>*@
+            </div>
 		</div>
 
 		@{ open = Request.Cookies.Get("usefullinks")?.Value != "0"; }
