@@ -17,53 +17,93 @@
 </head>
 <body class="@theme">
     @using (var db = new SiteContext())
-	{
-		var user = db.Authorize(User);
-		var date = DateTime.TryParse(Request.QueryString.Get("date") ?? "", out DateTime d) ? d : DateTime.Today;
+    {
+        var user = db.Authorize(User);
+        var date = DateTime.TryParse(Request.QueryString.Get("date") ?? "", out DateTime d) ? d : DateTime.Today;
 
-		var viewers = new[] { "gen", "gen_zam", "eng_gen", "eng_zam", "tai_duty", "ttc_duty", "ktc_duty", "elec_duty", "hvo_1", "hvo_2", "tb1", "tb2", "tb3" };
+        var viewers = new[] { "gen", "gen_zam", "eng_gen", "eng_zam", "tai_duty", "ttc_duty", "ktc_duty", "elec_duty", "hvo_1", "hvo_2", "tb1", "tb2", "tb3" };
 
-		var guilds = new[]
-		{
-		new
-		{
-			Name = "КТЦ",
-			Users = new [] { "ktc_gen", "ktc_zam", "ktc_mas", "ktc_masko", "ktc_zko", "ktc_zto" },
-		},
-		new
-		{
-			Name = "ТТЦ",
-			Users = new [] { "ttc_gen", "ttc_zam", "ttc_mast", "ttc_mast2" },
-		},
-		new
-		{
-			Name = "ЦТАИ",
-			Users = new [] { "tai_gen", "tai_zam", "tai_mast", "tai_mast2", "shumeiko", "crow", "void", "tai_duty", "esmal" },
-		},
-		new
-		{
-			Name = "ЭЦ",
-			Users = new [] { "elec_gen", "elec_zam", "el_lab", "el_mast" },
-		},
-		new
-		{
-			Name = "РСУ",
-			Users = new [] { "rsu_gen", "rsc" },
-		},
-		new
-		{
-			Name = "ХЦ",
-			Users = new [] { "him_gen", "him_cad" },
-		},
-	};
+        // для костыля 20260921
+        // добавлен несуществующий пользователь userNotFoundGerarahir в позицию [0]
+        // чтобы его можно было заменить на активного пользователя, если тот подойдёт по критериям
+        var guilds = new[]
+        {
+            new
+            {
+                Name = "КТЦ",
+                Users = new [] { "userNotFoundGerarahir", "ktc_gen", "ktc_zam", "ktc_mas", "ktc_masko", "ktc_zko", "ktc_zto" },
+            },
+            new
+            {
+                Name = "ТТЦ",
+                Users = new [] { "userNotFoundGerarahir", "ttc_gen", "ttc_zam", "ttc_mast", "ttc_mast2", "d.karpenkov" },
+            },
+            new
+            {
+                Name = "ЦТАИ",
+                Users = new [] { "userNotFoundGerarahir", "tai_gen", "tai_zam", "tai_mast", "tai_mast2", "crow", "void", "tai_duty", "esmal" },
+            },
+            new
+            {
+                Name = "ЭЦ",
+                Users = new [] { "userNotFoundGerarahir", "elec_gen", "elec_zam", "el_lab", "el_mast" },
+            },
+            new
+            {
+                Name = "РСУ",
+                Users = new [] { "userNotFoundGerarahir", "rsu_gen", "rsc" },
+            },
+            new
+            {
+                Name = "ХЦ",
+                Users = new [] { "userNotFoundGerarahir", "him_gen", "him_cad" },
+            },
+        };
 
-		bool isNSS = user.UName == "gcu_user";
-		bool isENGGEN = user.UName == "eng_gen";
-		bool isENGZAM = user.UName == "eng_zam";
+        // костыль 20260921
+        // дополнительная проверка пользователя, чтобы можно было только добавить в группу orders в домене
+        // и не перезаливать сайт каждый раз при добавлении/изменении пользователей
+        //
+        // если пользователь не в режиме просмотра и есть в группе orders, то
+        // проверяется каждый цеховой список
+        // и если пользователя нет, но он в цеху и есть доступ
+        // то его дописывает в цех
+        // посредством замены первого несуществующего пользователя
 
-		if (!user.Groups.Contains("group_orders"))
-		{
-			<div>Нет доступа в данный раздел. Для получения доступа обратитесь в уАСУТП по тел. 3-34</div>
+        if (user.Groups.Contains("group_orders") && !viewers.Contains(user.UName))
+        {
+            string[] strUsrUnion = new[] { user.UName };
+            if (user.Groups.Contains("group_ktc") && !guilds.Where(x => x.Name == "КТЦ").FirstOrDefault().Users.Contains(user.UName))
+            {
+                guilds.Single(x => x.Name == "КТЦ").Users[0] = user.UName;
+            }
+            if (user.Groups.Contains("group_ttc") && !guilds.Where(x => x.Name == "ТТЦ").FirstOrDefault().Users.Contains(user.UName))
+            {
+                guilds.Single(x => x.Name == "ТТЦ").Users[0] = user.UName;
+            }
+            if (user.Groups.Contains("group_tai") && !guilds.Where(x => x.Name == "ЦТАИ").FirstOrDefault().Users.Contains(user.UName))
+            {
+                guilds.Single(x => x.Name == "ЦТАИ").Users[0] = user.UName;
+            }
+            if (user.Groups.Contains("group_elec") && !guilds.Where(x => x.Name == "ЭЦ").FirstOrDefault().Users.Contains(user.UName))
+            {
+                guilds.Single(x => x.Name == "ЭЦ").Users[0] = user.UName;
+            }
+            if (user.Groups.Contains("group_rsu") && !guilds.Where(x => x.Name == "РСУ").FirstOrDefault().Users.Contains(user.UName))
+            {
+                guilds.Single(x => x.Name == "РСУ").Users[0] = user.UName;
+            }
+            if (user.Groups.Contains("group_him") && !guilds.Where(x => x.Name == "ХЦ").FirstOrDefault().Users.Contains(user.UName))
+            {
+                guilds.Single(x => x.Name == "ХЦ").Users[0] = user.UName;
+            }
+        }
+
+        // для костыля 20260921
+        // добавлена проверка несуществующего пользователя userNotFoundGerarahir
+        if (!user.Groups.Contains("group_orders") || user.UName.Contains("userNotFoundGerarahir"))
+        {
+        <div>Нет доступа в данный раздел. Для получения доступа обратитесь в уАСУТП по тел. 3-34</div>
             return;
         }
 
@@ -90,36 +130,36 @@
                 .ToList();
         }
 
-        string AsNumber(int number)
-        {
-            return number == 0 ? "" : number.ToString();
-        }
+            string AsNumber(int number)
+            {
+                return number == 0 ? "" : number.ToString();
+            }
 
-        var records = db.OrdersRecords
-            .Where(x => orders.Select(y => y.Id).ToList().Contains(x.OrderId))
-            .ToList();
+            var records = db.OrdersRecords
+                .Where(x => orders.Select(y => y.Id).ToList().Contains(x.OrderId))
+                .ToList();
 
-        var ftpDate = db.Constants.Where(x => x.Keyword == "OrdersFTPDate").FirstOrDefault()?.Value ?? "";
+            var ftpDate = db.Constants.Where(x => x.Keyword == "OrdersFTPDate").FirstOrDefault()?.Value ?? "";
 
-        int plannedCommands = records.Select(x => x.NumberPlannedCommand).Sum();
-        int plannedOrders = records.Select(x => x.NumberPlannedOrder).Sum();
-        int unplannedCommands = records.Select(x => x.NumberUnplannedCommand).Sum();
-        int unplannedOrders = records.Select(x => x.NumberUnplannedOrder).Sum();
+            int plannedCommands = records.Select(x => x.NumberPlannedCommand).Sum();
+            int plannedOrders = records.Select(x => x.NumberPlannedOrder).Sum();
+            int unplannedCommands = records.Select(x => x.NumberUnplannedCommand).Sum();
+            int unplannedOrders = records.Select(x => x.NumberUnplannedOrder).Sum();
 
-        int masters = orders.Select(x => x.NumberMasters).Sum();
-        int personal = orders.Select(x => x.NumberPersonal).Sum();
+            int masters = orders.Select(x => x.NumberMasters).Sum();
+            int personal = orders.Select(x => x.NumberPersonal).Sum();
 
-		<div class="header">
+        <div class="header">
 			Просматриваемая дата: <span>@date.ToString("d MMMM yyyy")</span>
 			<a href="~/orders/?date=@date.AddDays(-1).ToString("dd.MM.yyyy")">Предыдущий день</a>
 			<a href="~/orders/?date=@date.AddDays(+1).ToString("dd.MM.yyyy")">Следующий день</a>
 			<a href="~/orders/?date=@DateTime.Today.ToString("dd.MM.yyyy")">Текущий день</a>
 
 			<i style="display: inline-block; margin: 0 2em;">Последний раз отчёт в РУП был отправлен @ftpDate</i>
-			@if (isNSS)
-			{
-				<button onclick="sendToFTP()">Отправить отчёт в РУП по FTP</button>
-			}
+            @if (user.UName == "gcu_user")
+            {
+                <button onclick="sendToFTP()">Отправить отчёт в РУП по FTP</button>
+            }
             @*@if (((date.Date - DateTime.Today).Days > 0) && (guilds.Where(x => x.Name == user. order.Guild).FirstOrDefault().Users.Contains(user.UName) || user.UName == "crow"))*@
             @if ((date.Date - DateTime.Today).Days > 0)
             {
@@ -189,7 +229,7 @@
 
                     string answerCodeN = "answercode0";
 
-                    @*if (isNSS || user.UName == "crow")
+                    @*if (user.UName == "gcu_user" || user.UName == "crow")
             {
                 answerCodeN = "answercode" + orderRecords[0].AnswerCode;
                 string border = orderRecords.Count < 2 ? "border" : "";
@@ -253,12 +293,14 @@
                     </tr>
                 }
             }*@
-                if (isNSS || user.UName == "crow")
-                {
-                    answerCodeN = "answercode" + orderRecords[0].AnswerCode;
-                    string border = orderRecords.Count < 2 ? "border" : "";
-                    if (date.Date >= DateTime.Today)
+                    // НСС и администратор
+                    // полный доступ
+                    if (user.UName == "gcu_user" || user.UName == "crow")
                     {
+                        answerCodeN = "answercode" + orderRecords[0].AnswerCode;
+                        string border = orderRecords.Count < 2 ? "border" : "";
+                        if (date.Date >= DateTime.Today)
+                        {
                             <tr orderId="@order.Id" recordId="@orderRecords[0].Id">
                                 <td class="border left" rowspan="@orderRecords.Count">
                                     <span>@order.Guild</span> <button onclick="addRecord(@order.Id)">+</button>
@@ -386,7 +428,9 @@
                         }
                     }
 
-                    else if (isENGGEN || isENGZAM)
+                    // главный инженер и зам
+                    // возможность разрешать и запрещать работы
+                    else if (user.UName == "eng_gen" || user.UName == "eng_zam")
                     {
                         answerCodeN = "answercode" + orderRecords[0].AnswerCode;
                         string border = orderRecords.Count < 2 ? "border" : "";
@@ -452,6 +496,8 @@
                             </tr>
                         }
                     }
+                    // пользователь определённого цеха с правами редактора
+                    // возможность добавлять и редактировать работы для своего цеха
                     else if (guilds.Where(x => x.Name == order.Guild).FirstOrDefault().Users.Contains(user.UName))
                     {
                         answerCodeN = "answercode" + orderRecords[0].AnswerCode;
@@ -555,6 +601,8 @@
                             }
                         }
                     }
+                    // если пользователь есть в группе для просмотра; или есть доступ, но ни одному цеху как редактор не принадлежит
+                    // возможность просматривать работы
                     else if (viewers.Contains(user.UName) || user.Groups.Contains("group_orders"))
                     {
                         answerCodeN = "answercode" + orderRecords[0].AnswerCode;
