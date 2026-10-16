@@ -181,7 +181,7 @@
                     <th rowspan="3" width="95px">Количество ремонтного персонала</th>
                     <th rowspan="3">Руководитель или производитель работ</th>
                     <th rowspan="3">Исполнитель работ</th>
-					<th rowspan="3" width="140px">Отметка о получении разрешения на выполнение работ от главного инженера</th>
+                    <th rowspan="3" width="140px">Разрешение на выполнение работ от главного инженера / зам. директора (в части транспорта)</th>
 				</tr>
 				<tr>
 					<th colspan="2">Плановые (@(plannedCommands + plannedOrders))</th>
@@ -430,7 +430,7 @@
 
                     // главный инженер и зам
                     // возможность разрешать и запрещать работы
-                    else if (user.UName == "eng_gen" || user.UName == "eng_zam")
+                    else if (user.UName == "eng_gen" || user.UName == "eng_zam" || user.UName == "gen_zam")
                     {
                         answerCodeN = "answercode" + orderRecords[0].AnswerCode;
                         string border = orderRecords.Count < 2 ? "border" : "";
